@@ -18,12 +18,12 @@ public class DbSeeder implements CommandLineRunner {
     @Override
     public void run(String... strings){
 
-        if(initializeDatabase == true){
-            User user = new User();
-            user.setName("Ywald");
-
-            userRepository.save(user);
-        }
+//        if(initializeDatabase == true){
+//            User user = new User();
+//            user.setName("Ywald");
+//
+//            userRepository.save(user);
+//        }
 
     }
 
