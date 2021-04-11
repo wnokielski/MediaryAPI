@@ -1,3 +1,7 @@
+DROP SCHEMA public CASCADE;
+
+CREATE SCHEMA public;
+
 CREATE TABLE Users(
     ID serial PRIMARY KEY,
     UID VARCHAR (50) NOT NULL,
