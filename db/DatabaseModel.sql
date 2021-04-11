@@ -1,10 +1,8 @@
-CREATE TYPE gender AS ENUM ('Male', 'Female');
-
 CREATE TABLE Users(
     ID serial PRIMARY KEY,
     UID VARCHAR (50) NOT NULL,
     FullName VARCHAR (40) NOT NULL,
-    Gender gender NOT NULL DEFAULT 'Male',
+    Gender VARCHAR(6) NOT NULL DEFAULT 'Male',
     DateOfBirth DATE NOT NULL DEFAULT '1970-01-01',
     Weight NUMERIC (4,1) DEFAULT 0.0
 );
