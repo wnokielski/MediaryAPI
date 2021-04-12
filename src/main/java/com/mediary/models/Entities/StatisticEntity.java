@@ -4,18 +4,18 @@ import javax.persistence.*;
 import java.sql.Date;
 
 @Entity
-@Table(name = "statistic", schema = "public", catalog = "MediaryDB")
+@Table(name = "`Statistic`", schema = "public", catalog = "MediaryDB")
 public class StatisticEntity {
     private Integer id;
     private String value;
     private Date date;
-    private StatistictypeEntity statistictypeByStatistictypeid;
-    private UsersEntity usersByUserid;
+    private StatisticTypeEntity statistictypeByStatistictypeid;
+    private UserEntity userByUserid;
 
     @Id
-    @SequenceGenerator(name="statistic_id_seq", sequenceName="statistic_id_seq", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="statistic_id_seq")
-    @Column(name = "id", nullable = false)
+    @SequenceGenerator(name="`Statistic_ID_seq`", sequenceName="`Statistic_ID_seq`", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="`Statistic_ID_seq`")
+    @Column(name = "`ID`", nullable = false)
     public Integer getId() {
         return id;
     }
@@ -25,7 +25,7 @@ public class StatisticEntity {
     }
 
     @Basic
-    @Column(name = "value", nullable = true, length = 50)
+    @Column(name = "`Value`", nullable = true, length = 50)
     public String getValue() {
         return value;
     }
@@ -35,7 +35,7 @@ public class StatisticEntity {
     }
 
     @Basic
-    @Column(name = "date", nullable = false)
+    @Column(name = "`Date`", nullable = false)
     public Date getDate() {
         return date;
     }
@@ -67,22 +67,22 @@ public class StatisticEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "statistictypeid", referencedColumnName = "id", nullable = false)
-    public StatistictypeEntity getStatistictypeByStatistictypeid() {
+    @JoinColumn(name = "`StatisticTypeID`", referencedColumnName = "`ID`", nullable = false)
+    public StatisticTypeEntity getStatistictypeByStatistictypeid() {
         return statistictypeByStatistictypeid;
     }
 
-    public void setStatistictypeByStatistictypeid(StatistictypeEntity statistictypeByStatistictypeid) {
+    public void setStatistictypeByStatistictypeid(StatisticTypeEntity statistictypeByStatistictypeid) {
         this.statistictypeByStatistictypeid = statistictypeByStatistictypeid;
     }
 
     @ManyToOne
-    @JoinColumn(name = "userid", referencedColumnName = "id", nullable = false)
-    public UsersEntity getUsersByUserid() {
-        return usersByUserid;
+    @JoinColumn(name = "`UserID`", referencedColumnName = "`ID`", nullable = false)
+    public UserEntity getUserByUserid() {
+        return userByUserid;
     }
 
-    public void setUsersByUserid(UsersEntity usersByUserid) {
-        this.usersByUserid = usersByUserid;
+    public void setUserByUserid(UserEntity userByUserid) {
+        this.userByUserid = userByUserid;
     }
 }

@@ -3,18 +3,18 @@ package com.mediary.Models.Entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "testresultitem", schema = "public", catalog = "MediaryDB")
-public class TestresultitemEntity {
+@Table(name = "`TestResultItem`", schema = "public", catalog = "MediaryDB")
+public class TestResultItemEntity {
     private Integer id;
     private String name;
     private String value;
     private String unit;
-    private TestresultEntity testresultByTestresultid;
+    private TestResultEntity testresultByTestresultid;
 
     @Id
-    @SequenceGenerator(name="testresultitem_id_seq", sequenceName="testresultitem_id_seq", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="testresultitem_id_seq")
-    @Column(name = "id", nullable = false)
+    @SequenceGenerator(name="`TestResultItem_ID_seq`", sequenceName="`TestResultItem_ID_seq`", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="`TestResultItem_ID_seq`")
+    @Column(name = "`ID`", nullable = false)
     public Integer getId() {
         return id;
     }
@@ -24,7 +24,7 @@ public class TestresultitemEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = false, length = 40)
+    @Column(name = "`Name`", nullable = false, length = 40)
     public String getName() {
         return name;
     }
@@ -34,7 +34,7 @@ public class TestresultitemEntity {
     }
 
     @Basic
-    @Column(name = "value", nullable = true, length = 50)
+    @Column(name = "`Value`", nullable = true, length = 50)
     public String getValue() {
         return value;
     }
@@ -44,7 +44,7 @@ public class TestresultitemEntity {
     }
 
     @Basic
-    @Column(name = "unit", nullable = true, length = 10)
+    @Column(name = "`Unit`", nullable = true, length = 10)
     public String getUnit() {
         return unit;
     }
@@ -58,7 +58,7 @@ public class TestresultitemEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TestresultitemEntity that = (TestresultitemEntity) o;
+        com.mediary.Models.Entities.TestResultItemEntity that = (com.mediary.Models.Entities.TestResultItemEntity) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
@@ -78,12 +78,12 @@ public class TestresultitemEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "testresultid", referencedColumnName = "id", nullable = false)
-    public TestresultEntity getTestresultByTestresultid() {
+    @JoinColumn(name = "`TestResultID`", referencedColumnName = "`ID`", nullable = false)
+    public TestResultEntity getTestresultByTestresultid() {
         return testresultByTestresultid;
     }
 
-    public void setTestresultByTestresultid(TestresultEntity testresultByTestresultid) {
+    public void setTestresultByTestresultid(TestResultEntity testresultByTestresultid) {
         this.testresultByTestresultid = testresultByTestresultid;
     }
 }

@@ -4,21 +4,21 @@ import javax.persistence.*;
 import java.sql.Date;
 
 @Entity
-@Table(name = "scheduleitem", schema = "public", catalog = "MediaryDB")
-public class ScheduleitemEntity {
+@Table(name = "`ScheduleItem`", schema = "public", catalog = "MediaryDB")
+public class ScheduleItemEntity {
     private Integer id;
     private String title;
     private Date date;
     private String place;
     private String address;
     private String note;
-    private UsersEntity usersByUserid;
-    private ScheduleitemtypeEntity scheduleitemtypeByScheduleitemtypeid;
+    private UserEntity userByUserid;
+    private ScheduleItemTypeEntity scheduleitemtypeByScheduleitemtypeid;
 
     @Id
-    @SequenceGenerator(name="scheduleitem_id_seq", sequenceName="scheduleitem_id_seq", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="scheduleitem_id_seq")
-    @Column(name = "id", nullable = false)
+    @SequenceGenerator(name="`ScheduleItem_ID_seq`", sequenceName="`ScheduleItem_ID_seq`", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="`ScheduleItem_ID_seq`")
+    @Column(name = "`ID`", nullable = false)
     public Integer getId() {
         return id;
     }
@@ -28,7 +28,7 @@ public class ScheduleitemEntity {
     }
 
     @Basic
-    @Column(name = "title", nullable = false, length = 30)
+    @Column(name = "`Title`", nullable = false, length = 30)
     public String getTitle() {
         return title;
     }
@@ -38,7 +38,7 @@ public class ScheduleitemEntity {
     }
 
     @Basic
-    @Column(name = "date", nullable = false)
+    @Column(name = "`Date`", nullable = false)
     public Date getDate() {
         return date;
     }
@@ -48,7 +48,7 @@ public class ScheduleitemEntity {
     }
 
     @Basic
-    @Column(name = "place", nullable = false, length = 30)
+    @Column(name = "`Place`", nullable = false, length = 30)
     public String getPlace() {
         return place;
     }
@@ -58,7 +58,7 @@ public class ScheduleitemEntity {
     }
 
     @Basic
-    @Column(name = "address", nullable = true, length = 50)
+    @Column(name = "`Address`", nullable = true, length = 50)
     public String getAddress() {
         return address;
     }
@@ -68,7 +68,7 @@ public class ScheduleitemEntity {
     }
 
     @Basic
-    @Column(name = "note", nullable = true, length = 200)
+    @Column(name = "`Note`", nullable = true, length = 200)
     public String getNote() {
         return note;
     }
@@ -82,7 +82,7 @@ public class ScheduleitemEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ScheduleitemEntity that = (ScheduleitemEntity) o;
+        com.mediary.Models.Entities.ScheduleItemEntity that = (com.mediary.Models.Entities.ScheduleItemEntity) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (title != null ? !title.equals(that.title) : that.title != null) return false;
@@ -106,22 +106,22 @@ public class ScheduleitemEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "userid", referencedColumnName = "id", nullable = false)
-    public UsersEntity getUsersByUserid() {
-        return usersByUserid;
+    @JoinColumn(name = "`UserID`", referencedColumnName = "`ID`", nullable = false)
+    public UserEntity getUserByUserid() {
+        return userByUserid;
     }
 
-    public void setUsersByUserid(UsersEntity usersByUserid) {
-        this.usersByUserid = usersByUserid;
+    public void setUserByUserid(UserEntity userByUserid) {
+        this.userByUserid = userByUserid;
     }
 
     @ManyToOne
-    @JoinColumn(name = "scheduleitemtypeid", referencedColumnName = "id", nullable = false)
-    public ScheduleitemtypeEntity getScheduleitemtypeByScheduleitemtypeid() {
+    @JoinColumn(name = "`ScheduleItemTypeID`", referencedColumnName = "`ID`", nullable = false)
+    public ScheduleItemTypeEntity getScheduleitemtypeByScheduleitemtypeid() {
         return scheduleitemtypeByScheduleitemtypeid;
     }
 
-    public void setScheduleitemtypeByScheduleitemtypeid(ScheduleitemtypeEntity scheduleitemtypeByScheduleitemtypeid) {
+    public void setScheduleitemtypeByScheduleitemtypeid(ScheduleItemTypeEntity scheduleitemtypeByScheduleitemtypeid) {
         this.scheduleitemtypeByScheduleitemtypeid = scheduleitemtypeByScheduleitemtypeid;
     }
 }

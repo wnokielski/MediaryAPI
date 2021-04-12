@@ -5,21 +5,21 @@ import java.sql.Date;
 import java.util.Collection;
 
 @Entity
-@Table(name = "testresult", schema = "public", catalog = "MediaryDB")
-public class TestresultEntity {
+@Table(name = "`TestResult`", schema = "public", catalog = "MediaryDB")
+public class TestResultEntity {
     private Integer id;
     private String title;
     private String note;
     private Date dateofthetest;
-    private Collection<FilesEntity> filesById;
-    private TesttypeEntity testtypeByTesttypeid;
-    private UsersEntity usersByUserid;
-    private Collection<TestresultitemEntity> testresultitemsById;
+    private Collection<com.mediary.Models.Entities.FileEntity> filesById;
+    private TestTypeEntity testtypeByTesttypeid;
+    private UserEntity userByUserid;
+    private Collection<TestResultItemEntity> testresultitemsById;
 
     @Id
-    @SequenceGenerator(name="testresult_id_seq", sequenceName="testresult_id_seq", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="testresult_id_seq")
-    @Column(name = "id", nullable = false)
+    @SequenceGenerator(name="`TestResult_ID_seq`", sequenceName="`TestResult_ID_seq`", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="`TestResult_ID_seq`")
+    @Column(name = "`ID`", nullable = false)
     public Integer getId() {
         return id;
     }
@@ -30,7 +30,7 @@ public class TestresultEntity {
     }
 
     @Basic
-    @Column(name = "title", nullable = false, length = 30)
+    @Column(name = "`Title`", nullable = false, length = 30)
     public String getTitle() {
         return title;
     }
@@ -40,7 +40,7 @@ public class TestresultEntity {
     }
 
     @Basic
-    @Column(name = "note", nullable = true, length = 200)
+    @Column(name = "`Note`", nullable = true, length = 200)
     public String getNote() {
         return note;
     }
@@ -50,7 +50,7 @@ public class TestresultEntity {
     }
 
     @Basic
-    @Column(name = "dateofthetest", nullable = false)
+    @Column(name = "`DateOfTheTest`", nullable = false)
     public Date getDateofthetest() {
         return dateofthetest;
     }
@@ -64,7 +64,7 @@ public class TestresultEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TestresultEntity that = (TestresultEntity) o;
+        com.mediary.Models.Entities.TestResultEntity that = (com.mediary.Models.Entities.TestResultEntity) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (title != null ? !title.equals(that.title) : that.title != null) return false;
@@ -85,40 +85,40 @@ public class TestresultEntity {
     }
 
     @OneToMany(mappedBy = "testresultByTestresultid")
-    public Collection<FilesEntity> getFilesById() {
+    public Collection<FileEntity> getFilesById() {
         return filesById;
     }
 
-    public void setFilesById(Collection<FilesEntity> filesById) {
+    public void setFilesById(Collection<FileEntity> filesById) {
         this.filesById = filesById;
     }
 
     @ManyToOne
-    @JoinColumn(name = "testtypeid", referencedColumnName = "id", nullable = false)
-    public TesttypeEntity getTesttypeByTesttypeid() {
+    @JoinColumn(name = "`TestTypeID`", referencedColumnName = "`ID`", nullable = false)
+    public TestTypeEntity getTesttypeByTesttypeid() {
         return testtypeByTesttypeid;
     }
 
-    public void setTesttypeByTesttypeid(TesttypeEntity testtypeByTesttypeid) {
+    public void setTesttypeByTesttypeid(TestTypeEntity testtypeByTesttypeid) {
         this.testtypeByTesttypeid = testtypeByTesttypeid;
     }
 
     @ManyToOne
-    @JoinColumn(name = "userid", referencedColumnName = "id", nullable = false)
-    public UsersEntity getUsersByUserid() {
-        return usersByUserid;
+    @JoinColumn(name = "`UserID`", referencedColumnName = "`ID`", nullable = false)
+    public UserEntity getUserByUserid() {
+        return userByUserid;
     }
 
-    public void setUsersByUserid(UsersEntity usersByUserid) {
-        this.usersByUserid = usersByUserid;
+    public void setUserByUserid(UserEntity userByUserid) {
+        this.userByUserid = userByUserid;
     }
 
     @OneToMany(mappedBy = "testresultByTestresultid")
-    public Collection<TestresultitemEntity> getTestresultitemsById() {
+    public Collection<TestResultItemEntity> getTestresultitemsById() {
         return testresultitemsById;
     }
 
-    public void setTestresultitemsById(Collection<TestresultitemEntity> testresultitemsById) {
+    public void setTestresultitemsById(Collection<TestResultItemEntity> testresultitemsById) {
         this.testresultitemsById = testresultitemsById;
     }
 }
