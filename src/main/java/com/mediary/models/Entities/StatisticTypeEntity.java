@@ -4,22 +4,18 @@ import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-@Table(name = "scheduleitemtype", schema = "public", catalog = "MediaryDB")
-public class ScheduleitemtypeEntity {
+@Table(name = "`StatisticType`", schema = "public", catalog = "MediaryDB")
+public class StatisticTypeEntity {
     private Integer id;
     private String name;
-    private Collection<ScheduleitemEntity> scheduleitemsById;
+    private Collection<StatisticEntity> statisticsById;
 
     @Id
-    @SequenceGenerator(name="scheduleitemtype_id_seq", sequenceName="scheduleitemtype_id_seq", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="scheduleitemtype_id_seq")
-    @Column(name = "id", nullable = false)
+    @SequenceGenerator(name="`StatisticType_ID_seq`", sequenceName="`StatisticType_ID_seq`", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="`StatisticType_ID_seq`")
+    @Column(name = "`ID`", nullable = false)
     public Integer getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void setId(Integer id) {
@@ -27,7 +23,7 @@ public class ScheduleitemtypeEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = false, length = 40)
+    @Column(name = "`Name`", nullable = false, length = 40)
     public String getName() {
         return name;
     }
@@ -41,7 +37,7 @@ public class ScheduleitemtypeEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ScheduleitemtypeEntity that = (ScheduleitemtypeEntity) o;
+        com.mediary.Models.Entities.StatisticTypeEntity that = (com.mediary.Models.Entities.StatisticTypeEntity) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
@@ -56,12 +52,12 @@ public class ScheduleitemtypeEntity {
         return result;
     }
 
-    @OneToMany(mappedBy = "scheduleitemtypeByScheduleitemtypeid")
-    public Collection<ScheduleitemEntity> getScheduleitemsById() {
-        return scheduleitemsById;
+    @OneToMany(mappedBy = "statistictypeByStatistictypeid")
+    public Collection<StatisticEntity> getStatisticsById() {
+        return statisticsById;
     }
 
-    public void setScheduleitemsById(Collection<ScheduleitemEntity> scheduleitemsById) {
-        this.scheduleitemsById = scheduleitemsById;
+    public void setStatisticsById(Collection<StatisticEntity> statisticsById) {
+        this.statisticsById = statisticsById;
     }
 }

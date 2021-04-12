@@ -4,17 +4,17 @@ import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-@Table(name = "testtype", schema = "public", catalog = "MediaryDB")
-public class TesttypeEntity {
+@Table(name = "`TestType`", schema = "public", catalog = "MediaryDB")
+public class TestTypeEntity {
     private Integer id;
     private String name;
     private String parameters;
-    private Collection<TestresultEntity> testresultsById;
+    private Collection<TestResultEntity> testresultsById;
 
     @Id
-    @SequenceGenerator(name="testtype_id_seq", sequenceName="testtype_id_seq", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="testtype_id_seq")
-    @Column(name = "id", nullable = false)
+    @SequenceGenerator(name="`TestType_ID_seq`", sequenceName="`TestType_ID_seq`", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="`TestType_ID_seq`")
+    @Column(name = "`ID`", nullable = false)
     public Integer getId() {
         return id;
     }
@@ -24,7 +24,7 @@ public class TesttypeEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = false, length = 40)
+    @Column(name = "`Name`", nullable = false, length = 40)
     public String getName() {
         return name;
     }
@@ -34,7 +34,7 @@ public class TesttypeEntity {
     }
 
     @Basic
-    @Column(name = "parameters", nullable = false)
+    @Column(name = "`Parameters`", nullable = false)
     public String getParameters() {
         return parameters;
     }
@@ -48,7 +48,7 @@ public class TesttypeEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TesttypeEntity that = (TesttypeEntity) o;
+        com.mediary.Models.Entities.TestTypeEntity that = (com.mediary.Models.Entities.TestTypeEntity) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
@@ -66,11 +66,11 @@ public class TesttypeEntity {
     }
 
     @OneToMany(mappedBy = "testtypeByTesttypeid")
-    public Collection<TestresultEntity> getTestresultsById() {
+    public Collection<TestResultEntity> getTestresultsById() {
         return testresultsById;
     }
 
-    public void setTestresultsById(Collection<TestresultEntity> testresultsById) {
+    public void setTestresultsById(Collection<TestResultEntity> testresultsById) {
         this.testresultsById = testresultsById;
     }
 }

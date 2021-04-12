@@ -3,18 +3,18 @@ package com.mediary.Models.Entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "files", schema = "public", catalog = "MediaryDB")
-public class FilesEntity {
+@Table(name = "`File`", schema = "public", catalog = "MediaryDB")
+public class FileEntity {
     private Integer id;
     private String uuid;
     private String originalname;
     private String url;
-    private TestresultEntity testresultByTestresultid;
+    private TestResultEntity testresultByTestresultid;
 
     @Id
-    @SequenceGenerator(name="files_id_seq", sequenceName="files_id_seq", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="files_id_seq")
-    @Column(name = "id", nullable = false)
+    @SequenceGenerator(name="`File_ID_seq`", sequenceName="`File_ID_seq`", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="`File_ID_seq`")
+    @Column(name = "`ID`", nullable = false)
     public Integer getId() {
         return id;
     }
@@ -24,7 +24,7 @@ public class FilesEntity {
     }
 
     @Basic
-    @Column(name = "uuid", nullable = false, length = 36)
+    @Column(name = "`UID`", nullable = false, length = 36)
     public String getUuid() {
         return uuid;
     }
@@ -34,7 +34,7 @@ public class FilesEntity {
     }
 
     @Basic
-    @Column(name = "originalname", nullable = false, length = 50)
+    @Column(name = "`OriginalName`", nullable = false, length = 50)
     public String getOriginalname() {
         return originalname;
     }
@@ -44,7 +44,7 @@ public class FilesEntity {
     }
 
     @Basic
-    @Column(name = "url", nullable = false, length = 200)
+    @Column(name = "`URL`", nullable = false, length = 200)
     public String getUrl() {
         return url;
     }
@@ -58,7 +58,7 @@ public class FilesEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        FilesEntity that = (FilesEntity) o;
+        com.mediary.Models.Entities.FileEntity that = (com.mediary.Models.Entities.FileEntity) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (uuid != null ? !uuid.equals(that.uuid) : that.uuid != null) return false;
@@ -78,12 +78,12 @@ public class FilesEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "testresultid", referencedColumnName = "id", nullable = false)
-    public TestresultEntity getTestresultByTestresultid() {
+    @JoinColumn(name = "TestResultID", referencedColumnName = "`ID`", nullable = false)
+    public TestResultEntity getTestresultByTestresultid() {
         return testresultByTestresultid;
     }
 
-    public void setTestresultByTestresultid(TestresultEntity testresultByTestresultid) {
+    public void setTestresultByTestresultid(TestResultEntity testresultByTestresultid) {
         this.testresultByTestresultid = testresultByTestresultid;
     }
 }
