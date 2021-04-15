@@ -11,15 +11,13 @@ import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.models.BlobItem;
 import com.mediary.Services.Interfaces.IStorageService;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class StorageService implements IStorageService {
 
-    @Autowired
-    private BlobServiceClientBuilder clientBuilder;
+    private final BlobServiceClientBuilder clientBuilder = new BlobServiceClientBuilder();
 
     @Override
     public BlobContainerClient getContainerClient(String containerName) {

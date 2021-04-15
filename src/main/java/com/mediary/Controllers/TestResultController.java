@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,8 +28,8 @@ public class TestResultController {
 
     @ResponseBody
     @GetMapping("/{userId}")
-    public ResponseEntity<List<GetTestResultDto>> getUserTestResults(Integer userId) {
-        var testResultDtos = testResultService.getUsersTestResults(userId);
+    public ResponseEntity<List<GetTestResultDto>> getUserTestResults(@PathVariable Integer userId) {
+        var testResultDtos = testResultService.getTestResultsByUser(userId);
         if (testResultDtos.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
@@ -37,7 +38,7 @@ public class TestResultController {
     }
 
     @PostMapping("/{userId}")
-    public ResponseEntity<?> addTestResult(Integer userId, @RequestBody AddTestResultDto testResultDto) {
+    public ResponseEntity<?> addTestResult(@PathVariable Integer userId, @RequestBody AddTestResultDto testResultDto) {
         try {
             testResultService.addTestResult(testResultDto, userId);
         } catch (Exception e) {

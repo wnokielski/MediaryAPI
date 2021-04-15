@@ -70,7 +70,7 @@ public class TestResultService implements ITestResultService {
     }
 
     @Override
-    public List<GetTestResultDto> getUsersTestResults(Integer userId) {
+    public List<GetTestResultDto> getTestResultsByUser(Integer userId) {
         var testResultEntities = testResultRepository.findByUserByUserid(userId);
         List<GetTestResultDto> testResultDtos = testResultsToDtos(testResultEntities);
         return testResultDtos;

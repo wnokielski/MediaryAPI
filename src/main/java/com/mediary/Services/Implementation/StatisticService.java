@@ -3,7 +3,7 @@ package com.mediary.Services.Implementation;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mediary.Models.Dtos.Request.AddStatisticRequestDto;
+import com.mediary.Models.Dtos.Request.AddStatisticDto;
 import com.mediary.Models.Dtos.Response.GetStatisticDto;
 import com.mediary.Models.Entities.StatisticEntity;
 import com.mediary.Repositories.StatisticRepository;
@@ -27,14 +27,14 @@ public class StatisticService implements IStatisticService {
     StatisticTypeRepository statisticTypeRepository;
 
     @Override
-    public void addStatistics(List<AddStatisticRequestDto> statistics, Integer userId) throws Exception {
-        for (AddStatisticRequestDto statistic : statistics) {
+    public void addStatistics(List<AddStatisticDto> statistics, Integer userId) throws Exception {
+        for (AddStatisticDto statistic : statistics) {
             addStatistic(statistic, userId);
         }
     }
 
     @Override
-    public StatisticEntity addStatistic(AddStatisticRequestDto statistic, Integer userId) throws Exception {
+    public void addStatistic(AddStatisticDto statistic, Integer userId) throws Exception {
         if (statistic.getValue().length() > 50) {
             throw new Exception("Too long value field");
         } else if (statistic.getDate() == null) {
@@ -49,7 +49,6 @@ public class StatisticService implements IStatisticService {
         var statisticType = statisticTypeRepository.findById(statistic.getStatisticTypeId());
         newStatistic.setStatistictypeByStatistictypeid(statisticType);
         statisticRepository.saveAndFlush(newStatistic);
-        return newStatistic;
     }
 
     @Override

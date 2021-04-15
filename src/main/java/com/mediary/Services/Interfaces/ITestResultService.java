@@ -10,7 +10,7 @@ public interface ITestResultService {
 
     void addTestResult(AddTestResultDto testResultDto, Integer userId) throws Exception;
 
-    List<GetTestResultDto> getUsersTestResults(Integer userId);
+    List<GetTestResultDto> getTestResultsByUser(Integer userId);
 
     List<GetTestResultDto> testResultsToDtos(List<TestResultEntity> testResultEntities);
 

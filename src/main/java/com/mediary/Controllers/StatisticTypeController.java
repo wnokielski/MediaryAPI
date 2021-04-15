@@ -26,6 +26,9 @@ public class StatisticTypeController {
     @ResponseBody
     public ResponseEntity<List<GetStatisticTypeDto>> getAllStatisticTypes() {
         var statisticTypeDtos = statisticTypeService.getAllStatisticTypes();
+        if (statisticTypeDtos.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
         return new ResponseEntity<List<GetStatisticTypeDto>>(statisticTypeDtos, HttpStatus.OK);
     }
 

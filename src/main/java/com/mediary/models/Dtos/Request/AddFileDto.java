@@ -6,5 +6,5 @@ import lombok.Data;
 
 @Data
 public class AddFileDto {
-    private MultipartFile File;
+    private MultipartFile file;
 }

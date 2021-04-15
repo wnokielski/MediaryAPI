@@ -26,6 +26,9 @@ public class TestTypeController {
     @GetMapping
     public ResponseEntity<List<GetTestTypeDto>> getAllTestTypes() {
         var testTypes = testTypeService.getAllTestTypes();
+        if (testTypes.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
         return new ResponseEntity<List<GetTestTypeDto>>(testTypes, HttpStatus.OK);
     }
 

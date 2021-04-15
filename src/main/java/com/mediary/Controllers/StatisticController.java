@@ -3,7 +3,7 @@ package com.mediary.Controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mediary.Models.Dtos.Request.AddStatisticRequestDto;
+import com.mediary.Models.Dtos.Request.AddStatisticDto;
 import com.mediary.Models.Dtos.Response.GetStatisticDto;
 import com.mediary.Services.Interfaces.IStatisticService;
 
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @CrossOrigin
 @RestController
@@ -27,7 +28,8 @@ public class StatisticController {
     IStatisticService statisticService;
 
     @PostMapping("/{userId}")
-    public ResponseEntity<?> addStatistics(int userId, @RequestBody List<AddStatisticRequestDto> statistics) {
+    public ResponseEntity<?> addStatistics(@PathVariable Integer userId,
+            @RequestBody List<AddStatisticDto> statistics) {
         try {
             statisticService.addStatistics(statistics, userId);
         } catch (Exception e) {
@@ -38,8 +40,8 @@ public class StatisticController {
 
     @ResponseBody
     @GetMapping("/{userId}/{statisticTypeId}")
-    public ResponseEntity<List<GetStatisticDto>> getStatisticsByUserAndStatisticType(Integer userId,
-            Integer statisticTypeId) {
+    public ResponseEntity<List<GetStatisticDto>> getStatisticsByUserAndStatisticType(@PathVariable Integer userId,
+            @PathVariable Integer statisticTypeId) {
         ArrayList<GetStatisticDto> statisticDtos;
         try {
             statisticDtos = (ArrayList<GetStatisticDto>) statisticService.getStatisticsByUserAndStatisticType(userId,
