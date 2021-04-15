@@ -14,4 +14,8 @@ public interface IStatisticService {
 
     List<GetStatisticDto> getStatisticsByUserAndStatisticType(Integer userId, Integer statisticTypeId) throws Exception;
 
+    List<GetStatisticDto> statisticsToDtos(List<StatisticEntity> statisticEntities);
+
+    GetStatisticDto statisticToDto(StatisticEntity statisticEntity);
+
 }

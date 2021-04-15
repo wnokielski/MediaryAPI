@@ -20,14 +20,26 @@ public class StatisticTypeService implements IStatisticTypeService {
     @Override
     public List<GetStatisticTypeDto> getAllStatisticTypes() {
         var statisticTypes = statisticTypeRepository.findAll();
+        var statisticTypeDtos = statisticTypesToDtos(statisticTypes);
+        return statisticTypeDtos;
+    }
+
+    @Override
+    public List<GetStatisticTypeDto> statisticTypesToDtos(List<StatisticTypeEntity> statisticTypeEntities) {
         var statisticTypeDtos = new ArrayList<GetStatisticTypeDto>();
-        for (StatisticTypeEntity statisticType : statisticTypes) {
-            var statisticTypeDto = new GetStatisticTypeDto();
-            statisticTypeDto.setId(statisticType.getId());
-            statisticType.setName(statisticType.getName());
+        for (StatisticTypeEntity statisticTypeEntity : statisticTypeEntities) {
+            var statisticTypeDto = statisticTypeToDto(statisticTypeEntity);
             statisticTypeDtos.add(statisticTypeDto);
         }
         return statisticTypeDtos;
+    }
+
+    @Override
+    public GetStatisticTypeDto statisticTypeToDto(StatisticTypeEntity statisticTypeEntity) {
+        var statisticTypeDto = new GetStatisticTypeDto();
+        statisticTypeDto.setId(statisticTypeEntity.getId());
+        statisticTypeEntity.setName(statisticTypeEntity.getName());
+        return statisticTypeDto;
     }
 
 }

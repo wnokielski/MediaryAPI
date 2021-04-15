@@ -61,15 +61,27 @@ public class StatisticService implements IStatisticService {
             throw new Exception("Statistic type with specified ID doesn't exist!");
         }
         var statistics = statisticRepository.findByUserIdAndStatisticTypeId(userId, statisticTypeId);
+        ArrayList<GetStatisticDto> statisticDtos = (ArrayList<GetStatisticDto>) statisticsToDtos(statistics);
+        return statisticDtos;
+    }
+
+    @Override
+    public List<GetStatisticDto> statisticsToDtos(List<StatisticEntity> statisticEntities) {
         ArrayList<GetStatisticDto> statisticDtos = new ArrayList<GetStatisticDto>();
-        for (StatisticEntity statistic : statistics) {
-            var statisticDto = new GetStatisticDto();
-            statisticDto.setId(statistic.getId());
-            statisticDto.setValue(statistic.getValue());
-            statisticDto.setDate(statistic.getDate());
-            statisticDto.setStatisticTypeName(statistic.getStatistictypeByStatistictypeid().getName());
+        for (StatisticEntity statisticEntity : statisticEntities) {
+            var statisticDto = statisticToDto(statisticEntity);
             statisticDtos.add(statisticDto);
         }
         return statisticDtos;
+    }
+
+    @Override
+    public GetStatisticDto statisticToDto(StatisticEntity statisticEntity) {
+        var statisticDto = new GetStatisticDto();
+        statisticDto.setId(statisticEntity.getId());
+        statisticDto.setValue(statisticEntity.getValue());
+        statisticDto.setDate(statisticEntity.getDate());
+        statisticDto.setStatisticTypeName(statisticEntity.getStatistictypeByStatistictypeid().getName());
+        return statisticDto;
     }
 }
