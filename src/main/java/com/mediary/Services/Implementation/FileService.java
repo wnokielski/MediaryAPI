@@ -1,5 +1,9 @@
 package com.mediary.Services.Implementation;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import com.mediary.Models.Dtos.Response.GetFileDto;
 import com.mediary.Models.Entities.FileEntity;
 import com.mediary.Models.Entities.TestResultEntity;
 import com.mediary.Repositories.FileRepository;
@@ -43,6 +47,8 @@ public class FileService implements IFileService {
         fileEntity.setOriginalname(fileName);
         fileEntity.setUrl(url);
         fileEntity.setTestresultByTestresultid(testResult);
+        fileRepository.save(fileEntity);
+        fileRepository.flush();
 
         return success;
     }
@@ -56,6 +62,7 @@ public class FileService implements IFileService {
             var success = storageService.deleteBlob(file.getUuid(), containerName);
             if (success) {
                 fileRepository.delete(file);
+                fileRepository.flush();
                 return true;
             } else {
                 log.warn("Specified blob wasn't deleted");
@@ -64,6 +71,7 @@ public class FileService implements IFileService {
         }
     }
 
+    @Override
     public boolean checkUserPermission(Integer userId, FileEntity fileEntity) {
         String blobName = fileEntity.getUuid();
         int index = blobName.indexOf("_");
@@ -71,4 +79,24 @@ public class FileService implements IFileService {
         boolean isPermited = ownerId.equals(userId.toString());
         return isPermited;
     }
+
+    @Override
+    public Collection<GetFileDto> filesToDtos(Collection<FileEntity> files) {
+        Collection<GetFileDto> fileDtos = new ArrayList<GetFileDto>();
+        for (FileEntity fileEntity : files) {
+            var fileDto = fileToDto(fileEntity);
+            fileDtos.add(fileDto);
+        }
+        return fileDtos;
+    }
+
+    @Override
+    public GetFileDto fileToDto(FileEntity file) {
+        GetFileDto fileDto = new GetFileDto();
+        fileDto.setId(file.getId());
+        fileDto.setOriginalName(file.getOriginalname());
+        fileDto.setUrl(file.getUrl());
+        return fileDto;
+    }
+
 }

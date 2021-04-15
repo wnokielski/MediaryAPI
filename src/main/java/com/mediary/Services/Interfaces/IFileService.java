@@ -1,5 +1,8 @@
 package com.mediary.Services.Interfaces;
 
+import java.util.Collection;
+
+import com.mediary.Models.Dtos.Response.GetFileDto;
 import com.mediary.Models.Entities.FileEntity;
 import com.mediary.Models.Entities.TestResultEntity;
 
@@ -12,5 +15,9 @@ public interface IFileService {
     public boolean deleteFile(Integer fileId);
 
     public boolean checkUserPermission(Integer userId, FileEntity fileEntity);
+
+    public Collection<GetFileDto> filesToDtos(Collection<FileEntity> files);
+
+    public GetFileDto fileToDto(FileEntity file);
 
 }
