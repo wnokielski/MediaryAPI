@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
@@ -30,7 +30,7 @@ public class UserController {
         if(result == Const.toLongName) throw new FullNameToLongException("Typed name is too long!");
         if(result == Const.toLongPassword) throw new PasswordToLongException("Typed password is too long!");
     }
-    @PutMapping("/user/{id}")
+    @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void updateUserDetails(@PathVariable int id, @RequestBody UserEntity user) throws EmailAlreadyUsedException, FullNameToLongException, EmailToLongException, UserDoesNotExist {
         user.setId(id);
@@ -44,13 +44,13 @@ public class UserController {
         if(result == Const.toLongName)
             throw new FullNameToLongException("Name is too long!");
     }
-    @GetMapping("/user/{id}")
+    @GetMapping("/{id}")
     public UserDto getUserById(@PathVariable int id) throws UserNotFoundException{
         UserDto user = userService.getUserById(id);
         if(user == null) throw new UserNotFoundException("There is no such user");
         return  user;
     }
-    @PutMapping("user/password/{id}/{newPassword}/{oldPassword}")
+    @PutMapping("/password/{id}/{newPassword}/{oldPassword}")
     @ResponseStatus(HttpStatus.OK)
     public void updatePassword(@PathVariable int id, @PathVariable String newPassword, @PathVariable String oldPassword) throws PasswordToLongException, UserDoesNotExist, WrongPasswordException {
         int result = userService.updatePassword(newPassword, id, oldPassword);
