@@ -37,6 +37,12 @@ public class CustomErrorHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.NOT_FOUND.value(),ex.getMessage());
         return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
     }
-
+    @ExceptionHandler({WrongPasswordException.class})
+    public ResponseEntity<ErrorResponse> wrong(Exception ex, WebRequest request)
+    {
+        ErrorResponse response = new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),ex.getMessage());
+        return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.mediary.Services.Implementation;
 
+import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Repositories.UserRepository;
 import com.mediary.Services.Const;
@@ -69,15 +70,25 @@ public class UserService implements IUserService {
         return Const.userDetailsUpdateSuccess;
     }
     @Override
-    public Optional<UserEntity> getUserById(int id) {
+    public UserDto getUserById(int id) {
+        UserDto usersDto = new UserDto();
         Optional<UserEntity> user = userRepository.findById(id);
         if(user.isEmpty()) return null;
-        return user;
+        usersDto.setId(user.get().getId());
+        usersDto.setUsername(user.get().getUsername());
+        usersDto.setFullName(user.get().getFullName());
+        usersDto.setGender(user.get().getGender());
+        usersDto.setEmail(user.get().getEmail());
+        usersDto.setDateOfBirth(user.get().getDateofbirth());
+        usersDto.setWeight(user.get().getWeight());
+        return usersDto;
     }
     @Override
-    public int updatePassword(String newPassword, Integer id) {
+    public int updatePassword(String newPassword, Integer id, String oldPassword) {
         UserEntity user = userRepository.getUserEntityById(id);
         if(user == null) return Const.userDoesNotExist;
+        if(!oldPassword.equals(user.getPassword()))
+            return Const.wrongPassword;
         if(newPassword.length() > 72)
             return Const.toLongPassword;
         if(!newPassword.equals(user.getPassword()))

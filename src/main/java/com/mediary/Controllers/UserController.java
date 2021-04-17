@@ -1,5 +1,6 @@
 package com.mediary.Controllers;
 
+import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Services.Const;
 import com.mediary.Services.Exceptions.User.*;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 @CrossOrigin
 @RestController
+@RequestMapping("/api")
 public class UserController {
 
     @Autowired
@@ -43,15 +45,17 @@ public class UserController {
             throw new FullNameToLongException("Name is too long!");
     }
     @GetMapping("/user/{id}")
-    public Optional<UserEntity> getUserById(@PathVariable int id) throws UserNotFoundException{
-        Optional<UserEntity> user = userService.getUserById(id);
+    public UserDto getUserById(@PathVariable int id) throws UserNotFoundException{
+        UserDto user = userService.getUserById(id);
         if(user == null) throw new UserNotFoundException("There is no such user");
         return  user;
     }
-    @PutMapping("user/password/{id}/{password}")
+    @PutMapping("user/password/{id}/{newPassword}/{oldPassword}")
     @ResponseStatus(HttpStatus.OK)
-    public void updatePassword(@PathVariable int id, @PathVariable String password) throws PasswordToLongException, UserDoesNotExist {
-        int result = userService.updatePassword(password, id);
+    public void updatePassword(@PathVariable int id, @PathVariable String newPassword, @PathVariable String oldPassword) throws PasswordToLongException, UserDoesNotExist, WrongPasswordException {
+        int result = userService.updatePassword(newPassword, id, oldPassword);
+        if(result == Const.wrongPassword)
+            throw new WrongPasswordException("Wrong password!");
         if(result == Const.userDoesNotExist)
             throw new UserDoesNotExist("User does not exist!");
         if(result == Const.toLongPassword)

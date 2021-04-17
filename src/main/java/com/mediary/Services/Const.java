@@ -15,4 +15,5 @@ public class Const {
     public static final int toLongPassword= 5;
     public static final int toLongName= 6;
     public static final int userDoesNotExist= 2;
+    public static final int wrongPassword= 7;
 }
