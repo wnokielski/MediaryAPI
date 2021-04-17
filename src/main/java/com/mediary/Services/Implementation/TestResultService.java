@@ -1,9 +1,10 @@
 package com.mediary.Services.Implementation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mediary.Models.Dtos.Request.AddFileDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mediary.Models.Dtos.Request.AddTestResultDto;
 import com.mediary.Models.Dtos.Response.GetTestResultDto;
 import com.mediary.Models.Entities.TestResultEntity;
@@ -17,8 +18,12 @@ import com.mediary.Services.Interfaces.ITestTypeService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class TestResultService implements ITestResultService {
 
     @Autowired
@@ -40,7 +45,8 @@ public class TestResultService implements ITestResultService {
     ITestResultItemService testResultItemService;
 
     @Override
-    public void addTestResult(AddTestResultDto testResultDto, Integer userId) throws Exception {
+    public void addTestResult(AddTestResultDto testResultDto, MultipartFile[] files, Integer userId) throws Exception {
+
         if (testResultDto.getTitle().length() > 30 || testResultDto.getTitle() == "") {
             throw new Exception("Title field is incorrect");
         } else if (testResultDto.getNote().length() > 200) {
@@ -48,30 +54,42 @@ public class TestResultService implements ITestResultService {
         } else if (testResultDto.getDateofthetest() == null) {
             throw new Exception("Date of the test is required");
         } else {
-            TestResultEntity testResult = new TestResultEntity();
-            testResult.setTitle(testResultDto.getTitle());
-            testResult.setNote(testResultDto.getNote());
-            testResult.setDateofthetest(testResultDto.getDateofthetest());
+            TestResultEntity testResultEntity = new TestResultEntity();
+            testResultEntity.setTitle(testResultDto.getTitle());
+            testResultEntity.setNote(testResultDto.getNote());
+            testResultEntity.setDateofthetest(testResultDto.getDateofthetest());
 
             var testType = testTypeRepository.findById(testResultDto.getTestTypeId());
-            testResult.setTesttypeByTesttypeid(testType);
+            testResultEntity.setTesttypeByTesttypeid(testType);
 
             var user = userRepository.findById(userId);
-            testResult.setUserByUserid(user);
+            testResultEntity.setUserByUserid(user);
 
-            testResultRepository.save(testResult);
-
-            for (AddFileDto fileDto : testResultDto.getFiles()) {
-                fileService.uploadFile(fileDto.getFile(), userId, testResult);
+            testResultRepository.save(testResultEntity);
+            log.warn("So far do good");
+            for (MultipartFile file : files) {
+                fileService.uploadFile(file, userId, testResultEntity);
             }
 
-            testResultItemService.addTestResultItems(testResultDto.getTestResultItems(), testResult);
+            testResultItemService.addTestResultItems(testResultDto.getTestResulItems(), testResultEntity);
         }
     }
 
     @Override
+    public AddTestResultDto getJson(String testResult) {
+        AddTestResultDto testResultDto = new AddTestResultDto();
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            testResultDto = objectMapper.readValue(testResult, AddTestResultDto.class);
+        } catch (IOException e) {
+            log.warn("Mapping error");
+        }
+        return testResultDto;
+    }
+
+    @Override
     public List<GetTestResultDto> getTestResultsByUser(Integer userId) {
-        var testResultEntities = testResultRepository.findByUserByUserid(userId);
+        var testResultEntities = testResultRepository.findByUser(userId);
         List<GetTestResultDto> testResultDtos = testResultsToDtos(testResultEntities);
         return testResultDtos;
     }

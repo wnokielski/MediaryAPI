@@ -13,11 +13,15 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @CrossOrigin
 @RestController
 @RequestMapping("/api/test/result")
@@ -37,11 +41,13 @@ public class TestResultController {
         }
     }
 
-    @PostMapping("/{userId}")
-    public ResponseEntity<?> addTestResult(@PathVariable Integer userId, @RequestBody AddTestResultDto testResultDto) {
+    @PostMapping(value = "/{userId}")
+    public ResponseEntity<?> addTestResult(@PathVariable Integer userId,
+            @RequestPart(required = false) MultipartFile[] files, @RequestPart AddTestResultDto testResult) {
         try {
-            testResultService.addTestResult(testResultDto, userId);
+            testResultService.addTestResult(testResult, files, userId);
         } catch (Exception e) {
+            log.warn(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.CREATED);

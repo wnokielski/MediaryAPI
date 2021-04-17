@@ -7,33 +7,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.azure.storage.blob.BlobContainerClient;
-import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.models.BlobItem;
 import com.mediary.Services.Interfaces.IStorageService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class StorageService implements IStorageService {
 
-    private final BlobServiceClientBuilder clientBuilder = new BlobServiceClientBuilder();
-
-    @Override
-    public BlobContainerClient getContainerClient(String containerName) {
-        try {
-            var serviceClient = clientBuilder.buildClient();
-            var containerClient = serviceClient.getBlobContainerClient(containerName);
-            return containerClient;
-        } catch (Exception e) {
-            return null;
-        }
-    }
+    @Autowired
+    BlobContainerClient containerClient;
 
     @Override
     public boolean deleteBlob(String blobName, String containerName) {
         try {
-            var containerClient = getContainerClient(containerName);
             var blobClient = containerClient.getBlobClient(blobName);
             blobClient.delete();
             return true;
@@ -45,7 +34,6 @@ public class StorageService implements IStorageService {
 
     @Override
     public byte[] downloadBlob(String blobName, String containerName) {
-        var containerClient = getContainerClient(containerName);
         var blobClient = containerClient.getBlobClient(blobName);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         blobClient.download(outputStream);
@@ -55,7 +43,6 @@ public class StorageService implements IStorageService {
 
     @Override
     public List<String> listBlobs(String containerName) {
-        var containerClient = getContainerClient(containerName);
         var items = new ArrayList<String>();
 
         for (BlobItem blobItem : containerClient.listBlobs()) {
@@ -66,7 +53,6 @@ public class StorageService implements IStorageService {
 
     @Override
     public String uploadBlob(MultipartFile file, String blobName, String containerName) {
-        var containerClient = getContainerClient(containerName);
         var blobClient = containerClient.getBlobClient(blobName);
         if (blobClient.exists()) {
             return null;

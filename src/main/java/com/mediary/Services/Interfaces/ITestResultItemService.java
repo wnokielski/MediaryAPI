@@ -10,14 +10,16 @@ import com.mediary.Models.Entities.TestResultItemEntity;
 
 public interface ITestResultItemService {
 
-    public void addTestResultItems(Collection<AddTestResultItemDto> testResultItemDtos, TestResultEntity testResult);
+    void addTestResultItems(Collection<AddTestResultItemDto> testResultItemDtos, TestResultEntity testResult);
 
-    public void addTestResultItem(AddTestResultItemDto testResultItemDto, TestResultEntity testResult);
+    void addTestResultItem(AddTestResultItemDto testResultItemDto, TestResultEntity testResult);
 
-    public List<GetTestResultItemDto> getAllByTestResultId(Integer testResultId);
+    AddTestResultItemDto getJson(String testResultItem);
 
-    public Collection<GetTestResultItemDto> testResultItemsToDtos(Collection<TestResultItemEntity> testResultItems);
+    List<GetTestResultItemDto> getAllByTestResultId(Integer testResultId);
 
-    public GetTestResultItemDto testResultItemToDto(TestResultItemEntity testResultItem);
+    Collection<GetTestResultItemDto> testResultItemsToDtos(Collection<TestResultItemEntity> testResultItems);
+
+    GetTestResultItemDto testResultItemToDto(TestResultItemEntity testResultItem);
 
 }

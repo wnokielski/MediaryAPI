@@ -1,9 +1,11 @@
 package com.mediary.Services.Implementation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mediary.Models.Dtos.Request.AddTestResultItemDto;
 import com.mediary.Models.Dtos.Response.GetTestResultItemDto;
 import com.mediary.Models.Entities.TestResultEntity;
@@ -14,7 +16,10 @@ import com.mediary.Services.Interfaces.ITestResultItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class TestResultItemService implements ITestResultItemService {
 
     @Autowired
@@ -36,6 +41,18 @@ public class TestResultItemService implements ITestResultItemService {
         testResultItem.setTestresultByTestresultid(testResult);
         testResultItemRepository.save(testResultItem);
         testResultItemRepository.flush();
+    }
+
+    @Override
+    public AddTestResultItemDto getJson(String testResultItem) {
+        AddTestResultItemDto testResultItemDto = new AddTestResultItemDto();
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            testResultItemDto = objectMapper.readValue(testResultItem, AddTestResultItemDto.class);
+        } catch (IOException e) {
+            log.warn("Mapping error");
+        }
+        return testResultItemDto;
     }
 
     @Override

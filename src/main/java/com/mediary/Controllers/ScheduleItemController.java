@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @CrossOrigin
 @RestController
 @RequestMapping("/api/schedule")
@@ -49,6 +52,7 @@ public class ScheduleItemController {
         try {
             scheduleItemService.addScheduleItems(scheduleItems, userId);
         } catch (Exception e) {
+            log.warn(e.getStackTrace().toString());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.CREATED);

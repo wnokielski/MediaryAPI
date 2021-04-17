@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FileService implements IFileService {
 
-    @Value("${azure.storage.containerName")
+    @Value("${azure.storage.containerName}")
     private String containerName;
 
     @Autowired
@@ -36,9 +36,15 @@ public class FileService implements IFileService {
 
     public boolean uploadFile(MultipartFile file, Integer userId, TestResultEntity testResult) {
         boolean success = false;
-        String fileName = file.getName();
+        String fileName = file.getOriginalFilename();
         String blobName = storageService.generateBlobName(fileName, userId.toString());
-        String url = storageService.uploadBlob(file, blobName, containerName);
+        String url = null;
+        try {
+            url = storageService.uploadBlob(file, blobName, containerName);
+        } catch (Exception e) {
+            log.warn("Storage service problem");
+        }
+
         if (url != null) {
             success = true;
         }

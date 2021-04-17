@@ -59,6 +59,12 @@ public class ScheduleItemService implements IScheduleItemService {
         } else if (scheduleItemDto.getScheduleItemTypeId() == null) {
             log.warn("Schedule item type is required");
             throw new Exception("Schedule item type is required");
+        } else if (userRepository.findById(userId) == null) {
+            log.warn("User doesn't exist");
+            throw new Exception("User doesn't exist");
+        } else if (scheduleItemTypeRepository.findById(scheduleItemDto.getScheduleItemTypeId()) == null) {
+            log.warn("Schedule item type doesn't exist");
+            throw new Exception("Schedule item type doesn't exist");
         } else {
             ScheduleItemEntity scheduleItemEntity = new ScheduleItemEntity();
             scheduleItemEntity.setTitle(scheduleItemDto.getTitle());
@@ -102,6 +108,7 @@ public class ScheduleItemService implements IScheduleItemService {
         scheduleItemDto.setNote(scheduleItemEntity.getNote());
         scheduleItemDto.setPlace(scheduleItemEntity.getPlace());
         scheduleItemDto.setAddress(scheduleItemEntity.getAddress());
+        scheduleItemDto.setDate(scheduleItemEntity.getDate());
 
         var scheduleItemType = scheduleItemEntity.getScheduleitemtypeByScheduleitemtypeid();
         scheduleItemDto.setScheduleItemType(scheduleItemTypeService.scheduleItemTypeToDto(scheduleItemType));

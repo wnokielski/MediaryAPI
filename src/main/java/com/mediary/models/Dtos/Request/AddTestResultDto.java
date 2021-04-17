@@ -11,6 +11,5 @@ public class AddTestResultDto {
     private String note;
     private Date dateofthetest;
     private Integer testTypeId;
-    private Collection<AddFileDto> files;
-    private Collection<AddTestResultItemDto> testResultItems;
+    private Collection<AddTestResultItemDto> testResulItems;
 }

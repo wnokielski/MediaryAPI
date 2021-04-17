@@ -2,13 +2,9 @@ package com.mediary.Services.Interfaces;
 
 import java.util.List;
 
-import com.azure.storage.blob.BlobContainerClient;
-
 import org.springframework.web.multipart.MultipartFile;
 
 public interface IStorageService {
-
-    BlobContainerClient getContainerClient(String containerName);
 
     boolean deleteBlob(String blobName, String containerName);
 
