@@ -11,4 +11,5 @@ public interface UserRepository extends JpaRepository<com.mediary.Models.Entitie
     UserEntity findUserEntitiesByUsername(String userName);
     UserEntity findUserEntitiesByEmail(String email);
     Optional<UserEntity> findById(Integer id);
+    UserEntity getUserEntityById(Integer id);
 }

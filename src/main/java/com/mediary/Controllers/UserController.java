@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/api")
@@ -40,5 +42,20 @@ public class UserController {
             throw new EmailToLongException("E-mail is too long!");
         if(result == Const.toLongName)
             throw new FullNameToLongException("Name is too long!");
+    }
+    @GetMapping("/user/{id}")
+    public Optional<UserEntity> getUserById(@PathVariable int id) throws UserNotFoundException{
+        Optional<UserEntity> user = userService.getUserById(id);
+        if(user == null) throw new UserNotFoundException("There is no such user");
+        return  user;
+    }
+    @PutMapping("user/password/{id}/{password}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updatePassword(@PathVariable int id, @PathVariable String password) throws PasswordToLongException, UserDoesNotExist {
+        int result = userService.updatePassword(password, id);
+        if(result == Const.userDoesNotExist)
+            throw new UserDoesNotExist("User does not exist!");
+        if(result == Const.toLongPassword)
+            throw new PasswordToLongException("Password is too long!");
     }
 }

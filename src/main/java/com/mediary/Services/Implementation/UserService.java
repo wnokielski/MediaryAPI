@@ -68,4 +68,21 @@ public class UserService implements IUserService {
 
         return Const.userDetailsUpdateSuccess;
     }
+    @Override
+    public Optional<UserEntity> getUserById(int id) {
+        Optional<UserEntity> user = userRepository.findById(id);
+        if(user.isEmpty()) return null;
+        return user;
+    }
+    @Override
+    public int updatePassword(String newPassword, Integer id) {
+        UserEntity user = userRepository.getUserEntityById(id);
+        if(user == null) return Const.userDoesNotExist;
+        if(newPassword.length() > 72)
+            return Const.toLongPassword;
+        if(!newPassword.equals(user.getPassword()))
+            user.setPassword(newPassword);
+        userRepository.save(user);
+        return Const.userDetailsUpdateSuccess;
+    }
 }
