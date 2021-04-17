@@ -102,8 +102,8 @@ public class UserEntity {
         com.mediary.Models.Entities.UserEntity that = (com.mediary.Models.Entities.UserEntity) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (password != null ? !password.equals(that.password) : that.password != null) return false;
-        if (password != null ? !password.equals(that.password) : that.password != null) return false;
+        if (username != null ? !username.equals(that.username) : that.username != null) return false;
+        if (email != null ? !email.equals(that.email) : that.email != null) return false;
         if (password != null ? !password.equals(that.password) : that.password != null) return false;
         if (fullName != null ? !fullName.equals(that.fullName) : that.fullName != null) return false;
         if (gender != null ? !gender.equals(that.gender) : that.gender != null) return false;

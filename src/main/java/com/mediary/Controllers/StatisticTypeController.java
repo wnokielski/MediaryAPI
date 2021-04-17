@@ -2,7 +2,7 @@ package com.mediary.Controllers;
 
 import java.util.List;
 
-import com.mediary.Models.Dtos.Response.GetStatisticTypeDto;
+import com.mediary.Models.DTOs.Response.GetStatisticTypeDto;
 import com.mediary.Services.Interfaces.IStatisticTypeService;
 
 import org.springframework.beans.factory.annotation.Autowired;

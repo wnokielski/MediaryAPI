@@ -3,7 +3,7 @@ package com.mediary.Services.Implementation;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.mediary.Models.Dtos.Response.GetFileDto;
+import com.mediary.Models.DTOs.Response.GetFileDto;
 import com.mediary.Models.Entities.FileEntity;
 import com.mediary.Models.Entities.TestResultEntity;
 import com.mediary.Repositories.FileRepository;

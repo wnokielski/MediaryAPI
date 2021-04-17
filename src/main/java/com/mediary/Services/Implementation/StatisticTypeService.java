@@ -3,7 +3,7 @@ package com.mediary.Services.Implementation;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mediary.Models.Dtos.Response.GetStatisticTypeDto;
+import com.mediary.Models.DTOs.Response.GetStatisticTypeDto;
 import com.mediary.Models.Entities.StatisticTypeEntity;
 import com.mediary.Repositories.StatisticTypeRepository;
 import com.mediary.Services.Interfaces.IStatisticTypeService;

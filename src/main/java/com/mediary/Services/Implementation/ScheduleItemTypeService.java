@@ -3,7 +3,7 @@ package com.mediary.Services.Implementation;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mediary.Models.Dtos.Response.GetScheduleItemTypeDto;
+import com.mediary.Models.DTOs.Response.GetScheduleItemTypeDto;
 import com.mediary.Models.Entities.ScheduleItemTypeEntity;
 import com.mediary.Repositories.ScheduleItemTypeRepository;
 import com.mediary.Services.Interfaces.IScheduleItemTypeService;

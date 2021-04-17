@@ -1,4 +1,4 @@
-package com.mediary.Models.Dtos.Request;
+package com.mediary.Models.DTOs.Request;
 
 import java.sql.Date;
 

@@ -3,8 +3,8 @@ package com.mediary.Services.Implementation;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mediary.Models.Dtos.Request.AddScheduleItemDto;
-import com.mediary.Models.Dtos.Response.GetScheduleItemDto;
+import com.mediary.Models.DTOs.Request.AddScheduleItemDto;
+import com.mediary.Models.DTOs.Response.GetScheduleItemDto;
 import com.mediary.Models.Entities.ScheduleItemEntity;
 import com.mediary.Repositories.ScheduleItemRepository;
 import com.mediary.Repositories.ScheduleItemTypeRepository;
@@ -73,7 +73,7 @@ public class ScheduleItemService implements IScheduleItemService {
             scheduleItemEntity.setAddress(scheduleItemDto.getAddress());
             scheduleItemEntity.setNote(scheduleItemDto.getNote());
 
-            var user = userRepository.findById(userId);
+            var user = userRepository.findByUserId(userId);
             scheduleItemEntity.setUserByUserid(user);
 
             var scheduleItemType = scheduleItemTypeRepository.findById(scheduleItemDto.getScheduleItemTypeId());

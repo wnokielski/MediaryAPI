@@ -2,7 +2,7 @@ package com.mediary.Controllers;
 
 import java.util.List;
 
-import com.mediary.Models.Dtos.Response.GetTestTypeDto;
+import com.mediary.Models.DTOs.Response.GetTestTypeDto;
 import com.mediary.Services.Implementation.TestTypeService;
 
 import org.springframework.beans.factory.annotation.Autowired;

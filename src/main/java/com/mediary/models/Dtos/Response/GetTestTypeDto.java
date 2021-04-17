@@ -1,4 +1,4 @@
-package com.mediary.Models.Dtos.Response;
+package com.mediary.Models.DTOs.Response;
 
 import lombok.Data;
 

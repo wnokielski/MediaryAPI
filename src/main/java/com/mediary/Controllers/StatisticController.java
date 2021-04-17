@@ -3,8 +3,8 @@ package com.mediary.Controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mediary.Models.Dtos.Request.AddStatisticDto;
-import com.mediary.Models.Dtos.Response.GetStatisticDto;
+import com.mediary.Models.DTOs.Request.AddStatisticDto;
+import com.mediary.Models.DTOs.Response.GetStatisticDto;
 import com.mediary.Services.Interfaces.IStatisticService;
 
 import org.springframework.beans.factory.annotation.Autowired;

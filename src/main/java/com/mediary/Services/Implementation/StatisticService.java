@@ -3,8 +3,8 @@ package com.mediary.Services.Implementation;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mediary.Models.Dtos.Request.AddStatisticDto;
-import com.mediary.Models.Dtos.Response.GetStatisticDto;
+import com.mediary.Models.DTOs.Request.AddStatisticDto;
+import com.mediary.Models.DTOs.Response.GetStatisticDto;
 import com.mediary.Models.Entities.StatisticEntity;
 import com.mediary.Repositories.StatisticRepository;
 import com.mediary.Repositories.StatisticTypeRepository;
@@ -48,7 +48,7 @@ public class StatisticService implements IStatisticService {
         StatisticEntity newStatistic = new StatisticEntity();
         newStatistic.setValue(statistic.getValue());
         newStatistic.setDate(statistic.getDate());
-        var user = userRepository.findById(userId);
+        var user = userRepository.findByUserId(userId);
         newStatistic.setUserByUserid(user);
 
         var statisticType = statisticTypeRepository.findById(statistic.getStatisticTypeId());

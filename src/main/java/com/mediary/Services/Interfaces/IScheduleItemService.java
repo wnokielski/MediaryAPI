@@ -2,8 +2,8 @@ package com.mediary.Services.Interfaces;
 
 import java.util.List;
 
-import com.mediary.Models.Dtos.Request.AddScheduleItemDto;
-import com.mediary.Models.Dtos.Response.GetScheduleItemDto;
+import com.mediary.Models.DTOs.Request.AddScheduleItemDto;
+import com.mediary.Models.DTOs.Response.GetScheduleItemDto;
 import com.mediary.Models.Entities.ScheduleItemEntity;
 
 public interface IScheduleItemService {

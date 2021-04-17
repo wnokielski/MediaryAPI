@@ -2,8 +2,8 @@ package com.mediary.Controllers;
 
 import java.util.List;
 
-import com.mediary.Models.Dtos.Request.AddTestResultDto;
-import com.mediary.Models.Dtos.Response.GetTestResultDto;
+import com.mediary.Models.DTOs.Request.AddTestResultDto;
+import com.mediary.Models.DTOs.Response.GetTestResultDto;
 import com.mediary.Services.Interfaces.ITestResultService;
 
 import org.springframework.beans.factory.annotation.Autowired;

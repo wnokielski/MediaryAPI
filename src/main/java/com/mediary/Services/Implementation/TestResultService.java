@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mediary.Models.Dtos.Request.AddTestResultDto;
-import com.mediary.Models.Dtos.Response.GetTestResultDto;
+import com.mediary.Models.DTOs.Request.AddTestResultDto;
+import com.mediary.Models.DTOs.Response.GetTestResultDto;
 import com.mediary.Models.Entities.TestResultEntity;
 import com.mediary.Repositories.TestResultRepository;
 import com.mediary.Repositories.TestTypeRepository;
@@ -62,7 +62,7 @@ public class TestResultService implements ITestResultService {
             var testType = testTypeRepository.findById(testResultDto.getTestTypeId());
             testResultEntity.setTesttypeByTesttypeid(testType);
 
-            var user = userRepository.findById(userId);
+            var user = userRepository.findByUserId(userId);
             testResultEntity.setUserByUserid(user);
 
             testResultRepository.save(testResultEntity);

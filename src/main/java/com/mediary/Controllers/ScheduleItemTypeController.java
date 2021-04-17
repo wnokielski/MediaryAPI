@@ -2,7 +2,7 @@ package com.mediary.Controllers;
 
 import java.util.List;
 
-import com.mediary.Models.Dtos.Response.GetScheduleItemTypeDto;
+import com.mediary.Models.DTOs.Response.GetScheduleItemTypeDto;
 import com.mediary.Services.Interfaces.IScheduleItemTypeService;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,7 +3,7 @@ package com.mediary.Services.Implementation;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mediary.Models.Dtos.Response.GetTestTypeDto;
+import com.mediary.Models.DTOs.Response.GetTestTypeDto;
 import com.mediary.Models.Entities.TestTypeEntity;
 import com.mediary.Repositories.TestTypeRepository;
 import com.mediary.Services.Interfaces.ITestTypeService;

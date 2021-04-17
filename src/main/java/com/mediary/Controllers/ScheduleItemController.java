@@ -3,8 +3,8 @@ package com.mediary.Controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mediary.Models.Dtos.Request.AddScheduleItemDto;
-import com.mediary.Models.Dtos.Response.GetScheduleItemDto;
+import com.mediary.Models.DTOs.Request.AddScheduleItemDto;
+import com.mediary.Models.DTOs.Response.GetScheduleItemDto;
 import com.mediary.Services.Interfaces.IScheduleItemService;
 
 import org.springframework.beans.factory.annotation.Autowired;

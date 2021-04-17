@@ -6,8 +6,8 @@ import java.util.Collection;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mediary.Models.Dtos.Request.AddTestResultItemDto;
-import com.mediary.Models.Dtos.Response.GetTestResultItemDto;
+import com.mediary.Models.DTOs.Request.AddTestResultItemDto;
+import com.mediary.Models.DTOs.Response.GetTestResultItemDto;
 import com.mediary.Models.Entities.TestResultEntity;
 import com.mediary.Models.Entities.TestResultItemEntity;
 import com.mediary.Repositories.TestResultItemRepository;
