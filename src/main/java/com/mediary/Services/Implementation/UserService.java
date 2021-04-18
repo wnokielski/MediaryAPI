@@ -5,7 +5,17 @@ import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Repositories.UserRepository;
 import com.mediary.Services.Const;
 import com.mediary.Services.Interfaces.IUserService;
+import com.mediary.models.DTOs.JwtRequest;
+import com.mediary.models.DTOs.JwtResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,6 +25,18 @@ public class UserService implements IUserService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUserDetailsService userDetailsService;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    JwtTokenUtils jwtTokenUtils;
 
     @Override
     public int registerNewUser(UserEntity user) {
@@ -33,7 +55,7 @@ public class UserService implements IUserService {
         UserEntity newUser = new UserEntity();
         newUser.setUsername(user.getUsername());
         newUser.setEmail(user.getEmail());
-        newUser.setPassword(user.getPassword());
+        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
         newUser.setFullName(user.getFullName());
         newUser.setGender(user.getGender());
         newUser.setDateofbirth(user.getDateofbirth());
@@ -87,13 +109,47 @@ public class UserService implements IUserService {
     public int updatePassword(String newPassword, Integer id, String oldPassword) {
         UserEntity user = userRepository.getUserEntityById(id);
         if(user == null) return Const.userDoesNotExist;
-        if(!oldPassword.equals(user.getPassword()))
+        if(!passwordEncoder.encode(oldPassword).equals(passwordEncoder.encode(user.getPassword())))
             return Const.wrongPassword;
         if(newPassword.length() > 72)
             return Const.toLongPassword;
-        if(!newPassword.equals(user.getPassword()))
-            user.setPassword(newPassword);
+        if(!passwordEncoder.encode(newPassword).equals(passwordEncoder.encode(user.getPassword())))
+            user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         return Const.userDetailsUpdateSuccess;
+    }
+
+    @Override
+    public ResponseEntity<?> authenticateUser(JwtRequest authenticationRequest){
+
+        int result = -1;
+
+        try {
+            result = authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if(result == Const.badCredentials){
+            return new ResponseEntity("Bad Credentials", HttpStatus.UNAUTHORIZED);
+        }
+
+        UserDetails userDetails = userDetailsService
+                .loadUserByUsername(authenticationRequest.getUsername());
+
+        return new ResponseEntity(new JwtResponse(jwtTokenUtils.generateToken(userDetails)), HttpStatus.OK);
+    }
+
+    private int authenticate(String username, String password) throws Exception {
+        int result = -1;
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        } catch (DisabledException e) {
+            throw new Exception("USER_DISABLED", e);
+        } catch (BadCredentialsException e) {
+            return Const.badCredentials;
+        }
+
+        return result;
     }
 }

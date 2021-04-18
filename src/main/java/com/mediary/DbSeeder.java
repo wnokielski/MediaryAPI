@@ -14,7 +14,7 @@ public class DbSeeder implements CommandLineRunner {
     private UserRepository userRepository;
 
     //initialize database?
-    boolean initializeDatabase = true;
+    boolean initializeDatabase = false;
 
     @Override
     public void run(String... strings){
