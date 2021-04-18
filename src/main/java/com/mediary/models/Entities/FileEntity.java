@@ -12,8 +12,8 @@ public class FileEntity {
     private TestResultEntity testresultByTestresultid;
 
     @Id
-    @SequenceGenerator(name="`File_ID_seq`", sequenceName="`File_ID_seq`", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="`File_ID_seq`")
+    @SequenceGenerator(name = "`File_ID_seq`", sequenceName = "`File_ID_seq`", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "`File_ID_seq`")
     @Column(name = "`ID`", nullable = false)
     public Integer getId() {
         return id;
@@ -24,7 +24,7 @@ public class FileEntity {
     }
 
     @Basic
-    @Column(name = "`UID`", nullable = false, length = 36)
+    @Column(name = "`UID`", nullable = false, length = 100)
     public String getUuid() {
         return uuid;
     }
@@ -55,15 +55,21 @@ public class FileEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         com.mediary.Models.Entities.FileEntity that = (com.mediary.Models.Entities.FileEntity) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (uuid != null ? !uuid.equals(that.uuid) : that.uuid != null) return false;
-        if (originalname != null ? !originalname.equals(that.originalname) : that.originalname != null) return false;
-        if (url != null ? !url.equals(that.url) : that.url != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null)
+            return false;
+        if (uuid != null ? !uuid.equals(that.uuid) : that.uuid != null)
+            return false;
+        if (originalname != null ? !originalname.equals(that.originalname) : that.originalname != null)
+            return false;
+        if (url != null ? !url.equals(that.url) : that.url != null)
+            return false;
 
         return true;
     }

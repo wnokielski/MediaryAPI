@@ -1,7 +1,9 @@
 package com.mediary.Controllers;
 
 import com.mediary.Models.DTOs.UserDto;
-import com.mediary.Models.Entities.UserEntity;
+import com.mediary.Models.DTOs.Request.ChangePasswordDto;
+import com.mediary.Models.DTOs.Request.UserRegisterDto;
+import com.mediary.Models.DTOs.Request.UserUpdateDto;
 import com.mediary.Services.Const;
 import com.mediary.Services.Exceptions.User.*;
 import com.mediary.Services.Implementation.UserService;
@@ -22,7 +24,7 @@ public class UserController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.OK)
-    public void registerNewUser(@RequestBody UserEntity user)
+    public void registerNewUser(@RequestBody UserRegisterDto user)
             throws UsernameToLongException, UsernameAlreadyUsedException, EmailToLongException, PasswordToLongException,
             EmailAlreadyUsedException, FullNameToLongException {
         int result = userService.registerNewUser(user);
@@ -42,10 +44,9 @@ public class UserController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateUserDetails(@PathVariable int id, @RequestBody UserEntity user)
+    public void updateUserDetails(@PathVariable int id, @RequestBody UserUpdateDto user)
             throws EmailAlreadyUsedException, FullNameToLongException, EmailToLongException, UserDoesNotExist {
-        user.setId(id);
-        int result = userService.updateUserDetails(user);
+        int result = userService.updateUserDetails(user, id);
         if (result == Const.userDoesNotExist)
             throw new UserDoesNotExist("User does not exist!");
         if (result == Const.emailAlreadyUsed)
@@ -64,11 +65,11 @@ public class UserController {
         return user;
     }
 
-    @PutMapping("/password/{id}/{newPassword}/{oldPassword}")
+    @PutMapping("/password/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void updatePassword(@PathVariable int id, @PathVariable String newPassword, @PathVariable String oldPassword)
+    public void updatePassword(@PathVariable int id, @RequestBody ChangePasswordDto passwordDto)
             throws PasswordToLongException, UserDoesNotExist, WrongPasswordException {
-        int result = userService.updatePassword(newPassword, id, oldPassword);
+        int result = userService.updatePassword(passwordDto, id);
         if (result == Const.wrongPassword)
             throw new WrongPasswordException("Wrong password!");
         if (result == Const.userDoesNotExist)

@@ -18,6 +18,7 @@ import com.mediary.Repositories.TestTypeRepository;
 import com.mediary.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
@@ -49,6 +50,9 @@ public class DbSeeder implements CommandLineRunner {
     @Autowired
     private TestResultItemRepository testResultItemRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     // initialize database?
     boolean initializeDatabase = false;
 
@@ -62,7 +66,7 @@ public class DbSeeder implements CommandLineRunner {
             user.setGender("Male");
             user.setDateofbirth(Date.valueOf("1984-06-20"));
             user.setUsername("j.kowalski");
-            user.setPassword("password123");
+            user.setPassword(passwordEncoder.encode("password123"));
 
             userRepository.save(user);
             userRepository.flush();

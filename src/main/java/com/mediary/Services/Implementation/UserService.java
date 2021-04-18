@@ -1,6 +1,9 @@
 package com.mediary.Services.Implementation;
 
 import com.mediary.Models.DTOs.UserDto;
+import com.mediary.Models.DTOs.Request.ChangePasswordDto;
+import com.mediary.Models.DTOs.Request.UserRegisterDto;
+import com.mediary.Models.DTOs.Request.UserUpdateDto;
 import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Repositories.UserRepository;
 import com.mediary.Services.Const;
@@ -39,7 +42,7 @@ public class UserService implements IUserService {
     JwtTokenUtils jwtTokenUtils;
 
     @Override
-    public int registerNewUser(UserEntity user) {
+    public int registerNewUser(UserRegisterDto user) {
         if (userRepository.findUserEntitiesByUsername(user.getUsername()) != null)
             return Const.usernameAlreadyUsed;
         if (userRepository.findUserEntitiesByEmail(user.getEmail()) != null)
@@ -59,14 +62,13 @@ public class UserService implements IUserService {
         newUser.setFullName(user.getFullName());
         newUser.setGender(user.getGender());
         newUser.setDateofbirth(user.getDateofbirth());
-        newUser.setWeight(user.getWeight());
         userRepository.save(newUser);
         return Const.registrationSuccess;
     }
 
     @Override
-    public int updateUserDetails(UserEntity user) {
-        Optional<UserEntity> newUser = userRepository.findById(user.getId());
+    public int updateUserDetails(UserUpdateDto user, Integer userId) {
+        Optional<UserEntity> newUser = userRepository.findById(userId);
 
         if (newUser.isEmpty())
             return Const.userDoesNotExist;
@@ -87,8 +89,6 @@ public class UserService implements IUserService {
             newUser.get().setGender(user.getGender());
         if (!user.getDateofbirth().equals(newUser.get().getDateofbirth()))
             newUser.get().setDateofbirth(user.getDateofbirth());
-        if (!user.getWeight().equals(newUser.get().getWeight()))
-            newUser.get().setWeight(user.getWeight());
         userRepository.save(newUser.get());
 
         return Const.userDetailsUpdateSuccess;
@@ -111,16 +111,16 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public int updatePassword(String newPassword, Integer id, String oldPassword) {
+    public int updatePassword(ChangePasswordDto passwordDto, Integer id) {
         UserEntity user = userRepository.getUserEntityById(id);
         if (user == null)
             return Const.userDoesNotExist;
-        if (!passwordEncoder.encode(oldPassword).equals(passwordEncoder.encode(user.getPassword())))
+        if (!passwordEncoder.encode(passwordDto.getOldPassword()).equals(passwordEncoder.encode(user.getPassword())))
             return Const.wrongPassword;
-        if (newPassword.length() > 72)
+        if (passwordDto.getNewPassword().length() > 72)
             return Const.toLongPassword;
-        if (!passwordEncoder.encode(newPassword).equals(passwordEncoder.encode(user.getPassword())))
-            user.setPassword(passwordEncoder.encode(newPassword));
+        if (!passwordEncoder.encode(passwordDto.getNewPassword()).equals(passwordEncoder.encode(user.getPassword())))
+            user.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
         userRepository.save(user);
         return Const.userDetailsUpdateSuccess;
     }
