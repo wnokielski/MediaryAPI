@@ -1,4 +1,4 @@
-package com.mediary.models.DTOs;
+package com.mediary.Models.DTOs;
 
 public class JwtResponse {
 

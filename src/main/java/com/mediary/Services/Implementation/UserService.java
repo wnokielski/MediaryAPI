@@ -1,12 +1,15 @@
 package com.mediary.Services.Implementation;
 
 import com.mediary.Models.DTOs.UserDto;
+import com.mediary.Models.DTOs.Request.ChangePasswordDto;
+import com.mediary.Models.DTOs.Request.UserRegisterDto;
+import com.mediary.Models.DTOs.Request.UserUpdateDto;
 import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Repositories.UserRepository;
 import com.mediary.Services.Const;
 import com.mediary.Services.Interfaces.IUserService;
-import com.mediary.models.DTOs.JwtRequest;
-import com.mediary.models.DTOs.JwtResponse;
+import com.mediary.Models.DTOs.JwtRequest;
+import com.mediary.Models.DTOs.JwtResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,18 +42,18 @@ public class UserService implements IUserService {
     JwtTokenUtils jwtTokenUtils;
 
     @Override
-    public int registerNewUser(UserEntity user) {
-        if(userRepository.findUserEntitiesByUsername(user.getUsername()) != null)
+    public int registerNewUser(UserRegisterDto user) {
+        if (userRepository.findUserEntitiesByUsername(user.getUsername()) != null)
             return Const.usernameAlreadyUsed;
-        if(userRepository.findUserEntitiesByEmail(user.getEmail()) != null)
+        if (userRepository.findUserEntitiesByEmail(user.getEmail()) != null)
             return Const.emailAlreadyUsed;
-        if(user.getUsername().length() > 30)
+        if (user.getUsername().length() > 30)
             return Const.toLongUsername;
-        if(user.getEmail().length() > 254)
+        if (user.getEmail().length() > 254)
             return Const.toLongEmail;
-        if(user.getPassword().length() > 72)
+        if (user.getPassword().length() > 72)
             return Const.toLongPassword;
-        if(user.getFullName().length() > 40)
+        if (user.getFullName().length() > 40)
             return Const.toLongName;
         UserEntity newUser = new UserEntity();
         newUser.setUsername(user.getUsername());
@@ -59,43 +62,44 @@ public class UserService implements IUserService {
         newUser.setFullName(user.getFullName());
         newUser.setGender(user.getGender());
         newUser.setDateofbirth(user.getDateofbirth());
-        newUser.setWeight(user.getWeight());
         userRepository.save(newUser);
         return Const.registrationSuccess;
     }
 
     @Override
-    public int updateUserDetails(UserEntity user) {
-        Optional<UserEntity> newUser = userRepository.findById(user.getId());
+    public int updateUserDetails(UserUpdateDto user, Integer userId) {
+        Optional<UserEntity> newUser = userRepository.findById(userId);
 
-        if(newUser.isEmpty()) return Const.userDoesNotExist;
+        if (newUser.isEmpty())
+            return Const.userDoesNotExist;
 
-        if(user.getEmail().length() > 254)
+        if (user.getEmail().length() > 254)
             return Const.toLongEmail;
 
-        if(user.getEmail() != null && !user.getEmail().equals(newUser.get().getEmail())){
-            if(userRepository.findUserEntitiesByEmail(user.getEmail()) != null) return Const.emailAlreadyUsed;
+        if (user.getEmail() != null && !user.getEmail().equals(newUser.get().getEmail())) {
+            if (userRepository.findUserEntitiesByEmail(user.getEmail()) != null)
+                return Const.emailAlreadyUsed;
             newUser.get().setEmail(user.getEmail());
         }
-        if(user.getFullName().length() > 40)
+        if (user.getFullName().length() > 40)
             return Const.toLongName;
-        if(!user.getFullName().equals(newUser.get().getFullName()))
+        if (!user.getFullName().equals(newUser.get().getFullName()))
             newUser.get().setFullName(user.getFullName());
-        if(!user.getGender().equals(newUser.get().getGender()))
+        if (!user.getGender().equals(newUser.get().getGender()))
             newUser.get().setGender(user.getGender());
-        if(!user.getDateofbirth().equals(newUser.get().getDateofbirth()))
+        if (!user.getDateofbirth().equals(newUser.get().getDateofbirth()))
             newUser.get().setDateofbirth(user.getDateofbirth());
-        if(!user.getWeight().equals(newUser.get().getWeight()))
-            newUser.get().setWeight(user.getWeight());
         userRepository.save(newUser.get());
 
         return Const.userDetailsUpdateSuccess;
     }
+
     @Override
     public UserDto getUserById(int id) {
         UserDto usersDto = new UserDto();
         Optional<UserEntity> user = userRepository.findById(id);
-        if(user.isEmpty()) return null;
+        if (user.isEmpty())
+            return null;
         usersDto.setId(user.get().getId());
         usersDto.setUsername(user.get().getUsername());
         usersDto.setFullName(user.get().getFullName());
@@ -105,22 +109,24 @@ public class UserService implements IUserService {
         usersDto.setWeight(user.get().getWeight());
         return usersDto;
     }
+
     @Override
-    public int updatePassword(String newPassword, Integer id, String oldPassword) {
+    public int updatePassword(ChangePasswordDto passwordDto, Integer id) {
         UserEntity user = userRepository.getUserEntityById(id);
-        if(user == null) return Const.userDoesNotExist;
-        if(!passwordEncoder.encode(oldPassword).equals(passwordEncoder.encode(user.getPassword())))
+        if (user == null)
+            return Const.userDoesNotExist;
+        if (!passwordEncoder.encode(passwordDto.getOldPassword()).equals(passwordEncoder.encode(user.getPassword())))
             return Const.wrongPassword;
-        if(newPassword.length() > 72)
+        if (passwordDto.getNewPassword().length() > 72)
             return Const.toLongPassword;
-        if(!passwordEncoder.encode(newPassword).equals(passwordEncoder.encode(user.getPassword())))
-            user.setPassword(passwordEncoder.encode(newPassword));
+        if (!passwordEncoder.encode(passwordDto.getNewPassword()).equals(passwordEncoder.encode(user.getPassword())))
+            user.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
         userRepository.save(user);
         return Const.userDetailsUpdateSuccess;
     }
 
     @Override
-    public ResponseEntity<?> authenticateUser(JwtRequest authenticationRequest){
+    public ResponseEntity<?> authenticateUser(JwtRequest authenticationRequest) {
 
         int result = -1;
 
@@ -130,12 +136,11 @@ public class UserService implements IUserService {
             e.printStackTrace();
         }
 
-        if(result == Const.badCredentials){
+        if (result == Const.badCredentials) {
             return new ResponseEntity("Bad Credentials", HttpStatus.UNAUTHORIZED);
         }
 
-        UserDetails userDetails = userDetailsService
-                .loadUserByUsername(authenticationRequest.getUsername());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 
         return new ResponseEntity(new JwtResponse(jwtTokenUtils.generateToken(userDetails)), HttpStatus.OK);
     }
