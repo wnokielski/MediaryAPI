@@ -9,6 +9,8 @@ import com.mediary.Models.Entities.StatisticEntity;
 import com.mediary.Repositories.StatisticRepository;
 import com.mediary.Repositories.StatisticTypeRepository;
 import com.mediary.Repositories.UserRepository;
+import com.mediary.Services.Exceptions.EntityNotFoundException;
+import com.mediary.Services.Exceptions.IncorrectFieldException;
 import com.mediary.Services.Interfaces.IStatisticService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,41 +32,52 @@ public class StatisticService implements IStatisticService {
     StatisticTypeRepository statisticTypeRepository;
 
     @Override
-    public void addStatistics(List<AddStatisticDto> statistics, Integer userId) throws Exception {
+    public void addStatistics(List<AddStatisticDto> statistics, Integer userId)
+            throws IncorrectFieldException, EntityNotFoundException {
         for (AddStatisticDto statistic : statistics) {
             addStatistic(statistic, userId);
         }
     }
 
     @Override
-    public void addStatistic(AddStatisticDto statistic, Integer userId) throws Exception {
+    public void addStatistic(AddStatisticDto statistic, Integer userId)
+            throws IncorrectFieldException, EntityNotFoundException {
         if (statistic.getValue().length() > 50) {
-            log.warn("Too long value field");
-            throw new Exception("Too long value field");
+            log.warn("Value field exceeds allowed length");
+            throw new IncorrectFieldException("Value field exceeds allowed length");
         } else if (statistic.getDate() == null) {
-            log.warn("Date field can't by null");
-            throw new Exception("Date field can't be null");
+            log.warn("Date field is required");
+            throw new IncorrectFieldException("Date field is required");
         }
         StatisticEntity newStatistic = new StatisticEntity();
         newStatistic.setValue(statistic.getValue());
         newStatistic.setDate(statistic.getDate());
         var user = userRepository.findByUserId(userId);
-        newStatistic.setUserByUserid(user);
+        if (user != null) {
+            newStatistic.setUserByUserid(user);
+        } else {
+            throw new EntityNotFoundException("User with specified ID doesn't exist");
+        }
 
         var statisticType = statisticTypeRepository.findById(statistic.getStatisticTypeId());
-        newStatistic.setStatistictypeByStatistictypeid(statisticType);
+        if (statisticType != null) {
+            newStatistic.setStatistictypeByStatistictypeid(statisticType);
+        } else {
+            throw new EntityNotFoundException("Statistic type with specified ID doesn't exist!");
+        }
+
         statisticRepository.saveAndFlush(newStatistic);
     }
 
     @Override
     public List<GetStatisticDto> getStatisticsByUserAndStatisticType(Integer userId, Integer statisticTypeId)
-            throws Exception {
+            throws EntityNotFoundException {
         if (userRepository.findById(userId) == null) {
             log.warn("User with specified ID doesn't exist!");
-            throw new Exception("User with specified ID doesn't exist!");
+            throw new EntityNotFoundException("User with specified ID doesn't exist!");
         } else if (statisticTypeRepository.findById(statisticTypeId) == null) {
             log.warn("User with specified ID doesn't exist!");
-            throw new Exception("Statistic type with specified ID doesn't exist!");
+            throw new EntityNotFoundException("Statistic type with specified ID doesn't exist!");
         }
         var statistics = statisticRepository.findByUserIdAndStatisticTypeId(userId, statisticTypeId);
         ArrayList<GetStatisticDto> statisticDtos = (ArrayList<GetStatisticDto>) statisticsToDtos(statistics);

@@ -9,6 +9,8 @@ import com.mediary.Models.Entities.ScheduleItemEntity;
 import com.mediary.Repositories.ScheduleItemRepository;
 import com.mediary.Repositories.ScheduleItemTypeRepository;
 import com.mediary.Repositories.UserRepository;
+import com.mediary.Services.Exceptions.EntityNotFoundException;
+import com.mediary.Services.Exceptions.IncorrectFieldException;
 import com.mediary.Services.Interfaces.IScheduleItemService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,38 +35,40 @@ public class ScheduleItemService implements IScheduleItemService {
     ScheduleItemTypeService scheduleItemTypeService;
 
     @Override
-    public void addScheduleItems(List<AddScheduleItemDto> scheduleItemDtos, Integer userId) throws Exception {
+    public void addScheduleItems(List<AddScheduleItemDto> scheduleItemDtos, Integer userId)
+            throws IncorrectFieldException, EntityNotFoundException {
         for (AddScheduleItemDto scheduleItemDto : scheduleItemDtos) {
             addScheduleItem(scheduleItemDto, userId);
         }
     }
 
     @Override
-    public void addScheduleItem(AddScheduleItemDto scheduleItemDto, Integer userId) throws Exception {
+    public void addScheduleItem(AddScheduleItemDto scheduleItemDto, Integer userId)
+            throws IncorrectFieldException, EntityNotFoundException {
         if (scheduleItemDto.getTitle().length() > 30 || scheduleItemDto.getTitle() == "") {
             log.warn("Title field is incorrect");
-            throw new Exception("Title field is incorrect");
+            throw new IncorrectFieldException("Title field is incorrect");
         } else if (scheduleItemDto.getDate() == null) {
             log.warn("Date field is required");
-            throw new Exception("Date field is required");
+            throw new IncorrectFieldException("Date field is required");
         } else if (scheduleItemDto.getPlace().length() > 30 || scheduleItemDto.getPlace() == "") {
             log.warn("Place field is incorrect");
-            throw new Exception("Place field is incorrect");
+            throw new IncorrectFieldException("Place field is incorrect");
         } else if (scheduleItemDto.getAddress().length() > 50) {
             log.warn("Address field is too long");
-            throw new Exception("Address field is too long");
+            throw new IncorrectFieldException("Address field is too long");
         } else if (scheduleItemDto.getNote().length() > 100) {
             log.warn("Note field is too long");
-            throw new Exception("Note field is too long");
+            throw new IncorrectFieldException("Note field is too long");
         } else if (scheduleItemDto.getScheduleItemTypeId() == null) {
             log.warn("Schedule item type is required");
-            throw new Exception("Schedule item type is required");
+            throw new IncorrectFieldException("Schedule item type is required");
         } else if (userRepository.findById(userId) == null) {
             log.warn("User doesn't exist");
-            throw new Exception("User doesn't exist");
+            throw new EntityNotFoundException("User with specified id doesn't exist");
         } else if (scheduleItemTypeRepository.findById(scheduleItemDto.getScheduleItemTypeId()) == null) {
             log.warn("Schedule item type doesn't exist");
-            throw new Exception("Schedule item type doesn't exist");
+            throw new EntityNotFoundException("Schedule item type with specified id doesn't exist");
         } else {
             ScheduleItemEntity scheduleItemEntity = new ScheduleItemEntity();
             scheduleItemEntity.setTitle(scheduleItemDto.getTitle());
@@ -83,10 +87,15 @@ public class ScheduleItemService implements IScheduleItemService {
     }
 
     @Override
-    public List<GetScheduleItemDto> getScheduleItemsByUser(Integer userId) {
-        var scheduleItems = scheduleItemRepository.findByUserId(userId);
-        List<GetScheduleItemDto> scheduleItemDtos = scheduleItemsToDtos(scheduleItems);
-        return scheduleItemDtos;
+    public List<GetScheduleItemDto> getScheduleItemsByUser(Integer userId) throws EntityNotFoundException {
+        if (userRepository.findById(userId) == null) {
+            throw new EntityNotFoundException("User with specified id doesn't exist");
+        } else {
+            var scheduleItems = scheduleItemRepository.findByUserId(userId);
+            List<GetScheduleItemDto> scheduleItemDtos = scheduleItemsToDtos(scheduleItems);
+            return scheduleItemDtos;
+        }
+
     }
 
     @Override

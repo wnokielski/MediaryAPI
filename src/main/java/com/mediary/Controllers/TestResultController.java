@@ -4,6 +4,9 @@ import java.util.List;
 
 import com.mediary.Models.DTOs.Request.AddTestResultDto;
 import com.mediary.Models.DTOs.Response.GetTestResultDto;
+import com.mediary.Services.Exceptions.BlobStorageException;
+import com.mediary.Services.Exceptions.EntityNotFoundException;
+import com.mediary.Services.Exceptions.IncorrectFieldException;
 import com.mediary.Services.Interfaces.ITestResultService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +19,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @CrossOrigin
 @RestController
 @RequestMapping("/api/test/result")
@@ -32,7 +33,8 @@ public class TestResultController {
 
     @ResponseBody
     @GetMapping("/{userId}")
-    public ResponseEntity<List<GetTestResultDto>> getUserTestResults(@PathVariable Integer userId) {
+    public ResponseEntity<List<GetTestResultDto>> getUserTestResults(@PathVariable Integer userId)
+            throws EntityNotFoundException {
         var testResultDtos = testResultService.getTestResultsByUser(userId);
         if (testResultDtos.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -41,16 +43,13 @@ public class TestResultController {
         }
     }
 
-    @PostMapping(value = "/{userId}")
-    public ResponseEntity<?> addTestResult(@PathVariable Integer userId,
-            @RequestPart(required = false) MultipartFile[] files, @RequestPart AddTestResultDto testResult) {
-        try {
-            testResultService.addTestResult(testResult, files, userId);
-        } catch (Exception e) {
-            log.warn(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/{userId}")
+    public void addTestResult(@PathVariable Integer userId, @RequestPart(required = false) MultipartFile[] files,
+            @RequestPart AddTestResultDto testResult)
+            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException {
+
+        testResultService.addTestResult(testResult, files, userId);
     }
 
 }

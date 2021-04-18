@@ -1,10 +1,11 @@
 package com.mediary.Controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.mediary.Models.DTOs.Request.AddScheduleItemDto;
 import com.mediary.Models.DTOs.Response.GetScheduleItemDto;
+import com.mediary.Services.Exceptions.EntityNotFoundException;
+import com.mediary.Services.Exceptions.IncorrectFieldException;
 import com.mediary.Services.Interfaces.IScheduleItemService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @CrossOrigin
 @RestController
 @RequestMapping("/api/schedule")
@@ -32,13 +31,10 @@ public class ScheduleItemController {
 
     @ResponseBody
     @GetMapping("/{userId}")
-    public ResponseEntity<List<GetScheduleItemDto>> getScheduleItemsByUser(@PathVariable Integer userId) {
-        ArrayList<GetScheduleItemDto> scheduleItemDtos;
-        try {
-            scheduleItemDtos = (ArrayList<GetScheduleItemDto>) scheduleItemService.getScheduleItemsByUser(userId);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<List<GetScheduleItemDto>> getScheduleItemsByUser(@PathVariable Integer userId)
+            throws EntityNotFoundException {
+
+        var scheduleItemDtos = scheduleItemService.getScheduleItemsByUser(userId);
         if (scheduleItemDtos.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
@@ -46,15 +42,10 @@ public class ScheduleItemController {
         }
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{userId}")
-    public ResponseEntity<?> addScheduleItems(@PathVariable Integer userId,
-            @RequestBody List<AddScheduleItemDto> scheduleItems) {
-        try {
-            scheduleItemService.addScheduleItems(scheduleItems, userId);
-        } catch (Exception e) {
-            log.warn(e.getStackTrace().toString());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public void addScheduleItems(@PathVariable Integer userId, @RequestBody List<AddScheduleItemDto> scheduleItems)
+            throws EntityNotFoundException, IncorrectFieldException {
+        scheduleItemService.addScheduleItems(scheduleItems, userId);
     }
 }

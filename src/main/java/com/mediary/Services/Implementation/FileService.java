@@ -8,6 +8,8 @@ import com.mediary.Models.Entities.FileEntity;
 import com.mediary.Models.Entities.TestResultEntity;
 import com.mediary.Repositories.FileRepository;
 import com.mediary.Repositories.TestResultRepository;
+import com.mediary.Services.Exceptions.BlobStorageException;
+import com.mediary.Services.Exceptions.EntityNotFoundException;
 import com.mediary.Services.Interfaces.IFileService;
 import com.mediary.Services.Interfaces.IStorageService;
 
@@ -34,7 +36,8 @@ public class FileService implements IFileService {
     @Autowired
     IStorageService storageService;
 
-    public boolean uploadFile(MultipartFile file, Integer userId, TestResultEntity testResult) {
+    public boolean uploadFile(MultipartFile file, Integer userId, TestResultEntity testResult)
+            throws BlobStorageException {
         boolean success = false;
         String fileName = file.getOriginalFilename();
         String blobName = storageService.generateBlobName(fileName, userId.toString());
@@ -43,6 +46,7 @@ public class FileService implements IFileService {
             url = storageService.uploadBlob(file, blobName, containerName);
         } catch (Exception e) {
             log.warn("Storage service problem");
+            throw new BlobStorageException("File upload problem occured");
         }
 
         if (url != null) {
@@ -59,13 +63,18 @@ public class FileService implements IFileService {
         return success;
     }
 
-    public boolean deleteFile(Integer fileId) {
+    public boolean deleteFile(Integer fileId) throws BlobStorageException, EntityNotFoundException {
         FileEntity file = fileRepository.findById(fileId);
         if (file == null) {
             log.warn("file with specified Id doesn't exist");
-            return false;
+            throw new EntityNotFoundException("file with specified Id doesn't exist");
         } else {
-            var success = storageService.deleteBlob(file.getUuid(), containerName);
+            boolean success = false;
+            try {
+                success = storageService.deleteBlob(file.getUuid(), containerName);
+            } catch (Exception e) {
+                throw new BlobStorageException("File deletion problem occured");
+            }
             if (success) {
                 fileRepository.delete(file);
                 fileRepository.flush();

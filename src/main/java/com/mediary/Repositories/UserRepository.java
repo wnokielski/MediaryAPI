@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<com.mediary.Models.Entities.UserEntity, Long> {
 
-    @Query("SELECT u from userEntity u WHERE u.id=?1")
+    @Query("SELECT u from UserEntity u WHERE u.id=?1")
     UserEntity findByUserId(Integer userId);
 
     UserEntity findUserEntitiesByUsername(String userName);
