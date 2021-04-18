@@ -25,25 +25,6 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
 
-//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-//        String header = request.getHeader("Authorization");
-//        UsernamePasswordAuthenticationToken authResult = getAuthenticationByToken(header);
-//        SecurityContextHolder.getContext().setAuthentication(authResult);
-//        chain.doFilter(request, response);
-//    }
-//
-//    private UsernamePasswordAuthenticationToken getAuthenticationByToken(String header) {
-//
-////        Jws<Claims> claimsJws = Jwts.parser().setSigningKey("aaa" .getBytes())
-////                .parseClaimsJws(header.replace("Bearer ", ""));
-//
-//        String username = jwtTokenUtils.getUsernameFromToken(header.replace("Bearer ", ""));
-//
-//        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
-//                = new UsernamePasswordAuthenticationToken(username, null);
-//        return usernamePasswordAuthenticationToken;
-//    }
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {

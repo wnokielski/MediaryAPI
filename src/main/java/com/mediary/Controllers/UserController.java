@@ -70,8 +70,4 @@ public class UserController {
         return userService.authenticateUser(authenticationRequest);
     }
 
-    @GetMapping("/testAuth")
-    String testAuth(){
-        return "Testowy endpoint";
-    }
 }
