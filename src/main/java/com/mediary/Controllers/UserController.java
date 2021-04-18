@@ -5,8 +5,11 @@ import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Services.Const;
 import com.mediary.Services.Exceptions.User.*;
 import com.mediary.Services.Implementation.UserService;
+import com.mediary.models.DTOs.JwtRequest;
+import com.mediary.models.DTOs.JwtResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -61,4 +64,10 @@ public class UserController {
         if(result == Const.toLongPassword)
             throw new PasswordToLongException("Password is too long!");
     }
+
+    @PostMapping("/authenticate")
+    ResponseEntity<?> authenticateUser(@RequestBody JwtRequest authenticationRequest){
+        return userService.authenticateUser(authenticationRequest);
+    }
+
 }
