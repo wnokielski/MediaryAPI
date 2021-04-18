@@ -16,4 +16,7 @@ public class Const {
     public static final int toLongName= 6;
     public static final int userDoesNotExist= 2;
     public static final int wrongPassword= 7;
+
+    //Authentication error codes
+    public static final int badCredentials = 8;
 }
