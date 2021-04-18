@@ -20,6 +20,23 @@ public class JwtTokenUtils {
     @Value("${jwt.secret}")
     private String secret;
 
+    //retrieve username from jwt token
+    public String getUsernameFromToken(String token) {
+        return JWT.decode(token).getSubject();
+    }
+
+    //retrieve expiration date from jwt token
+    public Date getExpirationDateFromToken(String token) {
+        return JWT.decode(token).getExpiresAt();
+    }
+
+
+    //check if the token has expired
+    private Boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(new Date());
+    }
+
     //generate token for user
     public String generateToken(UserDetails userDetails) {
 
@@ -34,5 +51,11 @@ public class JwtTokenUtils {
         return JWT.create().withPayload(claims).withSubject(subject).withIssuedAt(new Date(System.currentTimeMillis())).
                 withExpiresAt(new Date(System.currentTimeMillis() + jwtValidity * 1000)).sign(algorithm);
 
+    }
+
+    //validate token
+    public Boolean validateToken(String token, UserDetails userDetails) {
+        final String username = getUsernameFromToken(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 }

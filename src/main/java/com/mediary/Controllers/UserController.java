@@ -69,4 +69,9 @@ public class UserController {
     ResponseEntity<?> authenticateUser(@RequestBody JwtRequest authenticationRequest){
         return userService.authenticateUser(authenticationRequest);
     }
+
+    @GetMapping("/testAuth")
+    String testAuth(){
+        return "Testowy endpoint";
+    }
 }
