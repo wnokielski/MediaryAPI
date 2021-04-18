@@ -1,6 +1,5 @@
 package com.mediary.Converters;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,12 +11,10 @@ public class JSONObjectConverter implements AttributeConverter<JSONObject, Strin
     @Override
     public String convertToDatabaseColumn(JSONObject jsonData) {
         String json;
-        try{
+        try {
             json = jsonData.toString();
-        }
-        catch (NullPointerException ex)
-        {
-            //extend error handling here if you want
+        } catch (NullPointerException ex) {
+            // extend error handling here if you want
             json = "";
         }
         return json;
@@ -29,7 +26,7 @@ public class JSONObjectConverter implements AttributeConverter<JSONObject, Strin
         try {
             jsonData = new JSONObject(jsonDataAsJson);
         } catch (JSONException ex) {
-            //extend error handling here if you want
+            // extend error handling here if you want
             jsonData = null;
         }
         return jsonData;
