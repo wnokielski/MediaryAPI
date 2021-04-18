@@ -63,7 +63,7 @@ public class ScheduleItemService implements IScheduleItemService {
         } else if (scheduleItemDto.getScheduleItemTypeId() == null) {
             log.warn("Schedule item type is required");
             throw new IncorrectFieldException("Schedule item type is required");
-        } else if (userRepository.findById(userId) == null) {
+        } else if (userRepository.findByUserId(userId) == null) {
             log.warn("User doesn't exist");
             throw new EntityNotFoundException("User with specified id doesn't exist");
         } else if (scheduleItemTypeRepository.findById(scheduleItemDto.getScheduleItemTypeId()) == null) {
@@ -88,7 +88,7 @@ public class ScheduleItemService implements IScheduleItemService {
 
     @Override
     public List<GetScheduleItemDto> getScheduleItemsByUser(Integer userId) throws EntityNotFoundException {
-        if (userRepository.findById(userId) == null) {
+        if (userRepository.findByUserId(userId) == null) {
             throw new EntityNotFoundException("User with specified id doesn't exist");
         } else {
             var scheduleItems = scheduleItemRepository.findByUserId(userId);

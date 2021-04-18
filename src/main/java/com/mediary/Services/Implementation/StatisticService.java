@@ -45,6 +45,9 @@ public class StatisticService implements IStatisticService {
         if (statistic.getValue().length() > 50) {
             log.warn("Value field exceeds allowed length");
             throw new IncorrectFieldException("Value field exceeds allowed length");
+        } else if (statistic.getValue() == "") {
+            log.warn("Value field is required");
+            throw new IncorrectFieldException("Value field required");
         } else if (statistic.getDate() == null) {
             log.warn("Date field is required");
             throw new IncorrectFieldException("Date field is required");
