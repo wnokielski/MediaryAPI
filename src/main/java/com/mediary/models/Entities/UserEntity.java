@@ -21,8 +21,8 @@ public class UserEntity {
     private Collection<TestResultEntity> testresultsById;
 
     @Id
-    @SequenceGenerator(name="`User_ID_seq`", sequenceName="`User_ID_seq`", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="`User_ID_seq`")
+    @SequenceGenerator(name = "`User_ID_seq`", sequenceName = "`User_ID_seq`", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "`User_ID_seq`")
     @Column(name = "`ID`", nullable = false)
     public Integer getId() {
         return id;
@@ -33,16 +33,24 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "`Username`", nullable = false, length = 30)
-    public String getUsername() { return username; }
+    @Column(name = "`Username`", nullable = true, length = 30)
+    public String getUsername() {
+        return username;
+    }
 
-    public void setUsername(String username) { this.username = username; }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     @Basic
     @Column(name = "`Email`", nullable = false, length = 254)
-    public String getEmail() { return email; }
+    public String getEmail() {
+        return email;
+    }
 
-    public void setEmail(String email) { this.email = email; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     @Basic
     @Column(name = "`Password`", nullable = false, length = 72)
@@ -65,7 +73,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "`Gender`", nullable = false)
+    @Column(name = "`Gender`", nullable = true)
     public String getGender() {
         return gender;
     }
@@ -75,7 +83,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "`DateOfBirth`", nullable = false)
+    @Column(name = "`DateOfBirth`", nullable = true)
     public Date getDateofbirth() {
         return dateofbirth;
     }
@@ -96,19 +104,29 @@ public class UserEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         com.mediary.Models.Entities.UserEntity that = (com.mediary.Models.Entities.UserEntity) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (username != null ? !username.equals(that.username) : that.username != null) return false;
-        if (email != null ? !email.equals(that.email) : that.email != null) return false;
-        if (password != null ? !password.equals(that.password) : that.password != null) return false;
-        if (fullName != null ? !fullName.equals(that.fullName) : that.fullName != null) return false;
-        if (gender != null ? !gender.equals(that.gender) : that.gender != null) return false;
-        if (dateofbirth != null ? !dateofbirth.equals(that.dateofbirth) : that.dateofbirth != null) return false;
-        if (weight != null ? !weight.equals(that.weight) : that.weight != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null)
+            return false;
+        if (username != null ? !username.equals(that.username) : that.username != null)
+            return false;
+        if (email != null ? !email.equals(that.email) : that.email != null)
+            return false;
+        if (password != null ? !password.equals(that.password) : that.password != null)
+            return false;
+        if (fullName != null ? !fullName.equals(that.fullName) : that.fullName != null)
+            return false;
+        if (gender != null ? !gender.equals(that.gender) : that.gender != null)
+            return false;
+        if (dateofbirth != null ? !dateofbirth.equals(that.dateofbirth) : that.dateofbirth != null)
+            return false;
+        if (weight != null ? !weight.equals(that.weight) : that.weight != null)
+            return false;
 
         return true;
     }

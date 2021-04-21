@@ -43,12 +43,8 @@ public class UserService implements IUserService {
 
     @Override
     public int registerNewUser(UserRegisterDto user) {
-        if (userRepository.findUserEntitiesByUsername(user.getUsername()) != null)
-            return Const.usernameAlreadyUsed;
         if (userRepository.findUserEntitiesByEmail(user.getEmail()) != null)
             return Const.emailAlreadyUsed;
-        if (user.getUsername().length() > 30)
-            return Const.toLongUsername;
         if (user.getEmail().length() > 254)
             return Const.toLongEmail;
         if (user.getPassword().length() > 72)
@@ -56,12 +52,9 @@ public class UserService implements IUserService {
         if (user.getFullName().length() > 40)
             return Const.toLongName;
         UserEntity newUser = new UserEntity();
-        newUser.setUsername(user.getUsername());
         newUser.setEmail(user.getEmail());
         newUser.setPassword(passwordEncoder.encode(user.getPassword()));
         newUser.setFullName(user.getFullName());
-        newUser.setGender(user.getGender());
-        newUser.setDateofbirth(user.getDateofbirth());
         userRepository.save(newUser);
         return Const.registrationSuccess;
     }
