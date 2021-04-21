@@ -131,7 +131,7 @@ public class UserService implements IUserService {
         int result = -1;
 
         try {
-            result = authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+            result = authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -140,7 +140,7 @@ public class UserService implements IUserService {
             return new ResponseEntity("Bad Credentials", HttpStatus.UNAUTHORIZED);
         }
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
 
         return new ResponseEntity(new JwtResponse(jwtTokenUtils.generateToken(userDetails)), HttpStatus.OK);
     }

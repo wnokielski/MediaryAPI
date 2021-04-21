@@ -18,14 +18,14 @@ public class JwtUserDetailsService implements UserDetailsService {
     UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = userRepository.findUserEntitiesByUsername(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        UserEntity user = userRepository.findUserEntitiesByEmail(email);
 
         if (user == null) {
             throw new UsernameNotFoundException("User not found!");
         }
 
-        return new User(user.getUsername(), user.getPassword(), new ArrayList<>());
+        return new User(user.getEmail(), user.getPassword(), new ArrayList<>());
     }
 
 }

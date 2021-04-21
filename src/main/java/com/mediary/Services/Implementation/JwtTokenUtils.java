@@ -19,8 +19,8 @@ public class JwtTokenUtils {
     @Value("${jwt.secret}")
     private String secret;
 
-    // retrieve username from jwt token
-    public String getUsernameFromToken(String token) {
+    // retrieve email from jwt token
+    public String getEmailFromToken(String token) {
         return JWT.decode(token).getSubject();
     }
 
@@ -53,7 +53,7 @@ public class JwtTokenUtils {
 
     // validate token
     public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        final String email = getEmailFromToken(token);
+        return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 }
