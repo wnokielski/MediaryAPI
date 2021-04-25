@@ -5,10 +5,10 @@ import com.mediary.Models.DTOs.Request.ChangePasswordDto;
 import com.mediary.Models.DTOs.Request.UserRegisterDto;
 import com.mediary.Models.DTOs.Request.UserUpdateDto;
 import com.mediary.Models.DTOs.JwtRequest;
+import com.mediary.Services.Exceptions.User.*;
 import org.springframework.http.ResponseEntity;
 
 public interface IUserService {
-    int registerNewUser(UserRegisterDto user);
 
     int updateUserDetails(UserUpdateDto user, Integer userId);
 
@@ -17,4 +17,6 @@ public interface IUserService {
     int updatePassword(ChangePasswordDto passwordDto, Integer id);
 
     ResponseEntity<?> authenticateUser(JwtRequest authenticationRequest);
+
+    ResponseEntity<?> signInAfterRegistration(UserRegisterDto user) throws EmailAlreadyUsedException, FullNameToLongException, EmailToLongException, UserDoesNotExist, PasswordToLongException;
 }

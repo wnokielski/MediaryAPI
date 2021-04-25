@@ -7,6 +7,7 @@ import com.mediary.Models.DTOs.Request.UserUpdateDto;
 import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Repositories.UserRepository;
 import com.mediary.Services.Const;
+import com.mediary.Services.Exceptions.User.*;
 import com.mediary.Services.Interfaces.IUserService;
 import com.mediary.Models.DTOs.JwtRequest;
 import com.mediary.Models.DTOs.JwtResponse;
@@ -41,23 +42,8 @@ public class UserService implements IUserService {
     @Autowired
     JwtTokenUtils jwtTokenUtils;
 
-    @Override
-    public int registerNewUser(UserRegisterDto user) {
-        if (userRepository.findUserEntitiesByEmail(user.getEmail()) != null)
-            return Const.emailAlreadyUsed;
-        if (user.getEmail().length() > 254)
-            return Const.toLongEmail;
-        if (user.getPassword().length() > 72)
-            return Const.toLongPassword;
-        if (user.getFullName().length() > 40)
-            return Const.toLongName;
-        UserEntity newUser = new UserEntity();
-        newUser.setEmail(user.getEmail());
-        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
-        newUser.setFullName(user.getFullName());
-        userRepository.save(newUser);
-        return Const.registrationSuccess;
-    }
+
+
 
     @Override
     public int updateUserDetails(UserUpdateDto user, Integer userId) {
@@ -138,6 +124,29 @@ public class UserService implements IUserService {
         return new ResponseEntity(new JwtResponse(jwtTokenUtils.generateToken(userDetails)), HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<?> signInAfterRegistration(UserRegisterDto user) throws EmailToLongException, PasswordToLongException,
+            EmailAlreadyUsedException, FullNameToLongException  {
+        int result = registerNewUser(user);
+        if (result == Const.emailAlreadyUsed)
+            throw new EmailAlreadyUsedException("E-mail is already used!");
+        if (result == Const.toLongEmail)
+            throw new EmailToLongException("E-mail is too long!");
+        if (result == Const.toLongName)
+            throw new FullNameToLongException("Typed name is too long!");
+        if (result == Const.toLongPassword)
+            throw new PasswordToLongException("Typed password is too long!");
+        if(result == Const.registrationSuccess){
+            JwtRequest token = new JwtRequest();
+            token.setPassword(user.getPassword());
+            token.setEmail(user.getEmail());
+            return this.authenticateUser(token);
+        }
+        else{
+            return new ResponseEntity("Bad Registration", HttpStatus.UNAUTHORIZED);
+        }
+    }
+
     private int authenticate(String username, String password) throws Exception {
         int result = -1;
         try {
@@ -149,5 +158,22 @@ public class UserService implements IUserService {
         }
 
         return result;
+    }
+
+    private int registerNewUser(UserRegisterDto user) {
+        if (userRepository.findUserEntitiesByEmail(user.getEmail()) != null)
+            return Const.emailAlreadyUsed;
+        if (user.getEmail().length() > 254)
+            return Const.toLongEmail;
+        if (user.getPassword().length() > 72)
+            return Const.toLongPassword;
+        if (user.getFullName().length() > 40)
+            return Const.toLongName;
+        UserEntity newUser = new UserEntity();
+        newUser.setEmail(user.getEmail());
+        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        newUser.setFullName(user.getFullName());
+        userRepository.save(newUser);
+        return Const.registrationSuccess;
     }
 }
