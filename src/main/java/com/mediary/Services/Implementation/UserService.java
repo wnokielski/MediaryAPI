@@ -11,6 +11,8 @@ import com.mediary.Services.Exceptions.User.*;
 import com.mediary.Services.Interfaces.IUserService;
 import com.mediary.Models.DTOs.JwtRequest;
 import com.mediary.Models.DTOs.JwtResponse;
+import com.mediary.models.DTOs.Response.LoginDto;
+import com.mediary.models.DTOs.Response.UserDataDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -121,7 +123,17 @@ public class UserService implements IUserService {
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
 
-        return new ResponseEntity(new JwtResponse(jwtTokenUtils.generateToken(userDetails)), HttpStatus.OK);
+        UserDataDto userData = new UserDataDto();
+        userData.setGender(userRepository.findUserEntitiesByEmail(userDetails.getUsername()).getGender());
+        userData.setWeight(userRepository.findUserEntitiesByEmail(userDetails.getUsername()).getWeight());
+        userData.setFullName(userRepository.findUserEntitiesByEmail(userDetails.getUsername()).getFullName());
+        userData.setDateOfBirth(userRepository.findUserEntitiesByEmail(userDetails.getUsername()).getDateofbirth());
+
+        LoginDto loginDto = new LoginDto();
+        loginDto.setUserData(userData);
+        loginDto.setToken(new JwtResponse(jwtTokenUtils.generateToken(userDetails)));
+
+        return new ResponseEntity(loginDto, HttpStatus.OK);
     }
 
     @Override
