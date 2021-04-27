@@ -19,4 +19,6 @@ public interface IUserService {
     ResponseEntity<?> authenticateUser(JwtRequest authenticationRequest);
 
     ResponseEntity<?> signInAfterRegistration(UserRegisterDto user) throws EmailAlreadyUsedException, FullNameToLongException, EmailToLongException, UserDoesNotExist, PasswordToLongException;
+
+    ResponseEntity<?> refreshToken(String authHeader);
 }

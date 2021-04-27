@@ -1,5 +1,6 @@
 package com.mediary.Controllers;
 
+import com.azure.core.annotation.Get;
 import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Models.DTOs.Request.ChangePasswordDto;
 import com.mediary.Models.DTOs.Request.UserRegisterDto;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @CrossOrigin
 @RestController
@@ -67,6 +70,11 @@ public class UserController {
     @PostMapping("/authenticate")
     ResponseEntity<?> authenticateUser(@RequestBody JwtRequest authenticationRequest) {
         return userService.authenticateUser(authenticationRequest);
+    }
+
+    @GetMapping("/refreshtoken")
+    ResponseEntity<?> refreshToken(@RequestHeader("Authorization") String authHeader){
+        return userService.refreshToken(authHeader);
     }
 
 }

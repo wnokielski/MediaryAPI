@@ -22,8 +22,11 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.firewall.FirewalledRequest;
 import org.springframework.stereotype.Service;
+import com.auth0.jwt.impl.NullClaim;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @Service
@@ -188,4 +191,13 @@ public class UserService implements IUserService {
         userRepository.save(newUser);
         return Const.registrationSuccess;
     }
+
+    @Override
+    public ResponseEntity<?> refreshToken(String authHeader){
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(jwtTokenUtils.getEmailFromToken(authHeader.substring(7)));
+
+        return new ResponseEntity<>(new JwtResponse(jwtTokenUtils.generateToken(userDetails)), HttpStatus.OK);
+    }
+
 }
