@@ -1,5 +1,6 @@
 package com.mediary.Controllers;
 
+import com.azure.core.annotation.Get;
 import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Models.DTOs.Request.ChangePasswordDto;
 import com.mediary.Models.DTOs.Request.UserRegisterDto;
@@ -14,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/api/user")
@@ -24,22 +27,8 @@ public class UserController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.OK)
-    public void registerNewUser(@RequestBody UserRegisterDto user)
-            throws UsernameToLongException, UsernameAlreadyUsedException, EmailToLongException, PasswordToLongException,
-            EmailAlreadyUsedException, FullNameToLongException {
-        int result = userService.registerNewUser(user);
-        if (result == Const.emailAlreadyUsed)
-            throw new EmailAlreadyUsedException("E-mail is already used!");
-        if (result == Const.usernameAlreadyUsed)
-            throw new UsernameAlreadyUsedException("Username is already used!");
-        if (result == Const.toLongEmail)
-            throw new EmailToLongException("E-mail is too long!");
-        if (result == Const.toLongUsername)
-            throw new UsernameToLongException("Username is too long!");
-        if (result == Const.toLongName)
-            throw new FullNameToLongException("Typed name is too long!");
-        if (result == Const.toLongPassword)
-            throw new PasswordToLongException("Typed password is too long!");
+    ResponseEntity<?> register(@RequestBody UserRegisterDto user) throws PasswordToLongException, EmailAlreadyUsedException, EmailToLongException, FullNameToLongException {
+        return userService.signInAfterRegistration(user);
     }
 
     @PutMapping("/{id}")
@@ -81,6 +70,11 @@ public class UserController {
     @PostMapping("/authenticate")
     ResponseEntity<?> authenticateUser(@RequestBody JwtRequest authenticationRequest) {
         return userService.authenticateUser(authenticationRequest);
+    }
+
+    @GetMapping("/refreshtoken")
+    ResponseEntity<?> refreshToken(@RequestHeader("Authorization") String authHeader){
+        return userService.refreshToken(authHeader);
     }
 
 }
