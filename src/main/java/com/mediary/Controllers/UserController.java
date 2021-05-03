@@ -1,11 +1,13 @@
 package com.mediary.Controllers;
 
-import com.azure.core.annotation.Get;
 import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Models.DTOs.Request.ChangePasswordDto;
 import com.mediary.Models.DTOs.Request.UserRegisterDto;
 import com.mediary.Models.DTOs.Request.UserUpdateDto;
 import com.mediary.Services.Const;
+import com.mediary.Services.Exceptions.EntityNotFoundException;
+import com.mediary.Services.Exceptions.EnumConversionException;
+import com.mediary.Services.Exceptions.IncorrectFieldException;
 import com.mediary.Services.Exceptions.User.*;
 import com.mediary.Services.Implementation.UserService;
 import com.mediary.Models.DTOs.JwtRequest;
@@ -14,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 @CrossOrigin
 @RestController
@@ -27,15 +27,17 @@ public class UserController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.OK)
-    ResponseEntity<?> register(@RequestBody UserRegisterDto user) throws PasswordToLongException, EmailAlreadyUsedException, EmailToLongException, FullNameToLongException {
+    ResponseEntity<?> register(@RequestBody UserRegisterDto user)
+            throws PasswordToLongException, EmailAlreadyUsedException, EmailToLongException, FullNameToLongException {
         return userService.signInAfterRegistration(user);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public void updateUserDetails(@PathVariable int id, @RequestBody UserUpdateDto user)
-            throws EmailAlreadyUsedException, FullNameToLongException, EmailToLongException, UserDoesNotExist {
-        int result = userService.updateUserDetails(user, id);
+    public void updateUserDetails(@RequestHeader("Authorization") String authHeader, @RequestBody UserUpdateDto user)
+            throws EmailAlreadyUsedException, FullNameToLongException, EmailToLongException, UserDoesNotExist,
+            EntityNotFoundException, EnumConversionException, IncorrectFieldException {
+        int result = userService.updateUserDetails(user, authHeader);
         if (result == Const.userDoesNotExist)
             throw new UserDoesNotExist("User does not exist!");
         if (result == Const.emailAlreadyUsed)
@@ -46,19 +48,19 @@ public class UserController {
             throw new FullNameToLongException("Name is too long!");
     }
 
-    @GetMapping("/{id}")
-    public UserDto getUserById(@PathVariable int id) throws UserNotFoundException {
-        UserDto user = userService.getUserById(id);
-        if (user == null)
-            throw new UserNotFoundException("There is no such user");
+    @GetMapping
+    public UserDto getUserByAuthHeader(@RequestHeader("Authorization") String authHeader)
+            throws EntityNotFoundException {
+        UserDto user = userService.getUserDetails(authHeader);
         return user;
     }
 
-    @PutMapping("/password/{id}")
+    @PutMapping("/password")
     @ResponseStatus(HttpStatus.OK)
-    public void updatePassword(@PathVariable int id, @RequestBody ChangePasswordDto passwordDto)
-            throws PasswordToLongException, UserDoesNotExist, WrongPasswordException {
-        int result = userService.updatePassword(passwordDto, id);
+    public void updatePassword(@RequestHeader("Authorization") String authHeader,
+            @RequestBody ChangePasswordDto passwordDto)
+            throws PasswordToLongException, UserDoesNotExist, WrongPasswordException, EntityNotFoundException {
+        int result = userService.updatePassword(passwordDto, authHeader);
         if (result == Const.wrongPassword)
             throw new WrongPasswordException("Wrong password!");
         if (result == Const.userDoesNotExist)
@@ -73,7 +75,7 @@ public class UserController {
     }
 
     @GetMapping("/refreshtoken")
-    ResponseEntity<?> refreshToken(@RequestHeader("Authorization") String authHeader){
+    ResponseEntity<?> refreshToken(@RequestHeader("Authorization") String authHeader) {
         return userService.refreshToken(authHeader);
     }
 

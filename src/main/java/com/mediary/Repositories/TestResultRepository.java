@@ -11,6 +11,6 @@ public interface TestResultRepository extends JpaRepository<TestResultEntity, Lo
 
     TestResultEntity findById(Integer id);
 
-    @Query("SELECT t from TestResultEntity t WHERE t.userByUserid.id=?1")
-    List<TestResultEntity> findByUser(Integer id);
+    @Query("SELECT t from TestResultEntity t WHERE t.userById.id=?1")
+    List<TestResultEntity> findByUserId(Integer id);
 }

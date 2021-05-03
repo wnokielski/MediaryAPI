@@ -13,9 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -30,11 +30,11 @@ public class ScheduleItemController {
     IScheduleItemService scheduleItemService;
 
     @ResponseBody
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<GetScheduleItemDto>> getScheduleItemsByUser(@PathVariable Integer userId)
-            throws EntityNotFoundException {
+    @GetMapping
+    public ResponseEntity<List<GetScheduleItemDto>> getScheduleItemsByUser(
+            @RequestHeader("Authorization") String authHeader) throws EntityNotFoundException {
 
-        var scheduleItemDtos = scheduleItemService.getScheduleItemsByUser(userId);
+        var scheduleItemDtos = scheduleItemService.getScheduleItemsByAuthHeader(authHeader);
         if (scheduleItemDtos.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
@@ -43,9 +43,10 @@ public class ScheduleItemController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/{userId}")
-    public void addScheduleItems(@PathVariable Integer userId, @RequestBody List<AddScheduleItemDto> scheduleItems)
+    @PostMapping
+    public void addScheduleItems(@RequestHeader("Authorization") String authHeader,
+            @RequestBody List<AddScheduleItemDto> scheduleItems)
             throws EntityNotFoundException, IncorrectFieldException {
-        scheduleItemService.addScheduleItems(scheduleItems, userId);
+        scheduleItemService.addScheduleItemsByAuthHeader(scheduleItems, authHeader);
     }
 }

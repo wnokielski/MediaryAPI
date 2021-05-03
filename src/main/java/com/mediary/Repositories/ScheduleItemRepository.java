@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ScheduleItemRepository extends JpaRepository<ScheduleItemEntity, Long> {
 
-    @Query("SELECT s from ScheduleItemEntity s WHERE s.userByUserid.id=?1")
+    @Query("SELECT s from ScheduleItemEntity s WHERE s.userById.id=?1")
     List<ScheduleItemEntity> findByUserId(Integer id);
 }

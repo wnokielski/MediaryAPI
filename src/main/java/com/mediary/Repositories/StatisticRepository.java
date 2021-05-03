@@ -9,8 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface StatisticRepository extends JpaRepository<StatisticEntity, Long> {
 
-    List<StatisticEntity> findByUserByUserid(Integer id);
+    List<StatisticEntity> findByUserById(Integer id);
 
-    @Query("SELECT s from StatisticEntity s WHERE s.userByUserid.id=?1 AND s.statistictypeByStatistictypeid.id=?2 ORDER BY s.date")
+    @Query("SELECT s from StatisticEntity s WHERE s.userById.id=?1 AND s.statisticTypeById.id=?2 ORDER BY s.date")
     List<StatisticEntity> findByUserIdAndStatisticTypeId(Integer userId, Integer statisticTypeId);
 }

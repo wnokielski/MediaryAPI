@@ -8,11 +8,11 @@ import java.util.Collection;
 public class ScheduleItemTypeEntity {
     private Integer id;
     private String name;
-    private Collection<ScheduleItemEntity> scheduleitemsById;
+    private Collection<ScheduleItemEntity> scheduleItemsById;
 
     @Id
-    @SequenceGenerator(name="`ScheduleItemType_ID_seq`", sequenceName="`ScheduleItemType_ID_seq`", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="`ScheduleItemType_ID_seq`")
+    @SequenceGenerator(name = "`ScheduleItemType_ID_seq`", sequenceName = "`ScheduleItemType_ID_seq`", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "`ScheduleItemType_ID_seq`")
     @Column(name = "`ID`", nullable = false)
     public Integer getId() {
         return id;
@@ -38,13 +38,17 @@ public class ScheduleItemTypeEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         com.mediary.Models.Entities.ScheduleItemTypeEntity that = (com.mediary.Models.Entities.ScheduleItemTypeEntity) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null)
+            return false;
+        if (name != null ? !name.equals(that.name) : that.name != null)
+            return false;
 
         return true;
     }
@@ -56,12 +60,12 @@ public class ScheduleItemTypeEntity {
         return result;
     }
 
-    @OneToMany(mappedBy = "scheduleitemtypeByScheduleitemtypeid")
-    public Collection<ScheduleItemEntity> getScheduleitemsById() {
-        return scheduleitemsById;
+    @OneToMany(mappedBy = "scheduleItemTypeById")
+    public Collection<ScheduleItemEntity> getScheduleItemsById() {
+        return scheduleItemsById;
     }
 
-    public void setScheduleitemsById(Collection<ScheduleItemEntity> scheduleitemsById) {
-        this.scheduleitemsById = scheduleitemsById;
+    public void setScheduleItemsById(Collection<ScheduleItemEntity> scheduleItemsById) {
+        this.scheduleItemsById = scheduleItemsById;
     }
 }

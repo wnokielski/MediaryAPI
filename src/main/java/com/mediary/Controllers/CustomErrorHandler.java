@@ -1,6 +1,7 @@
 package com.mediary.Controllers;
 
 import com.mediary.Services.Exceptions.User.UserNotFoundException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.mediary.Services.Exceptions.BlobStorageException;
 import com.mediary.Services.Exceptions.EntityNotFoundException;
+import com.mediary.Services.Exceptions.EnumConversionException;
 import com.mediary.Services.Exceptions.IncorrectFieldException;
 import com.mediary.Services.Exceptions.User.*;
 
@@ -53,6 +55,13 @@ public class CustomErrorHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({ IncorrectFieldException.class })
     public ResponseEntity<ErrorResponse> incorrect(Exception ex, WebRequest request) {
+        ErrorResponse response = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({ EnumConversionException.class })
+    public ResponseEntity<ErrorResponse> enumConversion(Exception ex, WebRequest request) {
         ErrorResponse response = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
                 ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

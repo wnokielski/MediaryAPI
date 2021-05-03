@@ -1,4 +1,4 @@
-package com.mediary.models.DTOs.Response;
+package com.mediary.Models.DTOs.Response;
 
 import lombok.Data;
 
@@ -11,4 +11,5 @@ public class UserDataDto {
     private String gender;
     private Date dateOfBirth;
     private BigDecimal weight;
+    private BigDecimal height;
 }

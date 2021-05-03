@@ -54,9 +54,9 @@ public class FileService implements IFileService {
         }
         FileEntity fileEntity = new FileEntity();
         fileEntity.setUuid(blobName);
-        fileEntity.setOriginalname(fileName);
+        fileEntity.setOriginalName(fileName);
         fileEntity.setUrl(url);
-        fileEntity.setTestresultByTestresultid(testResult);
+        fileEntity.setTestResultById(testResult);
         fileRepository.save(fileEntity);
         fileRepository.flush();
 
@@ -80,7 +80,7 @@ public class FileService implements IFileService {
                 fileRepository.flush();
                 return true;
             } else {
-                log.warn("Specified blob wasn't deleted");
+                log.warn("Specified blob weren't deleted");
                 return false;
             }
         }
@@ -109,7 +109,7 @@ public class FileService implements IFileService {
     public GetFileDto fileToDto(FileEntity file) {
         GetFileDto fileDto = new GetFileDto();
         fileDto.setId(file.getId());
-        fileDto.setOriginalName(file.getOriginalname());
+        fileDto.setOriginalName(file.getOriginalName());
         fileDto.setUrl(file.getUrl());
         return fileDto;
     }

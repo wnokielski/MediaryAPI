@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface FileRepository extends JpaRepository<FileEntity, Long> {
 
-    @Query("SELECT f from FileEntity f WHERE f.testresultByTestresultid.id=?1")
+    @Query("SELECT f from FileEntity f WHERE f.testResultById.id=?1")
     List<FileEntity> findByTestResultId(Integer testResultId);
 
     FileEntity findById(Integer id);

@@ -9,12 +9,12 @@ public class StatisticEntity {
     private Integer id;
     private String value;
     private Date date;
-    private StatisticTypeEntity statistictypeByStatistictypeid;
-    private UserEntity userByUserid;
+    private StatisticTypeEntity statisticTypeById;
+    private UserEntity userById;
 
     @Id
-    @SequenceGenerator(name="`Statistic_ID_seq`", sequenceName="`Statistic_ID_seq`", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="`Statistic_ID_seq`")
+    @SequenceGenerator(name = "`Statistic_ID_seq`", sequenceName = "`Statistic_ID_seq`", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "`Statistic_ID_seq`")
     @Column(name = "`ID`", nullable = false)
     public Integer getId() {
         return id;
@@ -46,14 +46,19 @@ public class StatisticEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         StatisticEntity that = (StatisticEntity) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (value != null ? !value.equals(that.value) : that.value != null) return false;
-        if (date != null ? !date.equals(that.date) : that.date != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null)
+            return false;
+        if (value != null ? !value.equals(that.value) : that.value != null)
+            return false;
+        if (date != null ? !date.equals(that.date) : that.date != null)
+            return false;
 
         return true;
     }
@@ -68,21 +73,21 @@ public class StatisticEntity {
 
     @ManyToOne
     @JoinColumn(name = "`StatisticTypeID`", referencedColumnName = "`ID`", nullable = false)
-    public StatisticTypeEntity getStatistictypeByStatistictypeid() {
-        return statistictypeByStatistictypeid;
+    public StatisticTypeEntity getStatisticTypeById() {
+        return statisticTypeById;
     }
 
-    public void setStatistictypeByStatistictypeid(StatisticTypeEntity statistictypeByStatistictypeid) {
-        this.statistictypeByStatistictypeid = statistictypeByStatistictypeid;
+    public void setStatisticTypeById(StatisticTypeEntity statisticTypeById) {
+        this.statisticTypeById = statisticTypeById;
     }
 
     @ManyToOne
     @JoinColumn(name = "`UserID`", referencedColumnName = "`ID`", nullable = false)
-    public UserEntity getUserByUserid() {
-        return userByUserid;
+    public UserEntity getUserById() {
+        return userById;
     }
 
-    public void setUserByUserid(UserEntity userByUserid) {
-        this.userByUserid = userByUserid;
+    public void setUserById(UserEntity userById) {
+        this.userById = userById;
     }
 }

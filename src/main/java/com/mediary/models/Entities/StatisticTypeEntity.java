@@ -8,11 +8,12 @@ import java.util.Collection;
 public class StatisticTypeEntity {
     private Integer id;
     private String name;
+    private String unit;
     private Collection<StatisticEntity> statisticsById;
 
     @Id
-    @SequenceGenerator(name="`StatisticType_ID_seq`", sequenceName="`StatisticType_ID_seq`", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="`StatisticType_ID_seq`")
+    @SequenceGenerator(name = "`StatisticType_ID_seq`", sequenceName = "`StatisticType_ID_seq`", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "`StatisticType_ID_seq`")
     @Column(name = "`ID`", nullable = false)
     public Integer getId() {
         return id;
@@ -32,15 +33,29 @@ public class StatisticTypeEntity {
         this.name = name;
     }
 
+    @Basic
+    @Column(name = "`Unit`", nullable = true, length = 10)
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         com.mediary.Models.Entities.StatisticTypeEntity that = (com.mediary.Models.Entities.StatisticTypeEntity) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null)
+            return false;
+        if (name != null ? !name.equals(that.name) : that.name != null)
+            return false;
 
         return true;
     }
@@ -52,7 +67,7 @@ public class StatisticTypeEntity {
         return result;
     }
 
-    @OneToMany(mappedBy = "statistictypeByStatistictypeid")
+    @OneToMany(mappedBy = "statisticTypeById")
     public Collection<StatisticEntity> getStatisticsById() {
         return statisticsById;
     }

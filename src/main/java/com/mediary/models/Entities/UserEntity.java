@@ -1,6 +1,9 @@
 package com.mediary.Models.Entities;
 
 import javax.persistence.*;
+
+import com.mediary.Models.Enums.Gender;
+
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.Collection;
@@ -10,15 +13,15 @@ import java.util.Collection;
 public class UserEntity {
     private Integer id;
     private String email;
-    private String username;
     private String password;
     private String fullName;
-    private String gender;
-    private Date dateofbirth;
+    private Gender gender;
+    private Date dateOfBirth;
     private BigDecimal weight;
-    private Collection<com.mediary.Models.Entities.ScheduleItemEntity> scheduleitemsById;
+    private BigDecimal height;
+    private Collection<ScheduleItemEntity> scheduleItemsById;
     private Collection<StatisticEntity> statisticsById;
-    private Collection<TestResultEntity> testresultsById;
+    private Collection<TestResultEntity> testResultsById;
 
     @Id
     @SequenceGenerator(name = "`User_ID_seq`", sequenceName = "`User_ID_seq`", allocationSize = 1)
@@ -30,16 +33,6 @@ public class UserEntity {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    @Basic
-    @Column(name = "`Username`", nullable = true, length = 30)
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     @Basic
@@ -63,7 +56,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "`FullName`", nullable = false, length = 40)
+    @Column(name = "`FullName`", nullable = false, length = 50)
     public String getFullName() {
         return fullName;
     }
@@ -73,33 +66,43 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "`Gender`", nullable = true)
-    public String getGender() {
+    @Column(name = "`Gender`", nullable = true, length = 10)
+    public Gender getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 
     @Basic
     @Column(name = "`DateOfBirth`", nullable = true)
-    public Date getDateofbirth() {
-        return dateofbirth;
+    public Date getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setDateofbirth(Date dateofbirth) {
-        this.dateofbirth = dateofbirth;
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     @Basic
-    @Column(name = "`Weight`", nullable = true, precision = 1)
+    @Column(name = "`Weight`", nullable = true, precision = 4, scale = 1)
     public BigDecimal getWeight() {
         return weight;
     }
 
     public void setWeight(BigDecimal weight) {
         this.weight = weight;
+    }
+
+    @Basic
+    @Column(name = "`Height`", nullable = true, precision = 3, scale = 2)
+    public BigDecimal getHeight() {
+        return height;
+    }
+
+    public void setHeight(BigDecimal height) {
+        this.height = height;
     }
 
     @Override
@@ -113,8 +116,6 @@ public class UserEntity {
 
         if (id != null ? !id.equals(that.id) : that.id != null)
             return false;
-        if (username != null ? !username.equals(that.username) : that.username != null)
-            return false;
         if (email != null ? !email.equals(that.email) : that.email != null)
             return false;
         if (password != null ? !password.equals(that.password) : that.password != null)
@@ -123,9 +124,11 @@ public class UserEntity {
             return false;
         if (gender != null ? !gender.equals(that.gender) : that.gender != null)
             return false;
-        if (dateofbirth != null ? !dateofbirth.equals(that.dateofbirth) : that.dateofbirth != null)
+        if (dateOfBirth != null ? !dateOfBirth.equals(that.dateOfBirth) : that.dateOfBirth != null)
             return false;
         if (weight != null ? !weight.equals(that.weight) : that.weight != null)
+            return false;
+        if (height != null ? !height.equals(that.height) : that.height != null)
             return false;
 
         return true;
@@ -137,21 +140,22 @@ public class UserEntity {
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (fullName != null ? fullName.hashCode() : 0);
         result = 31 * result + (gender != null ? gender.hashCode() : 0);
-        result = 31 * result + (dateofbirth != null ? dateofbirth.hashCode() : 0);
+        result = 31 * result + (dateOfBirth != null ? dateOfBirth.hashCode() : 0);
         result = 31 * result + (weight != null ? weight.hashCode() : 0);
+        result = 31 * result + (height != null ? height.hashCode() : 0);
         return result;
     }
 
-    @OneToMany(mappedBy = "userByUserid")
-    public Collection<ScheduleItemEntity> getScheduleitemsById() {
-        return scheduleitemsById;
+    @OneToMany(mappedBy = "userById")
+    public Collection<ScheduleItemEntity> getScheduleItemsById() {
+        return scheduleItemsById;
     }
 
-    public void setScheduleitemsById(Collection<ScheduleItemEntity> scheduleitemsById) {
-        this.scheduleitemsById = scheduleitemsById;
+    public void setScheduleItemsById(Collection<ScheduleItemEntity> scheduleItemsById) {
+        this.scheduleItemsById = scheduleItemsById;
     }
 
-    @OneToMany(mappedBy = "userByUserid")
+    @OneToMany(mappedBy = "userById")
     public Collection<StatisticEntity> getStatisticsById() {
         return statisticsById;
     }
@@ -160,12 +164,12 @@ public class UserEntity {
         this.statisticsById = statisticsById;
     }
 
-    @OneToMany(mappedBy = "userByUserid")
-    public Collection<TestResultEntity> getTestresultsById() {
-        return testresultsById;
+    @OneToMany(mappedBy = "userById")
+    public Collection<TestResultEntity> getTestResultsById() {
+        return testResultsById;
     }
 
-    public void setTestresultsById(Collection<TestResultEntity> testresultsById) {
-        this.testresultsById = testresultsById;
+    public void setTestResultsById(Collection<TestResultEntity> testResultsById) {
+        this.testResultsById = testResultsById;
     }
 }

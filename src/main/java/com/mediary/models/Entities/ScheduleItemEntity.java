@@ -12,12 +12,12 @@ public class ScheduleItemEntity {
     private String place;
     private String address;
     private String note;
-    private UserEntity userByUserid;
-    private ScheduleItemTypeEntity scheduleitemtypeByScheduleitemtypeid;
+    private UserEntity userById;
+    private ScheduleItemTypeEntity scheduleItemTypeById;
 
     @Id
-    @SequenceGenerator(name="`ScheduleItem_ID_seq`", sequenceName="`ScheduleItem_ID_seq`", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="`ScheduleItem_ID_seq`")
+    @SequenceGenerator(name = "`ScheduleItem_ID_seq`", sequenceName = "`ScheduleItem_ID_seq`", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "`ScheduleItem_ID_seq`")
     @Column(name = "`ID`", nullable = false)
     public Integer getId() {
         return id;
@@ -28,7 +28,7 @@ public class ScheduleItemEntity {
     }
 
     @Basic
-    @Column(name = "`Title`", nullable = false, length = 30)
+    @Column(name = "`Title`", nullable = false, length = 50)
     public String getTitle() {
         return title;
     }
@@ -48,7 +48,7 @@ public class ScheduleItemEntity {
     }
 
     @Basic
-    @Column(name = "`Place`", nullable = false, length = 30)
+    @Column(name = "`Place`", nullable = false, length = 50)
     public String getPlace() {
         return place;
     }
@@ -79,17 +79,25 @@ public class ScheduleItemEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         com.mediary.Models.Entities.ScheduleItemEntity that = (com.mediary.Models.Entities.ScheduleItemEntity) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (title != null ? !title.equals(that.title) : that.title != null) return false;
-        if (date != null ? !date.equals(that.date) : that.date != null) return false;
-        if (place != null ? !place.equals(that.place) : that.place != null) return false;
-        if (address != null ? !address.equals(that.address) : that.address != null) return false;
-        if (note != null ? !note.equals(that.note) : that.note != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null)
+            return false;
+        if (title != null ? !title.equals(that.title) : that.title != null)
+            return false;
+        if (date != null ? !date.equals(that.date) : that.date != null)
+            return false;
+        if (place != null ? !place.equals(that.place) : that.place != null)
+            return false;
+        if (address != null ? !address.equals(that.address) : that.address != null)
+            return false;
+        if (note != null ? !note.equals(that.note) : that.note != null)
+            return false;
 
         return true;
     }
@@ -107,21 +115,21 @@ public class ScheduleItemEntity {
 
     @ManyToOne
     @JoinColumn(name = "`UserID`", referencedColumnName = "`ID`", nullable = false)
-    public UserEntity getUserByUserid() {
-        return userByUserid;
+    public UserEntity getUserById() {
+        return userById;
     }
 
-    public void setUserByUserid(UserEntity userByUserid) {
-        this.userByUserid = userByUserid;
+    public void setUserById(UserEntity userByUserid) {
+        this.userById = userByUserid;
     }
 
     @ManyToOne
     @JoinColumn(name = "`ScheduleItemTypeID`", referencedColumnName = "`ID`", nullable = false)
-    public ScheduleItemTypeEntity getScheduleitemtypeByScheduleitemtypeid() {
-        return scheduleitemtypeByScheduleitemtypeid;
+    public ScheduleItemTypeEntity getScheduleItemTypeById() {
+        return scheduleItemTypeById;
     }
 
-    public void setScheduleitemtypeByScheduleitemtypeid(ScheduleItemTypeEntity scheduleitemtypeByScheduleitemtypeid) {
-        this.scheduleitemtypeByScheduleitemtypeid = scheduleitemtypeByScheduleitemtypeid;
+    public void setScheduleItemTypeById(ScheduleItemTypeEntity scheduleItemTypeById) {
+        this.scheduleItemTypeById = scheduleItemTypeById;
     }
 }

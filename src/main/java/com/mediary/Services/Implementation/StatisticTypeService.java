@@ -39,6 +39,7 @@ public class StatisticTypeService implements IStatisticTypeService {
         var statisticTypeDto = new GetStatisticTypeDto();
         statisticTypeDto.setId(statisticTypeEntity.getId());
         statisticTypeDto.setName(statisticTypeEntity.getName());
+        statisticTypeDto.setUnit(statisticTypeEntity.getUnit());
         return statisticTypeDto;
     }
 

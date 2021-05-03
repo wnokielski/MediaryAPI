@@ -13,7 +13,8 @@ public interface UserRepository extends JpaRepository<com.mediary.Models.Entitie
     @Query("SELECT u from UserEntity u WHERE u.id=?1")
     UserEntity findByUserId(Integer userId);
 
-    UserEntity findUserEntitiesByUsername(String userName);
+    @Query("SELECT u from UserEntity u WHERE u.email=?1")
+    UserEntity findByEmail(String email);
 
     UserEntity findUserEntitiesByEmail(String email);
 

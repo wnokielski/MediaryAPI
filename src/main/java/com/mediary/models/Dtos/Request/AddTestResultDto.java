@@ -9,7 +9,7 @@ import lombok.Data;
 public class AddTestResultDto {
     private String title;
     private String note;
-    private Date dateofthetest;
+    private Date dateOfTheTest;
     private Integer testTypeId;
     private Collection<AddTestResultItemDto> testResulItems;
 }

@@ -54,7 +54,7 @@ public class TestResultItemService implements ITestResultItemService {
             testResultItem.setName(testResultItemDto.getName());
             testResultItem.setValue(testResultItemDto.getValue());
             testResultItem.setUnit(testResultItemDto.getUnit());
-            testResultItem.setTestresultByTestresultid(testResult);
+            testResultItem.setTestResultById(testResult);
             testResultItemRepository.save(testResultItem);
         }
     }

@@ -3,9 +3,7 @@ package com.mediary.Models.DTOs.Response;
 import lombok.Data;
 
 @Data
-public class GetStatisticTypeDto {
-
-    private Integer id;
+public class TestParameterDto {
     private String name;
     private String unit;
 }

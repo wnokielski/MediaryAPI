@@ -6,6 +6,7 @@ import java.util.List;
 import com.mediary.Models.DTOs.Request.AddStatisticDto;
 import com.mediary.Models.DTOs.Response.GetStatisticDto;
 import com.mediary.Models.Entities.StatisticEntity;
+import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Repositories.StatisticRepository;
 import com.mediary.Repositories.StatisticTypeRepository;
 import com.mediary.Repositories.UserRepository;
@@ -29,18 +30,28 @@ public class StatisticService implements IStatisticService {
     UserRepository userRepository;
 
     @Autowired
+    UserService userService;
+
+    @Autowired
     StatisticTypeRepository statisticTypeRepository;
 
     @Override
-    public void addStatistics(List<AddStatisticDto> statistics, Integer userId)
+    public void addStatistcsByAuthHeader(List<AddStatisticDto> statistics, String authHeader)
+            throws EntityNotFoundException, IncorrectFieldException {
+        UserEntity user = userService.getUserByAuthHeader(authHeader);
+        addStatistics(statistics, user);
+    }
+
+    @Override
+    public void addStatistics(List<AddStatisticDto> statistics, UserEntity user)
             throws IncorrectFieldException, EntityNotFoundException {
         for (AddStatisticDto statistic : statistics) {
-            addStatistic(statistic, userId);
+            addStatistic(statistic, user);
         }
     }
 
     @Override
-    public void addStatistic(AddStatisticDto statistic, Integer userId)
+    public void addStatistic(AddStatisticDto statistic, UserEntity user)
             throws IncorrectFieldException, EntityNotFoundException {
         if (statistic.getValue().length() > 50) {
             log.warn("Value field exceeds allowed length");
@@ -55,16 +66,11 @@ public class StatisticService implements IStatisticService {
         StatisticEntity newStatistic = new StatisticEntity();
         newStatistic.setValue(statistic.getValue());
         newStatistic.setDate(statistic.getDate());
-        var user = userRepository.findByUserId(userId);
-        if (user != null) {
-            newStatistic.setUserByUserid(user);
-        } else {
-            throw new EntityNotFoundException("User with specified ID doesn't exist");
-        }
+        newStatistic.setUserById(user);
 
         var statisticType = statisticTypeRepository.findById(statistic.getStatisticTypeId());
         if (statisticType != null) {
-            newStatistic.setStatistictypeByStatistictypeid(statisticType);
+            newStatistic.setStatisticTypeById(statisticType);
         } else {
             throw new EntityNotFoundException("Statistic type with specified ID doesn't exist!");
         }
@@ -73,12 +79,21 @@ public class StatisticService implements IStatisticService {
     }
 
     @Override
+    public List<GetStatisticDto> getStatisticsByAuthHeaderAndStatisticType(String authHeader, Integer statisticTypeId)
+            throws EntityNotFoundException {
+        UserEntity user = userService.getUserByAuthHeader(authHeader);
+        if (user != null) {
+            var statistics = getStatisticsByUserAndStatisticType(user.getId(), statisticTypeId);
+            return statistics;
+        } else {
+            throw new EntityNotFoundException("User doesn't exist.");
+        }
+    }
+
+    @Override
     public List<GetStatisticDto> getStatisticsByUserAndStatisticType(Integer userId, Integer statisticTypeId)
             throws EntityNotFoundException {
-        if (userRepository.findById(userId) == null) {
-            log.warn("User with specified ID doesn't exist!");
-            throw new EntityNotFoundException("User with specified ID doesn't exist!");
-        } else if (statisticTypeRepository.findById(statisticTypeId) == null) {
+        if (statisticTypeRepository.findById(statisticTypeId) == null) {
             log.warn("User with specified ID doesn't exist!");
             throw new EntityNotFoundException("Statistic type with specified ID doesn't exist!");
         }
@@ -103,7 +118,7 @@ public class StatisticService implements IStatisticService {
         statisticDto.setId(statisticEntity.getId());
         statisticDto.setValue(statisticEntity.getValue());
         statisticDto.setDate(statisticEntity.getDate());
-        statisticDto.setStatisticTypeName(statisticEntity.getStatistictypeByStatistictypeid().getName());
+        statisticDto.setStatisticTypeName(statisticEntity.getStatisticTypeById().getName());
         return statisticDto;
     }
 }
