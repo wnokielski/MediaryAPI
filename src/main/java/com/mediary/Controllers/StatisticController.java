@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -29,20 +30,21 @@ public class StatisticController {
     @Autowired
     IStatisticService statisticService;
 
-    @PostMapping("/{userId}")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void addStatistics(@PathVariable Integer userId, @RequestBody List<AddStatisticDto> statistics)
-            throws EntityNotFoundException, IncorrectFieldException {
+    public void addStatistics(@RequestHeader("Authentication") String authHeader,
+            @RequestBody List<AddStatisticDto> statistics) throws EntityNotFoundException, IncorrectFieldException {
 
-        statisticService.addStatistics(statistics, userId);
+        statisticService.addStatistcsByAuthHeader(statistics, authHeader);
 
     }
 
     @ResponseBody
-    @GetMapping("/{userId}/{statisticTypeId}")
-    public ResponseEntity<List<GetStatisticDto>> getStatisticsByUserAndStatisticType(@PathVariable Integer userId,
-            @PathVariable Integer statisticTypeId) throws EntityNotFoundException {
-        var statisticDtos = statisticService.getStatisticsByUserAndStatisticType(userId, statisticTypeId);
+    @GetMapping("/{statisticTypeId}")
+    public ResponseEntity<List<GetStatisticDto>> getStatisticsByUserAndStatisticType(
+            @RequestHeader("Authentication") String authHeader, @PathVariable Integer statisticTypeId)
+            throws EntityNotFoundException {
+        var statisticDtos = statisticService.getStatisticsByAuthHeaderAndStatisticType(authHeader, statisticTypeId);
         if (statisticDtos.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {

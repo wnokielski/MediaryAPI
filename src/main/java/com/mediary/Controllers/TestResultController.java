@@ -14,8 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,10 +32,10 @@ public class TestResultController {
     ITestResultService testResultService;
 
     @ResponseBody
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<GetTestResultDto>> getUserTestResults(@PathVariable Integer userId)
+    @GetMapping
+    public ResponseEntity<List<GetTestResultDto>> getUserTestResults(@RequestHeader String authHeader)
             throws EntityNotFoundException {
-        var testResultDtos = testResultService.getTestResultsByUser(userId);
+        var testResultDtos = testResultService.getTestResultsByAuthHeader(authHeader);
         if (testResultDtos.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
@@ -44,12 +44,12 @@ public class TestResultController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/{userId}")
-    public void addTestResult(@PathVariable Integer userId, @RequestPart(required = false) MultipartFile[] files,
+    @PostMapping
+    public void addTestResult(@RequestHeader String authHeader, @RequestPart(required = false) MultipartFile[] files,
             @RequestPart AddTestResultDto testResult)
             throws EntityNotFoundException, IncorrectFieldException, BlobStorageException {
 
-        testResultService.addTestResult(testResult, files, userId);
+        testResultService.addTestResultByAuthHeader(testResult, files, authHeader);
     }
 
 }
