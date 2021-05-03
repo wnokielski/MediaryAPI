@@ -33,7 +33,7 @@ public class TestResultController {
 
     @ResponseBody
     @GetMapping
-    public ResponseEntity<List<GetTestResultDto>> getUserTestResults(@RequestHeader String authHeader)
+    public ResponseEntity<List<GetTestResultDto>> getUserTestResults(@RequestHeader("Authorization") String authHeader)
             throws EntityNotFoundException {
         var testResultDtos = testResultService.getTestResultsByAuthHeader(authHeader);
         if (testResultDtos.isEmpty()) {
@@ -45,8 +45,8 @@ public class TestResultController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public void addTestResult(@RequestHeader String authHeader, @RequestPart(required = false) MultipartFile[] files,
-            @RequestPart AddTestResultDto testResult)
+    public void addTestResult(@RequestHeader("Authorization") String authHeader,
+            @RequestPart(required = false) MultipartFile[] files, @RequestPart AddTestResultDto testResult)
             throws EntityNotFoundException, IncorrectFieldException, BlobStorageException {
 
         testResultService.addTestResultByAuthHeader(testResult, files, authHeader);

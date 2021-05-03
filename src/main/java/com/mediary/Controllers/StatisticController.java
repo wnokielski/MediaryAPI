@@ -32,7 +32,7 @@ public class StatisticController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void addStatistics(@RequestHeader("Authentication") String authHeader,
+    public void addStatistics(@RequestHeader("Authorization") String authHeader,
             @RequestBody List<AddStatisticDto> statistics) throws EntityNotFoundException, IncorrectFieldException {
 
         statisticService.addStatistcsByAuthHeader(statistics, authHeader);
@@ -42,7 +42,7 @@ public class StatisticController {
     @ResponseBody
     @GetMapping("/{statisticTypeId}")
     public ResponseEntity<List<GetStatisticDto>> getStatisticsByUserAndStatisticType(
-            @RequestHeader("Authentication") String authHeader, @PathVariable Integer statisticTypeId)
+            @RequestHeader("Authorization") String authHeader, @PathVariable Integer statisticTypeId)
             throws EntityNotFoundException {
         var statisticDtos = statisticService.getStatisticsByAuthHeaderAndStatisticType(authHeader, statisticTypeId);
         if (statisticDtos.isEmpty()) {
