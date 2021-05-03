@@ -3,6 +3,7 @@ package com.mediary.Services.Interfaces;
 import java.util.List;
 
 import com.mediary.Models.DTOs.Response.GetTestTypeDto;
+import com.mediary.Models.DTOs.Response.TestTypeDto;
 import com.mediary.Models.Entities.TestTypeEntity;
 
 public interface ITestTypeService {
@@ -11,5 +12,7 @@ public interface ITestTypeService {
 
     List<GetTestTypeDto> testTypesToDtos(List<TestTypeEntity> testTypeEntities);
 
-    GetTestTypeDto testTypeToDto(TestTypeEntity testTypeEntity);
+    TestTypeDto testTypeToDto(TestTypeEntity testTypeEntity);
+
+    GetTestTypeDto testTypeWithParametersToDto(TestTypeEntity testTypeEntity);
 }

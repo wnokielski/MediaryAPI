@@ -40,7 +40,7 @@ public class TestResultEntity {
     }
 
     @Basic
-    @Column(name = "`Location", nullable = true, length = 50)
+    @Column(name = "`Location`", nullable = true, length = 50)
     public String getLocation() {
         return location;
     }
