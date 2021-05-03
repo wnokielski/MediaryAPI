@@ -7,9 +7,9 @@ import javax.persistence.*;
 public class FileEntity {
     private Integer id;
     private String uuid;
-    private String originalname;
+    private String originalName;
     private String url;
-    private TestResultEntity testresultByTestresultid;
+    private TestResultEntity testResultById;
 
     @Id
     @SequenceGenerator(name = "`File_ID_seq`", sequenceName = "`File_ID_seq`", allocationSize = 1)
@@ -35,12 +35,12 @@ public class FileEntity {
 
     @Basic
     @Column(name = "`OriginalName`", nullable = false, length = 50)
-    public String getOriginalname() {
-        return originalname;
+    public String getOriginalName() {
+        return originalName;
     }
 
-    public void setOriginalname(String originalname) {
-        this.originalname = originalname;
+    public void setOriginalName(String originalname) {
+        this.originalName = originalname;
     }
 
     @Basic
@@ -66,7 +66,7 @@ public class FileEntity {
             return false;
         if (uuid != null ? !uuid.equals(that.uuid) : that.uuid != null)
             return false;
-        if (originalname != null ? !originalname.equals(that.originalname) : that.originalname != null)
+        if (originalName != null ? !originalName.equals(that.originalName) : that.originalName != null)
             return false;
         if (url != null ? !url.equals(that.url) : that.url != null)
             return false;
@@ -78,18 +78,18 @@ public class FileEntity {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (uuid != null ? uuid.hashCode() : 0);
-        result = 31 * result + (originalname != null ? originalname.hashCode() : 0);
+        result = 31 * result + (originalName != null ? originalName.hashCode() : 0);
         result = 31 * result + (url != null ? url.hashCode() : 0);
         return result;
     }
 
     @ManyToOne
-    @JoinColumn(name = "TestResultID", referencedColumnName = "`ID`", nullable = false)
-    public TestResultEntity getTestresultByTestresultid() {
-        return testresultByTestresultid;
+    @JoinColumn(name = "`TestResultID`", referencedColumnName = "`ID`", nullable = false)
+    public TestResultEntity getTestResultById() {
+        return testResultById;
     }
 
-    public void setTestresultByTestresultid(TestResultEntity testresultByTestresultid) {
-        this.testresultByTestresultid = testresultByTestresultid;
+    public void setTestResultById(TestResultEntity testResultById) {
+        this.testResultById = testResultById;
     }
 }

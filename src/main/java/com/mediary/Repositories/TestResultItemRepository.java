@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface TestResultItemRepository extends JpaRepository<TestResultItemEntity, Long> {
 
-    @Query("SELECT i from TestResultItemEntity i WHERE i.testresultByTestresultid.id=?1")
+    @Query("SELECT i from TestResultItemEntity i WHERE i.testResultById.id=?1")
     List<TestResultItemEntity> findByTestResultId(Integer testResultId);
 }
