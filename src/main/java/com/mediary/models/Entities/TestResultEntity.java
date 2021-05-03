@@ -9,6 +9,7 @@ import java.util.Collection;
 public class TestResultEntity {
     private Integer id;
     private String title;
+    private String location;
     private String note;
     private Date dateOfTheTest;
     private Collection<FileEntity> filesById;
@@ -39,6 +40,16 @@ public class TestResultEntity {
     }
 
     @Basic
+    @Column(name = "`Location`", nullable = true, length = 50)
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    @Basic
     @Column(name = "`Note`", nullable = true, length = 200)
     public String getNote() {
         return note;
@@ -65,11 +76,13 @@ public class TestResultEntity {
         if (o == null || getClass() != o.getClass())
             return false;
 
-        com.mediary.Models.Entities.TestResultEntity that = (com.mediary.Models.Entities.TestResultEntity) o;
+        TestResultEntity that = (TestResultEntity) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null)
             return false;
         if (title != null ? !title.equals(that.title) : that.title != null)
+            return false;
+        if (location != null ? !location.equals(that.location) : that.location != null)
             return false;
         if (note != null ? !note.equals(that.note) : that.note != null)
             return false;
@@ -83,6 +96,7 @@ public class TestResultEntity {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (location != null ? location.hashCode() : 0);
         result = 31 * result + (note != null ? note.hashCode() : 0);
         result = 31 * result + (dateOfTheTest != null ? dateOfTheTest.hashCode() : 0);
         return result;
