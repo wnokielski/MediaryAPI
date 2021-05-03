@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 public class AddTestResultDto {
     private String title;
+    private String location;
     private String note;
     private Date dateOfTheTest;
     private Integer testTypeId;

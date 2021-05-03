@@ -60,6 +60,8 @@ public class TestResultService implements ITestResultService {
 
         if (testResultDto.getTitle().length() > 50 || testResultDto.getTitle() == "") {
             throw new IncorrectFieldException("Title field is incorrect");
+        } else if (testResultDto.getLocation().length() > 50) {
+            throw new IncorrectFieldException("Location name is too long");
         } else if (testResultDto.getNote().length() > 200) {
             throw new IncorrectFieldException("Note is too long");
         } else if (testResultDto.getDateOfTheTest() == null) {
@@ -67,6 +69,7 @@ public class TestResultService implements ITestResultService {
         } else {
             TestResultEntity testResultEntity = new TestResultEntity();
             testResultEntity.setTitle(testResultDto.getTitle());
+            testResultEntity.setLocation(testResultDto.getLocation());
             testResultEntity.setNote(testResultDto.getNote());
             testResultEntity.setDateOfTheTest(testResultDto.getDateOfTheTest());
 
@@ -130,6 +133,7 @@ public class TestResultService implements ITestResultService {
         GetTestResultDto testResultDto = new GetTestResultDto();
         testResultDto.setId(testResultEntity.getId());
         testResultDto.setTitle(testResultEntity.getTitle());
+        testResultDto.setLocation(testResultEntity.getLocation());
         testResultDto.setNote(testResultEntity.getNote());
         testResultDto.setDateOfTheTest(testResultEntity.getDateOfTheTest());
         testResultDto.setUserId(testResultEntity.getUserById().getId());
