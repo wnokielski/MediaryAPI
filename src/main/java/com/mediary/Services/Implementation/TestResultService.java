@@ -8,9 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mediary.Models.DTOs.Request.AddTestResultDto;
 import com.mediary.Models.DTOs.Response.GetTestResultDto;
 import com.mediary.Models.Entities.TestResultEntity;
+import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Repositories.TestResultRepository;
 import com.mediary.Repositories.TestTypeRepository;
-import com.mediary.Repositories.UserRepository;
 import com.mediary.Services.Exceptions.BlobStorageException;
 import com.mediary.Services.Exceptions.EntityNotFoundException;
 import com.mediary.Services.Exceptions.IncorrectFieldException;
@@ -36,7 +36,7 @@ public class TestResultService implements ITestResultService {
     TestTypeRepository testTypeRepository;
 
     @Autowired
-    UserRepository userRepository;
+    UserService userService;
 
     @Autowired
     IFileService fileService;
@@ -48,37 +48,39 @@ public class TestResultService implements ITestResultService {
     ITestResultItemService testResultItemService;
 
     @Override
-    public void addTestResult(AddTestResultDto testResultDto, MultipartFile[] files, Integer userId)
+    public void addTestResultByAuthHeader(AddTestResultDto testResult, MultipartFile[] files, String authHeader)
+            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException {
+        UserEntity user = userService.getUserByAuthHeader(authHeader);
+        addTestResult(testResult, files, user);
+    }
+
+    @Override
+    public void addTestResult(AddTestResultDto testResultDto, MultipartFile[] files, UserEntity user)
             throws EntityNotFoundException, IncorrectFieldException, BlobStorageException {
 
-        if (testResultDto.getTitle().length() > 30 || testResultDto.getTitle() == "") {
+        if (testResultDto.getTitle().length() > 50 || testResultDto.getTitle() == "") {
             throw new IncorrectFieldException("Title field is incorrect");
         } else if (testResultDto.getNote().length() > 200) {
             throw new IncorrectFieldException("Note is too long");
-        } else if (testResultDto.getDateofthetest() == null) {
+        } else if (testResultDto.getDateOfTheTest() == null) {
             throw new IncorrectFieldException("Date of the test is required");
         } else {
             TestResultEntity testResultEntity = new TestResultEntity();
             testResultEntity.setTitle(testResultDto.getTitle());
             testResultEntity.setNote(testResultDto.getNote());
-            testResultEntity.setDateofthetest(testResultDto.getDateofthetest());
+            testResultEntity.setDateOfTheTest(testResultDto.getDateOfTheTest());
 
             var testType = testTypeRepository.findById(testResultDto.getTestTypeId());
             if (testType != null) {
-                testResultEntity.setTesttypeByTesttypeid(testType);
+                testResultEntity.setTestTypeById(testType);
             } else {
                 throw new EntityNotFoundException("Test Type with specified id doesn't exist");
             }
 
-            var user = userRepository.findByUserId(userId);
-            if (user != null) {
-                testResultEntity.setUserByUserid(user);
-            } else {
-                throw new EntityNotFoundException("User with specified id doesn't exist");
-            }
+            testResultEntity.setUserById(user);
 
             for (MultipartFile file : files) {
-                fileService.uploadFile(file, userId, testResultEntity);
+                fileService.uploadFile(file, user.getId(), testResultEntity);
             }
 
             testResultItemService.addTestResultItems(testResultDto.getTestResulItems(), testResultEntity);
@@ -99,14 +101,16 @@ public class TestResultService implements ITestResultService {
     }
 
     @Override
-    public List<GetTestResultDto> getTestResultsByUser(Integer userId) throws EntityNotFoundException {
-        if (userRepository.findByUserId(userId) != null) {
-            var testResultEntities = testResultRepository.findByUser(userId);
-            List<GetTestResultDto> testResultDtos = testResultsToDtos(testResultEntities);
-            return testResultDtos;
-        } else {
-            throw new EntityNotFoundException("User with specified id doesn't exist");
-        }
+    public List<GetTestResultDto> getTestResultsByAuthHeader(String authHeader) throws EntityNotFoundException {
+        UserEntity user = userService.getUserByAuthHeader(authHeader);
+        return getTestResultsByUser(user);
+    }
+
+    @Override
+    public List<GetTestResultDto> getTestResultsByUser(UserEntity user) {
+        var testResultEntities = testResultRepository.findByUserId(user.getId());
+        List<GetTestResultDto> testResultDtos = testResultsToDtos(testResultEntities);
+        return testResultDtos;
 
     }
 
@@ -127,16 +131,16 @@ public class TestResultService implements ITestResultService {
         testResultDto.setId(testResultEntity.getId());
         testResultDto.setTitle(testResultEntity.getTitle());
         testResultDto.setNote(testResultEntity.getNote());
-        testResultDto.setDateOfTheTest(testResultEntity.getDateofthetest());
-        testResultDto.setUserId(testResultEntity.getUserByUserid().getId());
+        testResultDto.setDateOfTheTest(testResultEntity.getDateOfTheTest());
+        testResultDto.setUserId(testResultEntity.getUserById().getId());
 
-        var testTypeEntity = testResultEntity.getTesttypeByTesttypeid();
+        var testTypeEntity = testResultEntity.getTestTypeById();
         testResultDto.setTestType(testTypeService.testTypeToDto(testTypeEntity));
 
         var files = testResultEntity.getFilesById();
         testResultDto.setFiles(fileService.filesToDtos(files));
 
-        var testResultItems = testResultEntity.getTestresultitemsById();
+        var testResultItems = testResultEntity.getTestResultItemsById();
         testResultDto.setTestResultItems(testResultItemService.testResultItemsToDtos(testResultItems));
 
         return testResultDto;

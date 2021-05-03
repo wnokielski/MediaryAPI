@@ -5,16 +5,23 @@ import java.util.List;
 import com.mediary.Models.DTOs.Request.AddStatisticDto;
 import com.mediary.Models.DTOs.Response.GetStatisticDto;
 import com.mediary.Models.Entities.StatisticEntity;
+import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Services.Exceptions.EntityNotFoundException;
 import com.mediary.Services.Exceptions.IncorrectFieldException;
 
 public interface IStatisticService {
 
-        void addStatistics(List<AddStatisticDto> statistics, Integer userId)
+        void addStatistcsByAuthHeader(List<AddStatisticDto> statistics, String authHeader)
                         throws EntityNotFoundException, IncorrectFieldException;
 
-        void addStatistic(AddStatisticDto statistic, Integer userId)
+        void addStatistics(List<AddStatisticDto> statistics, UserEntity user)
                         throws EntityNotFoundException, IncorrectFieldException;
+
+        void addStatistic(AddStatisticDto statistic, UserEntity user)
+                        throws EntityNotFoundException, IncorrectFieldException;
+
+        List<GetStatisticDto> getStatisticsByAuthHeaderAndStatisticType(String authHeader, Integer statisticTypeId)
+                        throws EntityNotFoundException;
 
         List<GetStatisticDto> getStatisticsByUserAndStatisticType(Integer userId, Integer statisticTypeId)
                         throws EntityNotFoundException;

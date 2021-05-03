@@ -5,14 +5,15 @@ import com.mediary.Models.DTOs.Request.ChangePasswordDto;
 import com.mediary.Models.DTOs.Request.UserRegisterDto;
 import com.mediary.Models.DTOs.Request.UserUpdateDto;
 import com.mediary.Models.Entities.UserEntity;
+import com.mediary.Models.Enums.Gender;
 import com.mediary.Repositories.UserRepository;
 import com.mediary.Services.Const;
 import com.mediary.Services.Exceptions.User.*;
 import com.mediary.Services.Interfaces.IUserService;
 import com.mediary.Models.DTOs.JwtRequest;
 import com.mediary.Models.DTOs.JwtResponse;
-import com.mediary.models.DTOs.Response.LoginDto;
-import com.mediary.models.DTOs.Response.UserDataDto;
+import com.mediary.Models.DTOs.Response.LoginDto;
+import com.mediary.Models.DTOs.Response.UserDataDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +23,15 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.firewall.FirewalledRequest;
 import org.springframework.stereotype.Service;
-import com.auth0.jwt.impl.NullClaim;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 
+import com.mediary.Services.Exceptions.EntityNotFoundException;
+import com.mediary.Services.Exceptions.EnumConversionException;
+import com.mediary.Services.Exceptions.IncorrectFieldException;
+
+@Slf4j
 @Service
 public class UserService implements IUserService {
 
@@ -47,56 +50,58 @@ public class UserService implements IUserService {
     @Autowired
     JwtTokenUtils jwtTokenUtils;
 
-
-
-
     @Override
-    public int updateUserDetails(UserUpdateDto user, Integer userId) {
-        Optional<UserEntity> newUser = userRepository.findById(userId);
+    public int updateUserDetails(UserUpdateDto user, String authHeader)
+            throws EntityNotFoundException, EnumConversionException, IncorrectFieldException {
+        UserEntity newUser = getUserByAuthHeader(authHeader);
 
-        if (newUser.isEmpty())
+        if (newUser == null)
             return Const.userDoesNotExist;
 
-        if (user.getEmail().length() > 254)
-            return Const.toLongEmail;
+        // if (user.getEmail().length() > 254)
+        // return Const.toLongEmail;
 
-        if (user.getEmail() != null && !user.getEmail().equals(newUser.get().getEmail())) {
-            if (userRepository.findUserEntitiesByEmail(user.getEmail()) != null)
-                return Const.emailAlreadyUsed;
-            newUser.get().setEmail(user.getEmail());
-        }
+        // if (user.getEmail() != null && !user.getEmail().equals(newUser.getEmail())) {
+        // if (userRepository.findUserEntitiesByEmail(user.getEmail()) != null)
+        // return Const.emailAlreadyUsed;
+        // newUser.setEmail(user.getEmail());
+        // }
         if (user.getFullName().length() > 40)
             return Const.toLongName;
-        if (!user.getFullName().equals(newUser.get().getFullName()))
-            newUser.get().setFullName(user.getFullName());
-        if (!user.getGender().equals(newUser.get().getGender()))
-            newUser.get().setGender(user.getGender());
-        if (!user.getDateofbirth().equals(newUser.get().getDateofbirth()))
-            newUser.get().setDateofbirth(user.getDateofbirth());
-        userRepository.save(newUser.get());
+        if (!user.getFullName().equals(newUser.getFullName()))
+            newUser.setFullName(user.getFullName());
+
+        if (!user.getGender().equals(newUser.getGender().getCode())) {
+            Gender gender = Gender.convertStringToEnum(user.getGender());
+            newUser.setGender(gender);
+        }
+        if (!user.getDateOfBirth().equals(newUser.getDateOfBirth()))
+            newUser.setDateOfBirth(user.getDateOfBirth());
+        if (!user.getWeight().equals(newUser.getWeight()))
+            newUser.setWeight(user.getWeight());
+        if (!user.getHeight().equals(newUser.getHeight()))
+            newUser.setHeight(user.getHeight());
+        userRepository.save(newUser);
 
         return Const.userDetailsUpdateSuccess;
     }
 
     @Override
-    public UserDto getUserById(int id) {
+    public UserDto getUserDetails(String authHeader) throws EntityNotFoundException {
         UserDto usersDto = new UserDto();
-        Optional<UserEntity> user = userRepository.findById(id);
-        if (user.isEmpty())
-            return null;
-        usersDto.setId(user.get().getId());
-        usersDto.setUsername(user.get().getUsername());
-        usersDto.setFullName(user.get().getFullName());
-        usersDto.setGender(user.get().getGender());
-        usersDto.setEmail(user.get().getEmail());
-        usersDto.setDateOfBirth(user.get().getDateofbirth());
-        usersDto.setWeight(user.get().getWeight());
+        UserEntity user = getUserByAuthHeader(authHeader);
+        usersDto.setId(user.getId());
+        usersDto.setFullName(user.getFullName());
+        usersDto.setGender(user.getGender().getCode());
+        usersDto.setEmail(user.getEmail());
+        usersDto.setDateOfBirth(user.getDateOfBirth());
+        usersDto.setWeight(user.getWeight());
         return usersDto;
     }
 
     @Override
-    public int updatePassword(ChangePasswordDto passwordDto, Integer id) {
-        UserEntity user = userRepository.getUserEntityById(id);
+    public int updatePassword(ChangePasswordDto passwordDto, String authHeader) throws EntityNotFoundException {
+        UserEntity user = getUserByAuthHeader(authHeader);
         if (user == null)
             return Const.userDoesNotExist;
         if (!passwordEncoder.encode(passwordDto.getOldPassword()).equals(passwordEncoder.encode(user.getPassword())))
@@ -127,10 +132,11 @@ public class UserService implements IUserService {
         UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
 
         UserDataDto userData = new UserDataDto();
-        userData.setGender(userRepository.findUserEntitiesByEmail(userDetails.getUsername()).getGender());
-        userData.setWeight(userRepository.findUserEntitiesByEmail(userDetails.getUsername()).getWeight());
-        userData.setFullName(userRepository.findUserEntitiesByEmail(userDetails.getUsername()).getFullName());
-        userData.setDateOfBirth(userRepository.findUserEntitiesByEmail(userDetails.getUsername()).getDateofbirth());
+        UserEntity userEntity = userRepository.findUserEntitiesByEmail(userDetails.getUsername());
+        userData.setGender(userEntity.getGender().getCode());
+        userData.setWeight(userEntity.getWeight());
+        userData.setFullName(userEntity.getFullName());
+        userData.setDateOfBirth(userEntity.getDateOfBirth());
 
         LoginDto loginDto = new LoginDto();
         loginDto.setUserData(userData);
@@ -140,8 +146,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<?> signInAfterRegistration(UserRegisterDto user) throws EmailToLongException, PasswordToLongException,
-            EmailAlreadyUsedException, FullNameToLongException  {
+    public ResponseEntity<?> signInAfterRegistration(UserRegisterDto user)
+            throws EmailToLongException, PasswordToLongException, EmailAlreadyUsedException, FullNameToLongException {
         int result = registerNewUser(user);
         if (result == Const.emailAlreadyUsed)
             throw new EmailAlreadyUsedException("E-mail is already used!");
@@ -151,13 +157,12 @@ public class UserService implements IUserService {
             throw new FullNameToLongException("Typed name is too long!");
         if (result == Const.toLongPassword)
             throw new PasswordToLongException("Typed password is too long!");
-        if(result == Const.registrationSuccess){
+        if (result == Const.registrationSuccess) {
             JwtRequest token = new JwtRequest();
             token.setPassword(user.getPassword());
             token.setEmail(user.getEmail());
             return this.authenticateUser(token);
-        }
-        else{
+        } else {
             return new ResponseEntity("Bad Registration", HttpStatus.UNAUTHORIZED);
         }
     }
@@ -193,11 +198,25 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<?> refreshToken(String authHeader){
+    public ResponseEntity<?> refreshToken(String authHeader) {
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(jwtTokenUtils.getEmailFromToken(authHeader.substring(7)));
+        UserDetails userDetails = userDetailsService
+                .loadUserByUsername(jwtTokenUtils.getEmailFromToken(authHeader.substring(7)));
 
         return new ResponseEntity<>(new JwtResponse(jwtTokenUtils.generateToken(userDetails)), HttpStatus.OK);
+    }
+
+    @Override
+    public UserEntity getUserByAuthHeader(String authHeader) throws EntityNotFoundException {
+        UserDetails userDetails = userDetailsService
+                .loadUserByUsername(jwtTokenUtils.getEmailFromToken(authHeader.substring(7)));
+        String email = userDetails.getUsername();
+        UserEntity user = userRepository.findByEmail(email);
+        if (user != null) {
+            return user;
+        } else {
+            throw new EntityNotFoundException("User doesn't exist");
+        }
     }
 
 }

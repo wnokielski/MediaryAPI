@@ -17,6 +17,9 @@ public class TestTypeService implements ITestTypeService {
     @Autowired
     TestTypeRepository testTypeRepository;
 
+    @Autowired
+    TestParameterService testParameterService;
+
     @Override
     public List<GetTestTypeDto> getAllTestTypes() {
         var testTypes = testTypeRepository.findAll();
@@ -40,6 +43,8 @@ public class TestTypeService implements ITestTypeService {
         var testTypeDto = new GetTestTypeDto();
         testTypeDto.setId(testTypeEntity.getId());
         testTypeDto.setName(testTypeEntity.getName());
+        var testParameters = testTypeEntity.getTestParametersById();
+        testTypeDto.setParameters(testParameterService.testParametersToDtos(testParameters));
         return testTypeDto;
     }
 }
