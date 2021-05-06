@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/user/register", "/api/user/authenticate", "swagger-ui.html").permitAll()
+                .antMatchers("/api/user/register", "/api/user/authenticate", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated();
 
         //All request unauthorized (FOR TEST PURPOSES ONLY!!!)
