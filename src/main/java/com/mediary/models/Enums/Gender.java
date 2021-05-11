@@ -3,7 +3,7 @@ package com.mediary.Models.Enums;
 import com.mediary.Services.Exceptions.EnumConversionException;
 
 public enum Gender {
-    MALE("Male"), FEMALE("Female");
+    MALE("Male"), FEMALE("Female"), UNDEFINED("Undefined");
 
     private String code;
 

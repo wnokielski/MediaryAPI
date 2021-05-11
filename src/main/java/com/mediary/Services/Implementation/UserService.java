@@ -194,6 +194,7 @@ public class UserService implements IUserService {
         newUser.setEmail(user.getEmail());
         newUser.setPassword(passwordEncoder.encode(user.getPassword()));
         newUser.setFullName(user.getFullName());
+        newUser.setGender(Gender.UNDEFINED);
         userRepository.save(newUser);
         return Const.registrationSuccess;
     }
