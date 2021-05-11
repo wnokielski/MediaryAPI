@@ -140,7 +140,8 @@ public class UserService implements IUserService {
 
         LoginDto loginDto = new LoginDto();
         loginDto.setUserData(userData);
-        loginDto.setToken(new JwtResponse(jwtTokenUtils.generateToken(userDetails)));
+        JwtResponse jwtToken = new JwtResponse(jwtTokenUtils.generateToken(userDetails));
+        loginDto.setToken(jwtToken.getToken());
 
         return new ResponseEntity(loginDto, HttpStatus.OK);
     }

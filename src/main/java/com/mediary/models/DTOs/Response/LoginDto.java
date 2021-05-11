@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class LoginDto {
-    com.mediary.Models.DTOs.JwtResponse token;
+    String token;
     UserDataDto userData;
 }
