@@ -96,6 +96,7 @@ public class UserService implements IUserService {
         usersDto.setEmail(user.getEmail());
         usersDto.setDateOfBirth(user.getDateOfBirth());
         usersDto.setWeight(user.getWeight());
+        usersDto.setHeight(user.getHeight());
         return usersDto;
     }
 
@@ -138,6 +139,7 @@ public class UserService implements IUserService {
         UserDataDto userData = new UserDataDto();
         UserEntity userEntity = userRepository.findUserEntitiesByEmail(userDetails.getUsername());
         userData.setGender(userEntity.getGender().getCode());
+        userData.setHeight(userEntity.getHeight());
         userData.setWeight(userEntity.getWeight());
         userData.setFullName(userEntity.getFullName());
         userData.setDateOfBirth(userEntity.getDateOfBirth());
