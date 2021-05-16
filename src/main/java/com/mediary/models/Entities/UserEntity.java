@@ -96,7 +96,7 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "`Height`", nullable = true, precision = 3, scale = 2)
+    @Column(name = "`Height`", nullable = true, precision = 3)
     public BigDecimal getHeight() {
         return height;
     }

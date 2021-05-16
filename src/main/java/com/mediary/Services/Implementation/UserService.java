@@ -77,8 +77,14 @@ public class UserService implements IUserService {
         }
         if (!user.getDateOfBirth().equals(newUser.getDateOfBirth()))
             newUser.setDateOfBirth(user.getDateOfBirth());
+        if (user.getWeight().precision() > 4 || user.getWeight().precision() == 4 && user.getWeight().scale() != 1) {
+            throw new IncorrectFieldException("Incorrect weight field! Too many digits");
+        }
         if (!user.getWeight().equals(newUser.getWeight()))
             newUser.setWeight(user.getWeight());
+        if (user.getHeight().precision() > 3) {
+            throw new IncorrectFieldException("Incorrect height field! Too many digits");
+        }
         if (!user.getHeight().equals(newUser.getHeight()))
             newUser.setHeight(user.getHeight());
         userRepository.save(newUser);
