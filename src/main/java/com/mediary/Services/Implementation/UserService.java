@@ -104,11 +104,15 @@ public class UserService implements IUserService {
         UserEntity user = getUserByAuthHeader(authHeader);
         if (user == null)
             return Const.userDoesNotExist;
-        if (!passwordEncoder.encode(passwordDto.getOldPassword()).equals(passwordEncoder.encode(user.getPassword())))
+        if (!passwordEncoder.matches(passwordDto.getOldPassword(), user.getPassword())) {
+            log.warn(user.getPassword());
+            log.warn(passwordEncoder.encode(passwordDto.getOldPassword()));
             return Const.wrongPassword;
+        }
+
         if (passwordDto.getNewPassword().length() > 72)
             return Const.toLongPassword;
-        if (!passwordEncoder.encode(passwordDto.getNewPassword()).equals(passwordEncoder.encode(user.getPassword())))
+        if (!passwordEncoder.matches(passwordDto.getNewPassword(), user.getPassword()))
             user.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
         userRepository.save(user);
         return Const.userDetailsUpdateSuccess;
