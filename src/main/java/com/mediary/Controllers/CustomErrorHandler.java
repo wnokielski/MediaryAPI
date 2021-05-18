@@ -1,5 +1,7 @@
 package com.mediary.Controllers;
 
+import com.mediary.Services.Exceptions.ScheduleItem.ScheduleItemDeletionError;
+import com.mediary.Services.Exceptions.ScheduleItem.ScheduleItemDoesNotExist;
 import com.mediary.Services.Exceptions.User.UserNotFoundException;
 
 import org.springframework.http.HttpStatus;
@@ -27,7 +29,7 @@ public class CustomErrorHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
     }
 
-    @ExceptionHandler({ UserNotFoundException.class, EntityNotFoundException.class })
+    @ExceptionHandler({ UserNotFoundException.class, EntityNotFoundException.class, ScheduleItemDoesNotExist.class})
     public ResponseEntity<ErrorResponse> notFoundHandle(Exception ex, WebRequest request) {
         ErrorResponse response = new ErrorResponse(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
@@ -40,7 +42,7 @@ public class CustomErrorHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({ WrongPasswordException.class })
+    @ExceptionHandler({ WrongPasswordException.class, ScheduleItemDeletionError.class})
     public ResponseEntity<ErrorResponse> wrong(Exception ex, WebRequest request) {
         ErrorResponse response = new ErrorResponse(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);

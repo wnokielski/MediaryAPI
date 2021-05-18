@@ -11,4 +11,8 @@ public interface ScheduleItemRepository extends JpaRepository<ScheduleItemEntity
 
     @Query("SELECT s from ScheduleItemEntity s WHERE s.userById.id=?1")
     List<ScheduleItemEntity> findByUserId(Integer id);
+
+    ScheduleItemEntity findById(Integer scheduleItemId);
+
+    void deleteById(Integer id);
 }

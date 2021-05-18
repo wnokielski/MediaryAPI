@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.mediary.Models.DTOs.Request.AddScheduleItemDto;
 import com.mediary.Models.DTOs.Response.GetScheduleItemDto;
+import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Models.Entities.ScheduleItemEntity;
 import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Services.Exceptions.EntityNotFoundException;
@@ -25,4 +26,6 @@ public interface IScheduleItemService {
         List<GetScheduleItemDto> scheduleItemsToDtos(List<ScheduleItemEntity> scheduleItemEntities);
 
         GetScheduleItemDto scheduleItemToDto(ScheduleItemEntity scheduleItemEntity);
+
+        int deleteScheduleItem(UserDto userId, Integer scheduleItemId);
 }

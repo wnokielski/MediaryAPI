@@ -11,4 +11,6 @@ public interface IScheduleItemTypeService {
     List<GetScheduleItemTypeDto> scheduleItemTypesToDtos(List<ScheduleItemTypeEntity> ScheduleItemTypeEntities);
 
     GetScheduleItemTypeDto scheduleItemTypeToDto(ScheduleItemTypeEntity scheduleItemTypeEntity);
+
+    void deleteScheduleItemType(Integer id);
 }

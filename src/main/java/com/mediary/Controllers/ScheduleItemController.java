@@ -3,23 +3,26 @@ package com.mediary.Controllers;
 import java.util.List;
 
 import com.mediary.Models.DTOs.Request.AddScheduleItemDto;
+import com.mediary.Models.DTOs.Request.UserUpdateDto;
 import com.mediary.Models.DTOs.Response.GetScheduleItemDto;
+import com.mediary.Models.DTOs.UserDto;
+import com.mediary.Services.Const;
 import com.mediary.Services.Exceptions.EntityNotFoundException;
+import com.mediary.Services.Exceptions.EnumConversionException;
 import com.mediary.Services.Exceptions.IncorrectFieldException;
+import com.mediary.Services.Exceptions.ScheduleItem.ScheduleItemDeletionError;
+import com.mediary.Services.Exceptions.ScheduleItem.ScheduleItemDoesNotExist;
+import com.mediary.Services.Exceptions.User.EmailAlreadyUsedException;
+import com.mediary.Services.Exceptions.User.EmailToLongException;
+import com.mediary.Services.Exceptions.User.FullNameToLongException;
+import com.mediary.Services.Exceptions.User.UserDoesNotExist;
+import com.mediary.Services.Implementation.UserService;
 import com.mediary.Services.Interfaces.IScheduleItemService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
@@ -28,6 +31,9 @@ public class ScheduleItemController {
 
     @Autowired
     IScheduleItemService scheduleItemService;
+
+    @Autowired
+    UserService userService;
 
     @ResponseBody
     @GetMapping
@@ -48,5 +54,17 @@ public class ScheduleItemController {
             @RequestBody List<AddScheduleItemDto> scheduleItems)
             throws EntityNotFoundException, IncorrectFieldException {
         scheduleItemService.addScheduleItemsByAuthHeader(scheduleItems, authHeader);
+    }
+
+    @DeleteMapping("/{scheduleItemId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteScheduleItem(@RequestHeader("Authorization") String authHeader, @PathVariable ("scheduleItemId") Integer scheduleItemId)
+            throws ScheduleItemDeletionError, ScheduleItemDoesNotExist, EntityNotFoundException {
+        UserDto user = userService.getUserDetails(authHeader);
+        int result = scheduleItemService.deleteScheduleItem(user, scheduleItemId);
+        if (result == Const.scheduleItemDeletionError)
+            throw new ScheduleItemDeletionError("Schedule item doesn't belong to this user!");
+        if (result == Const.scheduleItemDoesNotExist)
+            throw new ScheduleItemDoesNotExist("Schedule item does not exist!");
     }
 }

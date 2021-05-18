@@ -5,10 +5,12 @@ import java.util.List;
 
 import com.mediary.Models.DTOs.Request.AddScheduleItemDto;
 import com.mediary.Models.DTOs.Response.GetScheduleItemDto;
+import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Models.Entities.ScheduleItemEntity;
 import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Repositories.ScheduleItemRepository;
 import com.mediary.Repositories.ScheduleItemTypeRepository;
+import com.mediary.Services.Const;
 import com.mediary.Services.Exceptions.EntityNotFoundException;
 import com.mediary.Services.Exceptions.IncorrectFieldException;
 import com.mediary.Services.Interfaces.IScheduleItemService;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -123,4 +126,21 @@ public class ScheduleItemService implements IScheduleItemService {
 
         return scheduleItemDto;
     }
+
+    @Override
+    @Transactional
+    public int deleteScheduleItem(UserDto user, Integer scheduleItemId){
+        ScheduleItemEntity scheduleItem = scheduleItemRepository.findById(scheduleItemId);
+        if(scheduleItem != null){
+            if(scheduleItem.getUserById().getId().equals(user.getId())){
+                scheduleItemRepository.deleteById(scheduleItemId);
+                scheduleItemTypeService.deleteScheduleItemType(scheduleItem.getScheduleItemTypeById().getId());
+                return Const.scheduleItemDeletionSuccess;
+            }
+            return Const.scheduleItemDeletionError;
+        }
+        return Const.scheduleItemDoesNotExist;
+    }
+
+
 }
