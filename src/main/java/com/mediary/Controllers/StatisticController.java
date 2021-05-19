@@ -56,4 +56,15 @@ public class StatisticController {
         }
     }
 
+    @DeleteMapping("/{statisticId}")
+    public ResponseEntity<List<GetStatisticDto>> deleteStatisticByUserAndStatisticId(
+            @RequestHeader("Authorization") String authHeader, @PathVariable Integer statisticId)
+            throws EntityNotFoundException {
+        var qty = statisticService.deleteStatisticByAuthHeaderAndStatisticId(authHeader, statisticId);
+        if (qty == 0) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+    }
 }

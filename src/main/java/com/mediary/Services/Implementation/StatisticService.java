@@ -20,9 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
+@Transactional
 public class StatisticService implements IStatisticService {
 
     @Autowired
@@ -130,6 +132,29 @@ public class StatisticService implements IStatisticService {
                 Timestamp.valueOf(dateFrom + " 00:00:00"), Timestamp.valueOf(dateTo + " 23:59:59"));
         ArrayList<GetStatisticDto> statisticDtos = (ArrayList<GetStatisticDto>) statisticsToDtos(statistics);
         return statisticDtos;
+    }
+
+    @Override
+    public Long deleteStatisticByAuthHeaderAndStatisticId(String authHeader, Integer statisticId) throws EntityNotFoundException{
+        UserEntity user = userService.getUserByAuthHeader(authHeader);
+        if (user != null) {
+            var qty = deleteStatisticByUserAndStatisticId(user, statisticId);
+            return qty;
+        } else {
+            throw new EntityNotFoundException("User doesn't exist.");
+        }
+    }
+
+    @Override
+    public Long deleteStatisticByUserAndStatisticId(UserEntity user, Integer statisticId) throws EntityNotFoundException {
+        var statistic = statisticRepository.findByUserByIdAndId(user, statisticId);
+        if(statistic != null){
+            return statisticRepository.deleteById(statisticId);
+        } else {
+            log.warn("Statistic not found! Are you trying to delete someone else's statistic?");
+            throw new EntityNotFoundException("Statistic not found! Are you trying to delete someone else's statistic?");
+        }
+
     }
 
     @Override

@@ -17,4 +17,8 @@ public interface StatisticRepository extends JpaRepository<StatisticEntity, Long
     List<StatisticEntity> findByUserByIdAndStatisticTypeByIdAndDateBetween(Optional<com.mediary.Models.Entities.UserEntity> user,
                                                                            com.mediary.Models.Entities.StatisticTypeEntity statisticType,
                                                                            Timestamp dateFrom, Timestamp dateTo);
+
+    StatisticEntity findByUserByIdAndId(com.mediary.Models.Entities.UserEntity user, Integer statisticId);
+
+    Long deleteById(Integer statisticId);
 }
