@@ -44,4 +44,16 @@ public class StatisticController {
         }
     }
 
+    @GetMapping("/byDate/{statisticTypeId}/{dateFrom}/{dateTo}")
+    public ResponseEntity<List<GetStatisticDto>> getStatisticsByUserAndStatisticTypeAndDate (
+            @RequestHeader("Authorization") String authHeader, @PathVariable Integer statisticTypeId,
+            @PathVariable String dateFrom, @PathVariable String dateTo) throws EntityNotFoundException{
+        var statisticDtos = statisticService.getStatisticsByAuthHeaderAndStatisticTypeAndDate(authHeader, statisticTypeId, dateFrom, dateTo);
+        if (statisticDtos.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(statisticDtos, HttpStatus.OK);
+        }
+    }
+
 }
