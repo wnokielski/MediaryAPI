@@ -134,7 +134,7 @@ public class ScheduleItemService implements IScheduleItemService {
         if(scheduleItem != null){
             if(scheduleItem.getUserById().getId().equals(user.getId())){
                 scheduleItemRepository.deleteById(scheduleItemId);
-                scheduleItemTypeService.deleteScheduleItemType(scheduleItem.getScheduleItemTypeById().getId());
+//                scheduleItemTypeService.deleteScheduleItemType(scheduleItem.getScheduleItemTypeById().getId());
                 return Const.scheduleItemDeletionSuccess;
             }
             return Const.scheduleItemDeletionError;

@@ -1,16 +1,22 @@
 package com.mediary.Services.Implementation;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mediary.Models.DTOs.Request.AddTestResultDto;
 import com.mediary.Models.DTOs.Response.GetTestResultDto;
-import com.mediary.Models.Entities.TestResultEntity;
-import com.mediary.Models.Entities.UserEntity;
+import com.mediary.Models.DTOs.UserDto;
+import com.mediary.Models.Entities.*;
+import com.mediary.Models.Enums.SortType;
+import com.mediary.Repositories.FileRepository;
+import com.mediary.Repositories.TestResultItemRepository;
 import com.mediary.Repositories.TestResultRepository;
 import com.mediary.Repositories.TestTypeRepository;
+import com.mediary.Services.Const;
 import com.mediary.Services.Exceptions.BlobStorageException;
 import com.mediary.Services.Exceptions.EntityNotFoundException;
 import com.mediary.Services.Exceptions.IncorrectFieldException;
@@ -21,6 +27,7 @@ import com.mediary.Services.Interfaces.ITestTypeService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +53,12 @@ public class TestResultService implements ITestResultService {
 
     @Autowired
     ITestResultItemService testResultItemService;
+
+    @Autowired
+    TestResultItemRepository testResultItemRepository;
+
+    @Autowired
+    FileRepository fileRepository;
 
     @Override
     public void addTestResultByAuthHeader(AddTestResultDto testResult, MultipartFile[] files, String authHeader)
@@ -149,4 +162,106 @@ public class TestResultService implements ITestResultService {
 
         return testResultDto;
     }
+
+    @Override
+    @Transactional
+    public int deleteTestResult(UserDto user, Integer testResultId) throws BlobStorageException, EntityNotFoundException {
+        TestResultEntity testResult = testResultRepository.findById(testResultId);
+        if(testResult != null){
+            if(testResult.getUserById().getId().equals(user.getId())){
+                Collection<TestResultItemEntity> testResultItems = testResultItemRepository.findAllByTestResultById(testResult);
+                for(TestResultItemEntity testResultItem : testResultItems){
+                    testResultItemService.deleteTestResultItem(testResultItem.getId());
+                }
+                List<FileEntity> files = fileRepository.findByTestResultId(testResultId);
+                for(FileEntity file : files){
+                    fileService.deleteFile(file.getId());
+                }
+                if(files.isEmpty()){
+                    testResultRepository.deleteById(testResultId);
+                    return Const.testResultDeletionSuccess;
+                }
+                else{
+                    return Const.testResultFileDeletionError;
+                }
+            }
+            return Const.testResultDeletionError;
+        }
+        return Const.testResultDoesNotExists;
+    }
+
+    @Override
+    public List<GetTestResultDto> getTestResultsSorted(List<GetTestResultDto> testResults, String sortType){
+        List<GetTestResultDto> sortedResults = chooseSort(sortType, testResults);
+        return sortedResults;
+    }
+
+    @Override
+    public List<GetTestResultDto> sortByToday(List<GetTestResultDto> testResults) {
+        List<GetTestResultDto> sorted = new ArrayList<>();
+        for (GetTestResultDto testResult: testResults
+        ) {
+            if(testResult.getDateOfTheTest().toLocalDate().equals(LocalDate.now()))
+                sorted.add(testResult);
+        }
+        return sorted;
+    }
+
+    @Override
+    public List<GetTestResultDto> sortByThisWeek(List<GetTestResultDto> testResults) {
+        List<GetTestResultDto> sorted = new ArrayList<>();
+        for (GetTestResultDto testResult: testResults
+        ) {
+            if(testResult.getDateOfTheTest().toLocalDate().isAfter(LocalDate.now().minusDays(7))){
+                sorted.add(testResult);
+            }
+
+        }
+        return sorted;
+    }
+
+    @Override
+    public List<GetTestResultDto> sortByThisMonth(List<GetTestResultDto> testResults) {
+        List<GetTestResultDto> sorted = new ArrayList<>();
+        for (GetTestResultDto testResult: testResults
+        ) {
+            if(testResult.getDateOfTheTest().toLocalDate().isAfter(LocalDate.now().minusDays(30)))
+                sorted.add(testResult);
+        }
+        return sorted;
+    }
+
+    @Override
+    public List<GetTestResultDto> sortByThisYear(List<GetTestResultDto> testResults) {
+        List<GetTestResultDto> sorted = new ArrayList<>();
+        for (GetTestResultDto testResult: testResults
+        ) {
+            if(testResult.getDateOfTheTest().toLocalDate().isAfter(LocalDate.now().minusDays(365)))
+                sorted.add(testResult);
+        }
+        return sorted;
+    }
+
+    @Override
+    public List<GetTestResultDto> sortByPast(List<GetTestResultDto> testResults) {
+        List<GetTestResultDto> sorted = new ArrayList<>();
+        for (GetTestResultDto testResult: testResults
+        ) {
+            if(testResult.getDateOfTheTest().toLocalDate().isBefore(LocalDate.now()) ||
+                    testResult.getDateOfTheTest().toLocalDate().equals(LocalDate.now()))
+                sorted.add(testResult);
+        }
+        return sorted;
+    }
+
+    private List<GetTestResultDto> chooseSort(String sortType,  List<GetTestResultDto> testResults) {
+        List<GetTestResultDto> sortedEvents = null;
+        if(sortType.equals(SortType.Today.toString())) sortedEvents = sortByToday(testResults);
+        if(sortType.equals(SortType.ThisWeek.toString())) sortedEvents = sortByThisWeek(testResults);
+        if(sortType.equals(SortType.ThisMonth.toString())) sortedEvents = sortByThisMonth(testResults);
+        if(sortType.equals(SortType.ThisYear.toString())) sortedEvents = sortByThisYear(testResults);
+        if(sortType.equals(SortType.Past.toString())) sortedEvents = sortByPast(testResults);
+        return sortedEvents;
+    }
+
 }

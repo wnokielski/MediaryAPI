@@ -7,6 +7,7 @@ public class Const {
     public static final int registrationSuccess = 0;
     public static final int userDetailsUpdateSuccess =0;
     public static final int scheduleItemDeletionSuccess =0;
+    public static final int testResultDeletionSuccess = 0;
 
     //Error codes
     public static final int emailAlreadyUsed = 1;
@@ -19,6 +20,9 @@ public class Const {
     public static final int wrongPassword= 7;
     public static final int scheduleItemDeletionError = 1;
     public static final int scheduleItemDoesNotExist = 2;
+    public static final int testResultDeletionError = 1;
+    public static final int testResultFileDeletionError = 2;
+    public static final int testResultDoesNotExists = 3;
 
     //Authentication error codes
     public static final int badCredentials = 8;

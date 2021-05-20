@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.mediary.Models.DTOs.Request.AddTestResultDto;
 import com.mediary.Models.DTOs.Response.GetTestResultDto;
+import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Models.Entities.TestResultEntity;
 import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Services.Exceptions.BlobStorageException;
@@ -29,4 +30,18 @@ public interface ITestResultService {
     List<GetTestResultDto> testResultsToDtos(List<TestResultEntity> testResultEntities);
 
     GetTestResultDto testResultToDto(TestResultEntity testResultEntity);
+
+    int deleteTestResult(UserDto user, Integer testResultId) throws BlobStorageException, EntityNotFoundException;
+
+    List<GetTestResultDto> getTestResultsSorted(List<GetTestResultDto> testResults, String sortType);
+
+    List<GetTestResultDto> sortByToday(List<GetTestResultDto> testResults);
+
+    List<GetTestResultDto> sortByThisWeek(List<GetTestResultDto> testResults);
+
+    List<GetTestResultDto> sortByThisMonth(List<GetTestResultDto> testResults);
+
+    List<GetTestResultDto> sortByThisYear(List<GetTestResultDto> testResults);
+
+    List<GetTestResultDto> sortByPast(List<GetTestResultDto> testResults);
 }
