@@ -1,14 +1,14 @@
 package com.mediary.Models.Entities;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "`Statistic`", schema = "public", catalog = "MediaryDB")
 public class StatisticEntity {
     private Integer id;
     private String value;
-    private Date date;
+    private Timestamp date;
     private StatisticTypeEntity statisticTypeById;
     private UserEntity userById;
 
@@ -36,11 +36,11 @@ public class StatisticEntity {
 
     @Basic
     @Column(name = "`Date`", nullable = false)
-    public Date getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 

@@ -1,5 +1,7 @@
 package com.mediary.Services.Implementation;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,9 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
+@Transactional
 public class StatisticService implements IStatisticService {
 
     @Autowired
@@ -94,12 +98,63 @@ public class StatisticService implements IStatisticService {
     public List<GetStatisticDto> getStatisticsByUserAndStatisticType(Integer userId, Integer statisticTypeId)
             throws EntityNotFoundException {
         if (statisticTypeRepository.findById(statisticTypeId) == null) {
-            log.warn("User with specified ID doesn't exist!");
+            log.warn("Statistic type with specified ID doesn't exist!");
             throw new EntityNotFoundException("Statistic type with specified ID doesn't exist!");
         }
         var statistics = statisticRepository.findByUserIdAndStatisticTypeId(userId, statisticTypeId);
         ArrayList<GetStatisticDto> statisticDtos = (ArrayList<GetStatisticDto>) statisticsToDtos(statistics);
         return statisticDtos;
+    }
+
+    @Override
+    public List<GetStatisticDto> getStatisticsByAuthHeaderAndStatisticTypeAndDate(String authHeader, Integer statisticTypeId, String dateFrom, String dateTo)
+            throws EntityNotFoundException {
+        UserEntity user = userService.getUserByAuthHeader(authHeader);
+        if (user != null) {
+            var statistics = getStatisticsByUserAndStatisticTypeAndDate(user.getId(), statisticTypeId, dateFrom, dateTo);
+            return statistics;
+        } else {
+            throw new EntityNotFoundException("User doesn't exist.");
+        }
+    }
+
+    @Override
+    public List<GetStatisticDto> getStatisticsByUserAndStatisticTypeAndDate(Integer userId, Integer statisticTypeId, String dateFrom, String dateTo)
+            throws EntityNotFoundException {
+        if (statisticTypeRepository.findById(statisticTypeId) == null) {
+            log.warn("Statistic type with specified ID doesn't exist!");
+            throw new EntityNotFoundException("Statistic type with specified ID doesn't exist!");
+        }
+        var user = userRepository.findById(userId);
+        var statisticsType = statisticTypeRepository.findById(statisticTypeId);
+
+        var statistics = statisticRepository.findByUserByIdAndStatisticTypeByIdAndDateBetween(user, statisticsType,
+                Timestamp.valueOf(dateFrom + " 00:00:00"), Timestamp.valueOf(dateTo + " 23:59:59"));
+        ArrayList<GetStatisticDto> statisticDtos = (ArrayList<GetStatisticDto>) statisticsToDtos(statistics);
+        return statisticDtos;
+    }
+
+    @Override
+    public Long deleteStatisticByAuthHeaderAndStatisticId(String authHeader, Integer statisticId) throws EntityNotFoundException{
+        UserEntity user = userService.getUserByAuthHeader(authHeader);
+        if (user != null) {
+            var qty = deleteStatisticByUserAndStatisticId(user, statisticId);
+            return qty;
+        } else {
+            throw new EntityNotFoundException("User doesn't exist.");
+        }
+    }
+
+    @Override
+    public Long deleteStatisticByUserAndStatisticId(UserEntity user, Integer statisticId) throws EntityNotFoundException {
+        var statistic = statisticRepository.findByUserByIdAndId(user, statisticId);
+        if(statistic != null){
+            return statisticRepository.deleteById(statisticId);
+        } else {
+            log.warn("Statistic not found! Are you trying to delete someone else's statistic?");
+            throw new EntityNotFoundException("Statistic not found! Are you trying to delete someone else's statistic?");
+        }
+
     }
 
     @Override

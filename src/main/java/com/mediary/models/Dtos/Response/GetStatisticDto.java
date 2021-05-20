@@ -1,6 +1,6 @@
 package com.mediary.Models.DTOs.Response;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 import lombok.Data;
 
@@ -9,6 +9,6 @@ public class GetStatisticDto {
 
     private Integer id;
     private String value;
-    private Date date;
+    private Timestamp date;
     private String statisticTypeName;
 }

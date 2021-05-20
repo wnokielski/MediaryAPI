@@ -25,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 @Component
 public class DbSeeder implements CommandLineRunner {
@@ -98,28 +99,28 @@ public class DbSeeder implements CommandLineRunner {
                 // Schedule items
                 ScheduleItemEntity scheduleItem = new ScheduleItemEntity();
                 scheduleItem.setTitle("Yearly check-up");
-                scheduleItem.setDate(Date.valueOf("2021-06-17"));
+                scheduleItem.setDate(Timestamp.valueOf("2021-06-17 00:00:00"));
                 scheduleItem.setPlace("Medical Clinic");
                 scheduleItem.setScheduleItemTypeById(scheduleItemType);
                 scheduleItem.setUserById(user);
 
                 ScheduleItemEntity scheduleItem1 = new ScheduleItemEntity();
                 scheduleItem1.setTitle("Knee rehabilitation");
-                scheduleItem1.setDate(Date.valueOf("2021-03-15"));
+                scheduleItem1.setDate(Timestamp.valueOf("2021-03-15 00:00:00"));
                 scheduleItem1.setPlace("Rehabilitation center");
                 scheduleItem1.setScheduleItemTypeById(scheduleItemType2);
                 scheduleItem1.setUserById(user);
 
                 ScheduleItemEntity scheduleItem2 = new ScheduleItemEntity();
                 scheduleItem2.setTitle("Knee rehabilitation");
-                scheduleItem2.setDate(Date.valueOf("2021-04-19"));
+                scheduleItem2.setDate(Timestamp.valueOf("2021-04-19 00:00:00"));
                 scheduleItem2.setPlace("Rehabilitation center");
                 scheduleItem2.setScheduleItemTypeById(scheduleItemType2);
                 scheduleItem2.setUserById(user);
 
                 ScheduleItemEntity scheduleItem3 = new ScheduleItemEntity();
                 scheduleItem3.setTitle("Knee rehabilitation");
-                scheduleItem3.setDate(Date.valueOf("2021-05-17"));
+                scheduleItem3.setDate(Timestamp.valueOf("2021-05-17 00:00:00"));
                 scheduleItem3.setPlace("Rehabilitation center");
                 scheduleItem3.setScheduleItemTypeById(scheduleItemType2);
                 scheduleItem3.setUserById(user);
@@ -156,25 +157,25 @@ public class DbSeeder implements CommandLineRunner {
                 // Statistics
                 StatisticEntity statistic = new StatisticEntity();
                 statistic.setValue("120");
-                statistic.setDate(Date.valueOf("2021-04-12"));
+                statistic.setDate(Timestamp.valueOf("2021-04-12 21:37:00"));
                 statistic.setStatisticTypeById(statisticType2);
                 statistic.setUserById(user);
 
                 StatisticEntity statistic1 = new StatisticEntity();
                 statistic1.setValue("110");
-                statistic1.setDate(Date.valueOf("2021-04-13"));
+                statistic1.setDate(Timestamp.valueOf("2021-04-13 12:00:00"));
                 statistic1.setStatisticTypeById(statisticType2);
                 statistic1.setUserById(user);
 
                 StatisticEntity statistic2 = new StatisticEntity();
                 statistic2.setValue("130");
-                statistic2.setDate(Date.valueOf("2021-04-14"));
+                statistic2.setDate(Timestamp.valueOf("2021-04-14 11:23:00"));
                 statistic2.setStatisticTypeById(statisticType2);
                 statistic2.setUserById(user);
 
                 StatisticEntity statistic3 = new StatisticEntity();
                 statistic3.setValue("122");
-                statistic3.setDate(Date.valueOf("2021-04-15"));
+                statistic3.setDate(Timestamp.valueOf("2021-04-15 12:34:56"));
                 statistic3.setStatisticTypeById(statisticType2);
                 statistic3.setUserById(user);
 
