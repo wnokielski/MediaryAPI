@@ -37,11 +37,11 @@ public interface ITestResultService {
 
     List<GetTestResultDto> sortByToday(List<GetTestResultDto> testResults);
 
-    List<GetTestResultDto> sortByThisWeek(List<GetTestResultDto> testResults);
+    List<GetTestResultDto> sortByLastWeek(List<GetTestResultDto> testResults);
 
-    List<GetTestResultDto> sortByThisMonth(List<GetTestResultDto> testResults);
+    List<GetTestResultDto> sortByLastMonth(List<GetTestResultDto> testResults);
 
-    List<GetTestResultDto> sortByThisYear(List<GetTestResultDto> testResults);
+    List<GetTestResultDto> sortByLastYear(List<GetTestResultDto> testResults);
 
     List<GetTestResultDto> sortByPast(List<GetTestResultDto> testResults);
 }

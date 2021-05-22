@@ -208,7 +208,7 @@ public class TestResultService implements ITestResultService {
     }
 
     @Override
-    public List<GetTestResultDto> sortByThisWeek(List<GetTestResultDto> testResults) {
+    public List<GetTestResultDto> sortByLastWeek(List<GetTestResultDto> testResults) {
         List<GetTestResultDto> sorted = new ArrayList<>();
         for (GetTestResultDto testResult: testResults
         ) {
@@ -221,7 +221,7 @@ public class TestResultService implements ITestResultService {
     }
 
     @Override
-    public List<GetTestResultDto> sortByThisMonth(List<GetTestResultDto> testResults) {
+    public List<GetTestResultDto> sortByLastMonth(List<GetTestResultDto> testResults) {
         List<GetTestResultDto> sorted = new ArrayList<>();
         for (GetTestResultDto testResult: testResults
         ) {
@@ -232,7 +232,7 @@ public class TestResultService implements ITestResultService {
     }
 
     @Override
-    public List<GetTestResultDto> sortByThisYear(List<GetTestResultDto> testResults) {
+    public List<GetTestResultDto> sortByLastYear(List<GetTestResultDto> testResults) {
         List<GetTestResultDto> sorted = new ArrayList<>();
         for (GetTestResultDto testResult: testResults
         ) {
@@ -257,9 +257,9 @@ public class TestResultService implements ITestResultService {
     private List<GetTestResultDto> chooseSort(String sortType,  List<GetTestResultDto> testResults) {
         List<GetTestResultDto> sortedEvents = null;
         if(sortType.equals(SortType.Today.toString())) sortedEvents = sortByToday(testResults);
-        if(sortType.equals(SortType.ThisWeek.toString())) sortedEvents = sortByThisWeek(testResults);
-        if(sortType.equals(SortType.ThisMonth.toString())) sortedEvents = sortByThisMonth(testResults);
-        if(sortType.equals(SortType.ThisYear.toString())) sortedEvents = sortByThisYear(testResults);
+        if(sortType.equals(SortType.LastWeek.toString())) sortedEvents = sortByLastWeek(testResults);
+        if(sortType.equals(SortType.LastMonth.toString())) sortedEvents = sortByLastMonth(testResults);
+        if(sortType.equals(SortType.LastYear.toString())) sortedEvents = sortByLastYear(testResults);
         if(sortType.equals(SortType.Past.toString())) sortedEvents = sortByPast(testResults);
         return sortedEvents;
     }

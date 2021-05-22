@@ -2,9 +2,9 @@ package com.mediary.Models.Enums;
 
 public enum SortType {
     Today("Today"),
-    ThisWeek("ThisWeek"),
-    ThisMonth("ThisMonth"),
-    ThisYear("ThisYear"),
+    LastWeek("LastWeek"),
+    LastMonth("LastMonth"),
+    LastYear("LastYear"),
     Past("Past");
 
     private String sortType;

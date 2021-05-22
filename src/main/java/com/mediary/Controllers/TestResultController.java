@@ -70,11 +70,21 @@ public class TestResultController {
         if (result == Const.testResultFileDeletionError)
             throw new TestResultDeletionError("File deletion error");
     }
+
     @GetMapping("/{sortType}")
     @ResponseStatus(HttpStatus.OK)
-    public List<GetTestResultDto> getTestResults(@RequestHeader("Authorization") String authHeader, @PathVariable ("sortType") String sortType) throws EntityNotFoundException {
+    public ResponseEntity<List<GetTestResultDto>> getTestResults(@RequestHeader("Authorization") String authHeader, @PathVariable ("sortType") String sortType) throws EntityNotFoundException {
         var testResultDtos = testResultService.getTestResultsByAuthHeader(authHeader);
-        return testResultService.getTestResultsSorted(testResultDtos, sortType);
+        if (testResultDtos.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            List<GetTestResultDto> sortedTestResultDtos = testResultService.getTestResultsSorted(testResultDtos, sortType);
+            if(sortedTestResultDtos.isEmpty()){
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } else{
+                return new ResponseEntity<>(sortedTestResultDtos, HttpStatus.OK);
+            }
+        }
     }
 
 
