@@ -30,4 +30,14 @@ public interface IStatisticService {
 
         GetStatisticDto statisticToDto(StatisticEntity statisticEntity);
 
+        List<GetStatisticDto> getStatisticsByAuthHeaderAndStatisticTypeAndDate(String authHeader, Integer statisticTypeId, String dateFrom, String dateTo)
+                throws EntityNotFoundException;
+
+        List<GetStatisticDto> getStatisticsByUserAndStatisticTypeAndDate(Integer userId, Integer statisticTypeId, String dateFrom, String dateTo)
+                throws EntityNotFoundException;
+
+        Long deleteStatisticByAuthHeaderAndStatisticId(String authHeader, Integer statisticId) throws EntityNotFoundException;
+
+        Long deleteStatisticByUserAndStatisticId(UserEntity user, Integer statisticId) throws EntityNotFoundException;
+
 }

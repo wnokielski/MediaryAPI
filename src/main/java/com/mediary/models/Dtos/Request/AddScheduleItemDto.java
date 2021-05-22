@@ -1,13 +1,13 @@
 package com.mediary.Models.DTOs.Request;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 import lombok.Data;
 
 @Data
 public class AddScheduleItemDto {
     private String title;
-    private Date date;
+    private Timestamp date;
     private String place;
     private String address;
     private String note;

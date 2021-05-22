@@ -1,14 +1,14 @@
 package com.mediary.Models.Entities;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "`ScheduleItem`", schema = "public", catalog = "MediaryDB")
 public class ScheduleItemEntity {
     private Integer id;
     private String title;
-    private Date date;
+    private Timestamp date;
     private String place;
     private String address;
     private String note;
@@ -39,11 +39,11 @@ public class ScheduleItemEntity {
 
     @Basic
     @Column(name = "`Date`", nullable = false)
-    public Date getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 
