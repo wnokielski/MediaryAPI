@@ -3,17 +3,17 @@ package com.mediary.Controllers;
 import java.util.List;
 
 import com.mediary.Models.DTOs.Request.AddTestResultDto;
+import com.mediary.Models.DTOs.Request.AddTestResultItemDto;
+import com.mediary.Models.DTOs.Request.UpdateTestResultDto;
+import com.mediary.Models.DTOs.Request.UpdateTestResultItemDto;
 import com.mediary.Models.DTOs.Response.GetTestResultDto;
 import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Models.Entities.TestResultEntity;
 import com.mediary.Services.Const;
 import com.mediary.Services.Exceptions.BlobStorageException;
+import com.mediary.Services.Exceptions.EntityDoesNotBelongToUser;
 import com.mediary.Services.Exceptions.EntityNotFoundException;
 import com.mediary.Services.Exceptions.IncorrectFieldException;
-import com.mediary.Services.Exceptions.ScheduleItem.ScheduleItemDeletionError;
-import com.mediary.Services.Exceptions.ScheduleItem.ScheduleItemDoesNotExist;
-import com.mediary.Services.Exceptions.TestResult.TestResultDeletionError;
-import com.mediary.Services.Exceptions.TestResult.TestResultDoesNotExist;
 import com.mediary.Services.Exceptions.TestResult.TestResultFileDeletionError;
 import com.mediary.Services.Interfaces.ITestResultService;
 
@@ -60,15 +60,15 @@ public class TestResultController {
     @DeleteMapping("/{testResultId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteTestResult(@RequestHeader("Authorization") String authHeader, @PathVariable ("testResultId") Integer testResultId)
-            throws TestResultDeletionError, TestResultFileDeletionError, TestResultDoesNotExist, EntityNotFoundException, BlobStorageException {
+            throws EntityNotFoundException, BlobStorageException, EntityDoesNotBelongToUser, TestResultFileDeletionError {
         UserDto user = userService.getUserDetails(authHeader);
         int result = testResultService.deleteTestResult(user, testResultId);
         if (result == Const.testResultDeletionError)
-            throw new TestResultFileDeletionError("Test result doesn't belong to this user!");
+            throw new EntityDoesNotBelongToUser("Test result doesn't belong to this user!");
         if (result == Const.testResultDoesNotExists)
-            throw new TestResultDoesNotExist("Test result does not exist!");
+            throw new EntityNotFoundException("Test result does not exist!");
         if (result == Const.testResultFileDeletionError)
-            throw new TestResultDeletionError("File deletion error");
+            throw new TestResultFileDeletionError("File deletion error");
     }
 
     @GetMapping("/{sortType}")
@@ -87,5 +87,19 @@ public class TestResultController {
         }
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @PutMapping("/{testResultId}")
+    public void updateTestResultById(@RequestHeader("Authorization") String authHeader, @RequestBody UpdateTestResultDto testResult, @PathVariable ("testResultId") Integer testResultId)
+            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException, EntityDoesNotBelongToUser {
+        testResultService.updateTestResultById(testResult, authHeader, testResultId);
+    }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @PutMapping("/item/{testResultItemId}")
+    public void updateTestResultItemById(@RequestHeader("Authorization") String authHeader, @RequestBody UpdateTestResultItemDto testResultItem, @PathVariable ("testResultItemId") Integer testResultItemId)
+            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException, EntityDoesNotBelongToUser {
+        testResultService.updateTestResultItemById(testResultItem, authHeader, testResultItemId);
+    }
+
+    
 }

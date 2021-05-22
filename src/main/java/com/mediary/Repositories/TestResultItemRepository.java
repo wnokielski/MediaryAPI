@@ -17,4 +17,8 @@ public interface TestResultItemRepository extends JpaRepository<TestResultItemEn
 
     @Query("SELECT i from TestResultItemEntity i WHERE i.testResultById.id=?1")
     List<TestResultItemEntity> findByTestResultId(Integer testResultId);
+
+    TestResultItemEntity findById(Integer id);
+
+
 }

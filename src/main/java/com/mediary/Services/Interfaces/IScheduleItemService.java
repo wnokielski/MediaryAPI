@@ -8,9 +8,9 @@ import com.mediary.Models.DTOs.Response.GetScheduleItemDto;
 import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Models.Entities.ScheduleItemEntity;
 import com.mediary.Models.Entities.UserEntity;
+import com.mediary.Services.Exceptions.EntityDoesNotBelongToUser;
 import com.mediary.Services.Exceptions.EntityNotFoundException;
 import com.mediary.Services.Exceptions.IncorrectFieldException;
-import com.mediary.Services.Exceptions.ScheduleItem.ScheduleItemDoesNotBelongToThisUser;
 
 public interface IScheduleItemService {
 
@@ -33,5 +33,6 @@ public interface IScheduleItemService {
 
         List<GetScheduleItemDto> getScheduleItemByAuthHeadeAndDate(String authHeader, String dateFrom, String dateTo) throws EntityNotFoundException;
 
-        void updateScheduleItem(ScheduleItemUpdateDto scheduleItem, UserDto user, Integer scheduleItemId) throws IncorrectFieldException, EntityNotFoundException, ScheduleItemDoesNotBelongToThisUser;
+        void updateScheduleItem(ScheduleItemUpdateDto scheduleItem, UserDto user, Integer scheduleItemId)
+                throws IncorrectFieldException, EntityNotFoundException, EntityDoesNotBelongToUser;
 }

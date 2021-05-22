@@ -7,17 +7,15 @@ import java.util.List;
 import com.mediary.Models.DTOs.Request.AddScheduleItemDto;
 import com.mediary.Models.DTOs.Request.ScheduleItemUpdateDto;
 import com.mediary.Models.DTOs.Response.GetScheduleItemDto;
-import com.mediary.Models.DTOs.Response.GetStatisticDto;
 import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Models.Entities.ScheduleItemEntity;
-import com.mediary.Models.Entities.ScheduleItemTypeEntity;
 import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Repositories.ScheduleItemRepository;
 import com.mediary.Repositories.ScheduleItemTypeRepository;
 import com.mediary.Services.Const;
+import com.mediary.Services.Exceptions.EntityDoesNotBelongToUser;
 import com.mediary.Services.Exceptions.EntityNotFoundException;
 import com.mediary.Services.Exceptions.IncorrectFieldException;
-import com.mediary.Services.Exceptions.ScheduleItem.ScheduleItemDoesNotBelongToThisUser;
 import com.mediary.Services.Interfaces.IScheduleItemService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,7 +158,7 @@ public class ScheduleItemService implements IScheduleItemService {
     }
 
     @Override
-    public void updateScheduleItem(ScheduleItemUpdateDto scheduleItemDto, UserDto user, Integer scheduleItemId) throws IncorrectFieldException, EntityNotFoundException, ScheduleItemDoesNotBelongToThisUser {
+    public void updateScheduleItem(ScheduleItemUpdateDto scheduleItemDto, UserDto user, Integer scheduleItemId) throws IncorrectFieldException, EntityNotFoundException, EntityDoesNotBelongToUser {
         ScheduleItemEntity updatedScheduleItem = scheduleItemRepository.findById(scheduleItemId);
         if (updatedScheduleItem != null) {
             if (updatedScheduleItem.getUserById().getId().equals(user.getId())) {
@@ -201,18 +199,10 @@ public class ScheduleItemService implements IScheduleItemService {
                     scheduleItemRepository.save(updatedScheduleItem);
 
                 }
-
-//            return Const.scheduleItemDeletionError;
-
-
             } else{
                 log.warn("Schedule item doesn't belong to this user!");
-                throw new ScheduleItemDoesNotBelongToThisUser("Schedule item doesn't belong to this user!");
+                throw new EntityDoesNotBelongToUser("Schedule item doesn't belong to this user!");
             }
-
-
-//        return Const.scheduleItemDoesNotExist;
-
         } else{
             log.warn("Schedule item doesn't exist");
             throw new EntityNotFoundException("Schedule item with specified id doesn't exist");

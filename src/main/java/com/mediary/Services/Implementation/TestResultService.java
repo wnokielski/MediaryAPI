@@ -8,6 +8,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mediary.Models.DTOs.Request.AddTestResultDto;
+import com.mediary.Models.DTOs.Request.AddTestResultItemDto;
+import com.mediary.Models.DTOs.Request.UpdateTestResultDto;
+import com.mediary.Models.DTOs.Request.UpdateTestResultItemDto;
 import com.mediary.Models.DTOs.Response.GetTestResultDto;
 import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Models.Entities.*;
@@ -18,6 +21,7 @@ import com.mediary.Repositories.TestResultRepository;
 import com.mediary.Repositories.TestTypeRepository;
 import com.mediary.Services.Const;
 import com.mediary.Services.Exceptions.BlobStorageException;
+import com.mediary.Services.Exceptions.EntityDoesNotBelongToUser;
 import com.mediary.Services.Exceptions.EntityNotFoundException;
 import com.mediary.Services.Exceptions.IncorrectFieldException;
 import com.mediary.Services.Interfaces.IFileService;
@@ -253,6 +257,104 @@ public class TestResultService implements ITestResultService {
         }
         return sorted;
     }
+
+    @Override
+    public void updateTestResultById(UpdateTestResultDto testResultDto, String authHeader, Integer testResultId) throws EntityNotFoundException, EntityDoesNotBelongToUser, IncorrectFieldException {
+        UserEntity user = userService.getUserByAuthHeader(authHeader);
+        TestResultEntity updatedTestResult = testResultRepository.findById(testResultId);
+        if(updatedTestResult != null){
+            System.out.println(updatedTestResult.getUserById().getId());
+            System.out.println(user.getId());
+            if (updatedTestResult.getUserById().getId().equals(user.getId())) {
+                if (testResultDto.getTitle().length() > 50 || testResultDto.getTitle() == "") {
+                    throw new IncorrectFieldException("Title field is incorrect");
+                } else if (testResultDto.getLocation().length() > 50) {
+                    throw new IncorrectFieldException("Location name is too long");
+                } else if (testResultDto.getNote().length() > 200) {
+                    throw new IncorrectFieldException("Note is too long");
+                } else if (testResultDto.getDateOfTheTest() == null) {
+                    throw new IncorrectFieldException("Date of the test is required");
+                } else {
+
+                    if(!testResultDto.getTitle().equals(updatedTestResult.getTitle()))
+                        updatedTestResult.setTitle(testResultDto.getTitle());
+                    if(!testResultDto.getLocation().equals(updatedTestResult.getLocation()))
+                        updatedTestResult.setLocation(testResultDto.getLocation());
+                    if(!testResultDto.getNote().equals(updatedTestResult.getNote()))
+                        updatedTestResult.setNote(testResultDto.getNote());
+                    if(!testResultDto.getDateOfTheTest().equals(updatedTestResult.getDateOfTheTest()))
+                        updatedTestResult.setDateOfTheTest(testResultDto.getDateOfTheTest());
+
+                    System.out.println(testResultDto.getTestTypeId());
+                    TestTypeEntity testType = testTypeRepository.findById(testResultDto.getTestTypeId());
+                    System.out.println(testType.getId());
+                    if (testType != null) {
+                        if(!testResultDto.getTestTypeId().equals(updatedTestResult.getTestTypeById().getId()))
+                            updatedTestResult.setTestTypeById(testTypeRepository.findById(testResultDto.getTestTypeId()));
+                    } else {
+                        throw new EntityNotFoundException("Test Type with specified id doesn't exist");
+                    }
+                    testResultRepository.save(updatedTestResult);
+                    Collection<UpdateTestResultItemDto> testResultItems = testResultDto.getTestResultItems();
+                    if(testResultItems.isEmpty() == false){
+                        for(UpdateTestResultItemDto testResultItem : testResultItems){
+                            this.updateTestResultItemById(testResultItem, authHeader, testResultItem.getId());
+                        }
+                    }
+                }
+            } else {
+                log.warn("Test result doesn't belong to this user");
+                throw new EntityDoesNotBelongToUser("Test result doesn't belong to this user!");
+            }
+
+        } else{
+            log.warn("Test result doesn't exist");
+            throw new EntityNotFoundException("Test result with specified id doesn't exist");
+        }
+
+
+    }
+
+
+    @Override
+    public void updateTestResultItemById(UpdateTestResultItemDto testResultItemDto, String authHeader, Integer testResultItemId) throws EntityNotFoundException, IncorrectFieldException, EntityDoesNotBelongToUser {
+        UserEntity user = userService.getUserByAuthHeader(authHeader);
+        List<Integer> ids = new ArrayList<>();
+        TestResultItemEntity updatedTestResultItem = testResultItemRepository.findById(testResultItemId);
+        List<TestResultEntity> testResults = testResultRepository.findByUserId(user.getId());
+        if(updatedTestResultItem != null){
+            for(TestResultEntity testResult : testResults){
+                List<TestResultItemEntity> testResultsItems = (List<TestResultItemEntity>) testResultItemRepository.findAllByTestResultById(testResult);
+                for(TestResultItemEntity testResultItem : testResultsItems){
+                    ids.add(testResultItem.getId());
+                }
+            }
+            if(ids.contains(updatedTestResultItem.getId()) == true){
+                if (testResultItemDto.getName().length() > 40 || testResultItemDto.getName() == "") {
+                    throw new IncorrectFieldException("Name field is incorrect");
+                } else if (testResultItemDto.getUnit().length() > 10) {
+                    throw new IncorrectFieldException("Unit name is too long");
+                } else if (testResultItemDto.getValue().length() > 50) {
+                    throw new IncorrectFieldException("Value is too long");
+                } else {
+                    if(!testResultItemDto.getName().equals(updatedTestResultItem.getName()))
+                        updatedTestResultItem.setName(testResultItemDto.getName());
+                    if(!testResultItemDto.getUnit().equals(updatedTestResultItem.getUnit()))
+                        updatedTestResultItem.setUnit(testResultItemDto.getUnit());
+                    if(!testResultItemDto.getValue().equals(updatedTestResultItem.getValue()))
+                        updatedTestResultItem.setValue(testResultItemDto.getValue());
+                    testResultItemRepository.save(updatedTestResultItem);
+                }
+            } else {
+                log.warn("Test result doesn't belong to this user");
+                throw new EntityDoesNotBelongToUser("Test result item doesn't belong to this user!");
+            }
+        } else {
+            log.warn("Test result item doesn't exist");
+            throw new EntityNotFoundException("Test result item with specified id doesn't exist");
+        }
+    }
+
 
     private List<GetTestResultDto> chooseSort(String sortType,  List<GetTestResultDto> testResults) {
         List<GetTestResultDto> sortedEvents = null;

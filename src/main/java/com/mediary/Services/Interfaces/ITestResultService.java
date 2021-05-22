@@ -3,11 +3,15 @@ package com.mediary.Services.Interfaces;
 import java.util.List;
 
 import com.mediary.Models.DTOs.Request.AddTestResultDto;
+import com.mediary.Models.DTOs.Request.AddTestResultItemDto;
+import com.mediary.Models.DTOs.Request.UpdateTestResultDto;
+import com.mediary.Models.DTOs.Request.UpdateTestResultItemDto;
 import com.mediary.Models.DTOs.Response.GetTestResultDto;
 import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Models.Entities.TestResultEntity;
 import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Services.Exceptions.BlobStorageException;
+import com.mediary.Services.Exceptions.EntityDoesNotBelongToUser;
 import com.mediary.Services.Exceptions.EntityNotFoundException;
 import com.mediary.Services.Exceptions.IncorrectFieldException;
 
@@ -44,4 +48,9 @@ public interface ITestResultService {
     List<GetTestResultDto> sortByLastYear(List<GetTestResultDto> testResults);
 
     List<GetTestResultDto> sortByPast(List<GetTestResultDto> testResults);
+
+    void updateTestResultById(UpdateTestResultDto testResult, String authHeader, Integer testResultId)
+            throws EntityNotFoundException, EntityDoesNotBelongToUser, IncorrectFieldException;
+
+    void updateTestResultItemById(UpdateTestResultItemDto testResultItem, String authHeader, Integer testResultItemId) throws EntityNotFoundException, IncorrectFieldException, EntityDoesNotBelongToUser;
 }
