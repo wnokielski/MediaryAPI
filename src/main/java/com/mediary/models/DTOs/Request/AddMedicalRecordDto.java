@@ -6,11 +6,11 @@ import java.util.Collection;
 import lombok.Data;
 
 @Data
-public class AddTestResultDto {
+public class AddMedicalRecordDto {
     private String title;
     private String location;
     private String note;
     private Date dateOfTheTest;
     private Integer testTypeId;
-    private Collection<AddTestResultItemDto> testResulItems;
+    private Collection<AddTestItemDto> testItems;
 }

@@ -8,7 +8,7 @@ import java.util.Collection;
 public class TestTypeEntity {
     private Integer id;
     private String name;
-    private Collection<TestResultEntity> testResultsById;
+    private Collection<MedicalRecordEntity> medicalRecordsById;
     private Collection<TestParameterEntity> testParametersById;
 
     @Id
@@ -58,12 +58,12 @@ public class TestTypeEntity {
     }
 
     @OneToMany(mappedBy = "testTypeById")
-    public Collection<TestResultEntity> getTestResultsById() {
-        return testResultsById;
+    public Collection<MedicalRecordEntity> getMedicalRecordsById() {
+        return medicalRecordsById;
     }
 
-    public void setTestResultsById(Collection<TestResultEntity> testResultsById) {
-        this.testResultsById = testResultsById;
+    public void setMedicalRecordsById(Collection<MedicalRecordEntity> medicalRecordsById) {
+        this.medicalRecordsById = medicalRecordsById;
     }
 
     @OneToMany(mappedBy = "testTypeById")

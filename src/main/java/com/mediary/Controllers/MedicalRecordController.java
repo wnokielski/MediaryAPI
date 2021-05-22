@@ -2,12 +2,12 @@ package com.mediary.Controllers;
 
 import java.util.List;
 
-import com.mediary.Models.DTOs.Request.AddTestResultDto;
-import com.mediary.Models.DTOs.Response.GetTestResultDto;
+import com.mediary.Models.DTOs.Request.AddMedicalRecordDto;
+import com.mediary.Models.DTOs.Response.GetMedicalRecordDto;
 import com.mediary.Services.Exceptions.BlobStorageException;
 import com.mediary.Services.Exceptions.EntityNotFoundException;
 import com.mediary.Services.Exceptions.IncorrectFieldException;
-import com.mediary.Services.Interfaces.ITestResultService;
+import com.mediary.Services.Interfaces.IMedicalRecordService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,31 +25,31 @@ import org.springframework.web.multipart.MultipartFile;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/test/result")
-public class TestResultController {
+@RequestMapping("/api/record")
+public class MedicalRecordController {
 
     @Autowired
-    ITestResultService testResultService;
+    IMedicalRecordService medicalRecordService;
 
     @ResponseBody
     @GetMapping
-    public ResponseEntity<List<GetTestResultDto>> getUserTestResults(@RequestHeader("Authorization") String authHeader)
+    public ResponseEntity<List<GetMedicalRecordDto>> getUserMedicalRecords(@RequestHeader("Authorization") String authHeader)
             throws EntityNotFoundException {
-        var testResultDtos = testResultService.getTestResultsByAuthHeader(authHeader);
-        if (testResultDtos.isEmpty()) {
+        var medicalRecordDtos = medicalRecordService.getMedicalRecordsByAuthHeader(authHeader);
+        if (medicalRecordDtos.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseEntity<List<GetTestResultDto>>(testResultDtos, HttpStatus.OK);
+            return new ResponseEntity<List<GetMedicalRecordDto>>(medicalRecordDtos, HttpStatus.OK);
         }
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public void addTestResult(@RequestHeader("Authorization") String authHeader,
-            @RequestPart(required = false) MultipartFile[] files, @RequestPart AddTestResultDto testResult)
+    public void addMedicalRecord(@RequestHeader("Authorization") String authHeader,
+            @RequestPart(required = false) MultipartFile[] files, @RequestPart AddMedicalRecordDto medicalRecord)
             throws EntityNotFoundException, IncorrectFieldException, BlobStorageException {
 
-        testResultService.addTestResultByAuthHeader(testResult, files, authHeader);
+        medicalRecordService.addMedicalRecordByAuthHeader(medicalRecord, files, authHeader);
     }
 
 }

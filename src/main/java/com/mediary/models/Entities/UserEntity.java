@@ -21,7 +21,7 @@ public class UserEntity {
     private BigDecimal height;
     private Collection<ScheduleItemEntity> scheduleItemsById;
     private Collection<StatisticEntity> statisticsById;
-    private Collection<TestResultEntity> testResultsById;
+    private Collection<MedicalRecordEntity> medicalRecordsById;
 
     @Id
     @SequenceGenerator(name = "`User_ID_seq`", sequenceName = "`User_ID_seq`", allocationSize = 1)
@@ -165,11 +165,11 @@ public class UserEntity {
     }
 
     @OneToMany(mappedBy = "userById")
-    public Collection<TestResultEntity> getTestResultsById() {
-        return testResultsById;
+    public Collection<MedicalRecordEntity> getMedicalRecordsById() {
+        return medicalRecordsById;
     }
 
-    public void setTestResultsById(Collection<TestResultEntity> testResultsById) {
-        this.testResultsById = testResultsById;
+    public void setMedicalRecordsById(Collection<MedicalRecordEntity> medicalRecordsById) {
+        this.medicalRecordsById = medicalRecordsById;
     }
 }

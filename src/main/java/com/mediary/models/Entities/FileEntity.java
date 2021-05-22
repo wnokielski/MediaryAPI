@@ -9,7 +9,7 @@ public class FileEntity {
     private String uuid;
     private String originalName;
     private String url;
-    private TestResultEntity testResultById;
+    private MedicalRecordEntity medicalRecordById;
 
     @Id
     @SequenceGenerator(name = "`File_ID_seq`", sequenceName = "`File_ID_seq`", allocationSize = 1)
@@ -84,12 +84,12 @@ public class FileEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "`TestResultID`", referencedColumnName = "`ID`", nullable = false)
-    public TestResultEntity getTestResultById() {
-        return testResultById;
+    @JoinColumn(name = "`MedicalRecordID`", referencedColumnName = "`ID`", nullable = false)
+    public MedicalRecordEntity getMedicalRecordById() {
+        return medicalRecordById;
     }
 
-    public void setTestResultById(TestResultEntity testResultById) {
-        this.testResultById = testResultById;
+    public void setMedicalRecordById(MedicalRecordEntity medicalRecordById) {
+        this.medicalRecordById = medicalRecordById;
     }
 }

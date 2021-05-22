@@ -3,17 +3,17 @@ package com.mediary.Models.Entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "`TestResultItem`", schema = "public", catalog = "MediaryDB")
-public class TestResultItemEntity {
+@Table(name = "`testItem`", schema = "public", catalog = "MediaryDB")
+public class TestItemEntity {
     private Integer id;
     private String name;
     private String value;
     private String unit;
-    private TestResultEntity testResultById;
+    private MedicalRecordEntity medicalRecordById;
 
     @Id
-    @SequenceGenerator(name = "`TestResultItem_ID_seq`", sequenceName = "`TestResultItem_ID_seq`", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "`TestResultItem_ID_seq`")
+    @SequenceGenerator(name = "`TestItem_ID_seq`", sequenceName = "`TestItem_ID_seq`", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "`TestItem_ID_seq`")
     @Column(name = "`ID`", nullable = false)
     public Integer getId() {
         return id;
@@ -60,7 +60,7 @@ public class TestResultItemEntity {
         if (o == null || getClass() != o.getClass())
             return false;
 
-        com.mediary.Models.Entities.TestResultItemEntity that = (com.mediary.Models.Entities.TestResultItemEntity) o;
+        TestItemEntity that = (TestItemEntity) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null)
             return false;
@@ -84,12 +84,12 @@ public class TestResultItemEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "`TestResultID`", referencedColumnName = "`ID`", nullable = false)
-    public TestResultEntity getTestResultById() {
-        return testResultById;
+    @JoinColumn(name = "`MedicalRecordID`", referencedColumnName = "`ID`", nullable = false)
+    public MedicalRecordEntity getMedicalRecordById() {
+        return medicalRecordById;
     }
 
-    public void setTestResultById(TestResultEntity testResultById) {
-        this.testResultById = testResultById;
+    public void setMedicalRecordById(MedicalRecordEntity medicalRecordById) {
+        this.medicalRecordById = medicalRecordById;
     }
 }

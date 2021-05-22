@@ -54,7 +54,7 @@ CREATE TABLE TestType (
     Parameters json NOT NULL
 );
 
-CREATE TABLE TestResult (
+CREATE TABLE MedicalRecord (
     ID serial PRIMARY KEY,
     Title VARCHAR (30) NOT NULL,
     Note VARCHAR (200),
@@ -67,14 +67,14 @@ CREATE TABLE TestResult (
         FOREIGN KEY (UserID) REFERENCES Users (ID)
 );
 
-CREATE TABLE TestResultItem (
+CREATE TABLE TestItem (
     ID serial PRIMARY KEY,
     Name VARCHAR (40) NOT NULL,
     Value VARCHAR (50),
     Unit VARCHAR (10),
-    TestResultID INTEGER NOT NULL,
-    CONSTRAINT FK_TestResult
-        FOREIGN KEY (TestResultID) REFERENCES TestResult (ID)
+    MedicalRecordID INTEGER NOT NULL,
+    CONSTRAINT FK_MedicalRecord
+        FOREIGN KEY (MedicalRecordID) REFERENCES MedicalRecord (ID)
 );
 
 CREATE TABLE Files (
@@ -82,8 +82,8 @@ CREATE TABLE Files (
     UUID VARCHAR (36) NOT NULL,
     OriginalName VARCHAR (50) NOT NULL,
     URL VARCHAR (200) NOT NULL,
-    TestResultID INTEGER NOT NULL,
-    CONSTRAINT FK_TestResultItem
-        FOREIGN KEY (TestResultID) REFERENCES TestResult (ID)
+    MedicalRecordID INTEGER NOT NULL,
+    CONSTRAINT FK_MedicalRecord
+        FOREIGN KEY (MedicalRecordID) REFERENCES MedicalRecord (ID)
 )
 
