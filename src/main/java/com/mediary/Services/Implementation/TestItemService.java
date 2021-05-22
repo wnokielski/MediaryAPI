@@ -32,15 +32,15 @@ public class TestItemService implements ITestItemService {
     MedicalRecordRepository medicalRecordRepostiory;
 
     @Override
-    public void addMedicalRecordItems(Collection<AddTestItemDto> testItemDtos, MedicalRecordEntity medicalRecord)
+    public void addTestItems(Collection<AddTestItemDto> testItemDtos, MedicalRecordEntity medicalRecord)
             throws IncorrectFieldException {
         for (var testItemDto : testItemDtos) {
-            addMedicalRecordItem(testItemDto, medicalRecord);
+            addTestItem(testItemDto, medicalRecord);
         }
     }
 
     @Override
-    public void addMedicalRecordItem(AddTestItemDto testItemDto, MedicalRecordEntity medicalRecord)
+    public void addTestItem(AddTestItemDto testItemDto, MedicalRecordEntity medicalRecord)
             throws IncorrectFieldException {
 
         if (testItemDto.getName().length() > 40 || testItemDto.getName() == "") {

@@ -86,7 +86,7 @@ public class MedicalRecordService implements IMedicalRecordService {
                 fileService.uploadFile(file, user.getId(), medicalRecordEntity);
             }
 
-            testItemService.addMedicalRecordItems(medicalRecordDto.getTestItems(), medicalRecordEntity);
+            testItemService.addTestItems(medicalRecordDto.getTestItems(), medicalRecordEntity);
             medicalRecordRepository.save(medicalRecordEntity);
         }
     }

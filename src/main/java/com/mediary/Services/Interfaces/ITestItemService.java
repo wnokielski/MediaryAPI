@@ -12,10 +12,10 @@ import com.mediary.Services.Exceptions.IncorrectFieldException;
 
 public interface ITestItemService {
 
-    void addMedicalRecordItems(Collection<AddTestItemDto> testItemDtos, MedicalRecordEntity medicalRecord)
+    void addTestItems(Collection<AddTestItemDto> testItemDtos, MedicalRecordEntity medicalRecord)
             throws IncorrectFieldException;
 
-    void addMedicalRecordItem(AddTestItemDto testItemDto, MedicalRecordEntity medicalRecord)
+    void addTestItem(AddTestItemDto testItemDto, MedicalRecordEntity medicalRecord)
             throws IncorrectFieldException;
 
     AddTestItemDto getJson(String testItem);
