@@ -39,4 +39,9 @@ public class ScheduleItemTypeService implements IScheduleItemTypeService {
         scheduleItemTypeDto.setName(scheduleItemTypeEntity.getName());
         return scheduleItemTypeDto;
     }
+
+    @Override
+    public void deleteScheduleItemType(Integer id) {
+        scheduleItemTypeRepository.deleteById(id);
+    }
 }

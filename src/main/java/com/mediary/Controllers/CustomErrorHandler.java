@@ -1,5 +1,7 @@
 package com.mediary.Controllers;
 
+import com.mediary.Services.Exceptions.*;
+import com.mediary.Services.Exceptions.TestResult.TestResultFileDeletionError;
 import com.mediary.Services.Exceptions.User.UserNotFoundException;
 
 import org.springframework.http.HttpStatus;
@@ -9,10 +11,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.mediary.Services.Exceptions.BlobStorageException;
-import com.mediary.Services.Exceptions.EntityNotFoundException;
-import com.mediary.Services.Exceptions.EnumConversionException;
-import com.mediary.Services.Exceptions.IncorrectFieldException;
 import com.mediary.Services.Exceptions.User.*;
 
 import java.time.LocalDateTime;
@@ -27,7 +25,7 @@ public class CustomErrorHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
     }
 
-    @ExceptionHandler({ UserNotFoundException.class, EntityNotFoundException.class })
+    @ExceptionHandler({ UserNotFoundException.class, EntityNotFoundException.class})
     public ResponseEntity<ErrorResponse> notFoundHandle(Exception ex, WebRequest request) {
         ErrorResponse response = new ErrorResponse(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
@@ -40,20 +38,20 @@ public class CustomErrorHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({ WrongPasswordException.class })
+    @ExceptionHandler({ WrongPasswordException.class})
     public ResponseEntity<ErrorResponse> wrong(Exception ex, WebRequest request) {
         ErrorResponse response = new ErrorResponse(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({ BlobStorageException.class })
+    @ExceptionHandler({ BlobStorageException.class, TestResultFileDeletionError.class })
     public ResponseEntity<ErrorResponse> storage(Exception ex, WebRequest request) {
         ErrorResponse response = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
                 ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({ IncorrectFieldException.class })
+    @ExceptionHandler({ IncorrectFieldException.class, EntityDoesNotBelongToUser.class})
     public ResponseEntity<ErrorResponse> incorrect(Exception ex, WebRequest request) {
         ErrorResponse response = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
                 ex.getMessage());

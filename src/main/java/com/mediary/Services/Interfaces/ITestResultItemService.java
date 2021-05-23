@@ -26,4 +26,6 @@ public interface ITestResultItemService {
 
     GetTestResultItemDto testResultItemToDto(TestResultItemEntity testResultItem);
 
+    void deleteTestResultItem(Integer id);
+
 }

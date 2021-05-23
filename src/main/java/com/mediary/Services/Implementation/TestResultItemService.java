@@ -106,4 +106,9 @@ public class TestResultItemService implements ITestResultItemService {
         testResultItemDto.setValue(testResultItem.getValue());
         return testResultItemDto;
     }
+
+    @Override
+    public void deleteTestResultItem(Integer id) {
+        testResultItemRepository.deleteById(id);
+    }
 }

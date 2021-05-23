@@ -11,6 +11,8 @@ public interface TestResultRepository extends JpaRepository<TestResultEntity, Lo
 
     TestResultEntity findById(Integer id);
 
+    void deleteById(Integer id);
+
     @Query("SELECT t from TestResultEntity t WHERE t.userById.id=?1")
     List<TestResultEntity> findByUserId(Integer id);
 }
