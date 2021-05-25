@@ -1,16 +1,16 @@
 package com.mediary.Models.DTOs.Request;
 
+import lombok.Data;
+
 import java.sql.Date;
 import java.util.Collection;
 
-import lombok.Data;
-
 @Data
-public class AddTestResultDto {
+public class UpdateMedicalRecordDto {
     private String title;
     private String location;
+    private String category;
     private String note;
     private Date dateOfTheTest;
-    private Integer testTypeId;
-    private Collection<AddTestResultItemDto> testResulItems;
+    private Collection<UpdateTestItemDto> testItems;
 }

@@ -125,17 +125,17 @@ public class ScheduleItemService implements IScheduleItemService {
         scheduleItemDto.setDate(scheduleItemEntity.getDate());
 
         var scheduleItemType = scheduleItemEntity.getScheduleItemTypeById();
-        scheduleItemDto.setScheduleItemType(scheduleItemTypeService.scheduleItemTypeToDto(scheduleItemType));
+        scheduleItemDto.setScheduleItemTypeId(scheduleItemType.getId());
 
         return scheduleItemDto;
     }
 
     @Override
     @Transactional
-    public int deleteScheduleItem(UserDto user, Integer scheduleItemId){
+    public int deleteScheduleItem(UserDto user, Integer scheduleItemId) {
         ScheduleItemEntity scheduleItem = scheduleItemRepository.findById(scheduleItemId);
-        if(scheduleItem != null){
-            if(scheduleItem.getUserById().getId().equals(user.getId())){
+        if (scheduleItem != null) {
+            if (scheduleItem.getUserById().getId().equals(user.getId())) {
                 scheduleItemRepository.deleteById(scheduleItemId);
                 return Const.scheduleItemDeletionSuccess;
             }
@@ -145,12 +145,14 @@ public class ScheduleItemService implements IScheduleItemService {
     }
 
     @Override
-    public List<GetScheduleItemDto> getScheduleItemByAuthHeadeAndDate(String authHeader, String dateFrom, String dateTo) throws EntityNotFoundException{
+    public List<GetScheduleItemDto> getScheduleItemByAuthHeadeAndDate(String authHeader, String dateFrom, String dateTo)
+            throws EntityNotFoundException {
         UserEntity user = userService.getUserByAuthHeader(authHeader);
         if (user != null) {
             var scheduleItems = scheduleItemRepository.findByUserByIdAndDateBetween(java.util.Optional.of(user),
                     Timestamp.valueOf(dateFrom + " 00:00:00"), Timestamp.valueOf(dateTo + " 23:59:59"));
-            ArrayList<GetScheduleItemDto> scheduleItemDtos = (ArrayList<GetScheduleItemDto>) scheduleItemsToDtos(scheduleItems);
+            ArrayList<GetScheduleItemDto> scheduleItemDtos = (ArrayList<GetScheduleItemDto>) scheduleItemsToDtos(
+                    scheduleItems);
             return scheduleItemDtos;
         } else {
             throw new EntityNotFoundException("User doesn't exist.");
@@ -158,7 +160,8 @@ public class ScheduleItemService implements IScheduleItemService {
     }
 
     @Override
-    public void updateScheduleItem(ScheduleItemUpdateDto scheduleItemDto, UserDto user, Integer scheduleItemId) throws IncorrectFieldException, EntityNotFoundException, EntityDoesNotBelongToUser {
+    public void updateScheduleItem(ScheduleItemUpdateDto scheduleItemDto, UserDto user, Integer scheduleItemId)
+            throws IncorrectFieldException, EntityNotFoundException, EntityDoesNotBelongToUser {
         ScheduleItemEntity updatedScheduleItem = scheduleItemRepository.findById(scheduleItemId);
         if (updatedScheduleItem != null) {
             if (updatedScheduleItem.getUserById().getId().equals(user.getId())) {
@@ -184,26 +187,27 @@ public class ScheduleItemService implements IScheduleItemService {
                     log.warn("Schedule item type doesn't exist");
                     throw new EntityNotFoundException("Schedule item type with specified id doesn't exist");
                 } else {
-                    if(!scheduleItemDto.getTitle().equals(updatedScheduleItem.getTitle()))
+                    if (!scheduleItemDto.getTitle().equals(updatedScheduleItem.getTitle()))
                         updatedScheduleItem.setTitle(scheduleItemDto.getTitle());
-                    if(!scheduleItemDto.getDate().equals(updatedScheduleItem.getDate()))
+                    if (!scheduleItemDto.getDate().equals(updatedScheduleItem.getDate()))
                         updatedScheduleItem.setDate(scheduleItemDto.getDate());
-                    if(!scheduleItemDto.getPlace().equals(updatedScheduleItem.getPlace()))
+                    if (!scheduleItemDto.getPlace().equals(updatedScheduleItem.getPlace()))
                         updatedScheduleItem.setPlace(scheduleItemDto.getPlace());
-                    if(!scheduleItemDto.getAddress().equals(updatedScheduleItem.getAddress()))
+                    if (!scheduleItemDto.getAddress().equals(updatedScheduleItem.getAddress()))
                         updatedScheduleItem.setAddress(scheduleItemDto.getAddress());
-                    if(!scheduleItemDto.getNote().equals(updatedScheduleItem.getNote()))
+                    if (!scheduleItemDto.getNote().equals(updatedScheduleItem.getNote()))
                         updatedScheduleItem.setNote(scheduleItemDto.getNote());
-                    if(!scheduleItemDto.getScheduleItemTypeId().equals(updatedScheduleItem.getScheduleItemTypeById()))
-                        updatedScheduleItem.setScheduleItemTypeById(scheduleItemTypeRepository.findById(scheduleItemDto.getScheduleItemTypeId()));
+                    if (!scheduleItemDto.getScheduleItemTypeId().equals(updatedScheduleItem.getScheduleItemTypeById()))
+                        updatedScheduleItem.setScheduleItemTypeById(
+                                scheduleItemTypeRepository.findById(scheduleItemDto.getScheduleItemTypeId()));
                     scheduleItemRepository.save(updatedScheduleItem);
 
                 }
-            } else{
+            } else {
                 log.warn("Schedule item doesn't belong to this user!");
                 throw new EntityDoesNotBelongToUser("Schedule item doesn't belong to this user!");
             }
-        } else{
+        } else {
             log.warn("Schedule item doesn't exist");
             throw new EntityNotFoundException("Schedule item with specified id doesn't exist");
         }

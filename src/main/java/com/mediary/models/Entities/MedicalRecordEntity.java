@@ -1,25 +1,27 @@
 package com.mediary.Models.Entities;
 
+import com.mediary.Models.Enums.Category;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.Collection;
 
 @Entity
-@Table(name = "`TestResult`", schema = "public", catalog = "MediaryDB")
-public class TestResultEntity {
+@Table(name = "`MedicalRecord`", schema = "public", catalog = "MediaryDB")
+public class MedicalRecordEntity {
     private Integer id;
     private String title;
     private String location;
+    private Category category;
     private String note;
     private Date dateOfTheTest;
     private Collection<FileEntity> filesById;
-    private TestTypeEntity testTypeById;
     private UserEntity userById;
-    private Collection<TestResultItemEntity> testResultItemsById;
+    private Collection<TestItemEntity> testItemsById;
 
     @Id
-    @SequenceGenerator(name = "`TestResult_ID_seq`", sequenceName = "`TestResult_ID_seq`", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "`TestResult_ID_seq`")
+    @SequenceGenerator(name = "`MedicalRecord_ID_seq`", sequenceName = "`MedicalRecord_ID_seq`", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "`MedicalRecord_ID_seq`")
     @Column(name = "`ID`", nullable = false)
     public Integer getId() {
         return id;
@@ -50,6 +52,16 @@ public class TestResultEntity {
     }
 
     @Basic
+    @Column(name="`Category`", nullable = false, length = 15)
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    @Basic
     @Column(name = "`Note`", nullable = true, length = 200)
     public String getNote() {
         return note;
@@ -76,7 +88,7 @@ public class TestResultEntity {
         if (o == null || getClass() != o.getClass())
             return false;
 
-        TestResultEntity that = (TestResultEntity) o;
+        MedicalRecordEntity that = (MedicalRecordEntity) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null)
             return false;
@@ -102,23 +114,13 @@ public class TestResultEntity {
         return result;
     }
 
-    @OneToMany(mappedBy = "testResultById")
+    @OneToMany(mappedBy = "medicalRecordById")
     public Collection<FileEntity> getFilesById() {
         return filesById;
     }
 
     public void setFilesById(Collection<FileEntity> filesById) {
         this.filesById = filesById;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "`TestTypeID`", referencedColumnName = "`ID`", nullable = false)
-    public TestTypeEntity getTestTypeById() {
-        return testTypeById;
-    }
-
-    public void setTestTypeById(TestTypeEntity testTypeById) {
-        this.testTypeById = testTypeById;
     }
 
     @ManyToOne
@@ -131,12 +133,12 @@ public class TestResultEntity {
         this.userById = userById;
     }
 
-    @OneToMany(mappedBy = "testResultById")
-    public Collection<TestResultItemEntity> getTestResultItemsById() {
-        return testResultItemsById;
+    @OneToMany(mappedBy = "medicalRecordById")
+    public Collection<TestItemEntity> getTestItemsById() {
+        return testItemsById;
     }
 
-    public void setTestResultItemsById(Collection<TestResultItemEntity> testResultItemsById) {
-        this.testResultItemsById = testResultItemsById;
+    public void setTestItemsById(Collection<TestItemEntity> testItemsById) {
+        this.testItemsById = testItemsById;
     }
 }

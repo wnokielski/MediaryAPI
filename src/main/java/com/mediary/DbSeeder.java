@@ -5,18 +5,19 @@ import com.mediary.Models.Entities.ScheduleItemTypeEntity;
 import com.mediary.Models.Entities.StatisticEntity;
 import com.mediary.Models.Entities.StatisticTypeEntity;
 import com.mediary.Models.Entities.TestParameterEntity;
-import com.mediary.Models.Entities.TestResultEntity;
-import com.mediary.Models.Entities.TestResultItemEntity;
+import com.mediary.Models.Entities.MedicalRecordEntity;
+import com.mediary.Models.Entities.TestItemEntity;
 import com.mediary.Models.Entities.TestTypeEntity;
 import com.mediary.Models.Entities.UserEntity;
+import com.mediary.Models.Enums.Category;
 import com.mediary.Models.Enums.Gender;
 import com.mediary.Repositories.ScheduleItemRepository;
 import com.mediary.Repositories.ScheduleItemTypeRepository;
 import com.mediary.Repositories.StatisticRepository;
 import com.mediary.Repositories.StatisticTypeRepository;
 import com.mediary.Repositories.TestParameterRepository;
-import com.mediary.Repositories.TestResultItemRepository;
-import com.mediary.Repositories.TestResultRepository;
+import com.mediary.Repositories.TestItemRepository;
+import com.mediary.Repositories.MedicalRecordRepository;
 import com.mediary.Repositories.TestTypeRepository;
 import com.mediary.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +50,10 @@ public class DbSeeder implements CommandLineRunner {
     private StatisticRepository statisticRepository;
 
     @Autowired
-    private TestResultRepository testResultRepository;
+    private MedicalRecordRepository medicalRecordRepository;
 
     @Autowired
-    private TestResultItemRepository testResultItemRepository;
+    private TestItemRepository testItemRepository;
 
     @Autowired
     private TestParameterRepository testParameterRepository;
@@ -187,8 +188,6 @@ public class DbSeeder implements CommandLineRunner {
             }
 
             // Test types
-            TestTypeEntity testType = new TestTypeEntity();
-            testType.setName("Other");
             TestTypeEntity testType1 = new TestTypeEntity();
             testType1.setName("Blood count");
             TestTypeEntity testType2 = new TestTypeEntity();
@@ -214,7 +213,6 @@ public class DbSeeder implements CommandLineRunner {
             TestTypeEntity testType12 = new TestTypeEntity();
             testType12.setName("Cronoscopy");
 
-            testTypeRepository.save(testType);
             testTypeRepository.save(testType1);
             testTypeRepository.save(testType2);
             testTypeRepository.save(testType3);
@@ -528,79 +526,79 @@ public class DbSeeder implements CommandLineRunner {
                 testParameterRepository.flush();
             }
 
-            // Test results
-            // Test result items
+            // Medical Records
+            // Test items
             {
-                // Test results
-                TestResultEntity testResult = new TestResultEntity();
-                testResult.setTitle("Annual blood test");
-                testResult.setUserById(user);
-                testResult.setDateOfTheTest(Date.valueOf("2021-03-12"));
-                testResult.setTestTypeById(testType1);
+                // Medical Records
+                MedicalRecordEntity medicalRecord = new MedicalRecordEntity();
+                medicalRecord.setTitle("Annual blood test");
+                medicalRecord.setCategory(Category.EXAMINATION);
+                medicalRecord.setUserById(user);
+                medicalRecord.setDateOfTheTest(Date.valueOf("2021-03-12"));
 
-                TestResultEntity testResult1 = new TestResultEntity();
-                testResult1.setTitle("Cholesterol test");
-                testResult1.setUserById(user);
-                testResult1.setDateOfTheTest(Date.valueOf("2021-04-02"));
-                testResult1.setTestTypeById(testType3);
+                MedicalRecordEntity medicalRecord1 = new MedicalRecordEntity();
+                medicalRecord1.setTitle("Cholesterol test");
+                medicalRecord1.setCategory(Category.EXAMINATION);
+                medicalRecord1.setUserById(user);
+                medicalRecord1.setDateOfTheTest(Date.valueOf("2021-04-02"));
 
-                testResultRepository.save(testResult);
-                testResultRepository.save(testResult1);
-                testResultRepository.flush();
+                medicalRecordRepository.save(medicalRecord);
+                medicalRecordRepository.save(medicalRecord1);
+                medicalRecordRepository.flush();
 
-                // Test result items
-                TestResultItemEntity testResultItem = new TestResultItemEntity();
-                testResultItem.setName("Leukocytes");
-                testResultItem.setUnit("10^9/L");
-                testResultItem.setValue("5,2");
-                testResultItem.setTestResultById(testResult);
+                // Test items
+                TestItemEntity testItem = new TestItemEntity();
+                testItem.setName("Leukocytes");
+                testItem.setUnit("10^9/L");
+                testItem.setValue("5,2");
+                testItem.setMedicalRecordById(medicalRecord);
 
-                TestResultItemEntity testResultItem1 = new TestResultItemEntity();
-                testResultItem1.setName("Erythrocytes");
-                testResultItem1.setUnit("10^6/uL");
-                testResultItem1.setValue("4,8");
-                testResultItem1.setTestResultById(testResult);
+                TestItemEntity testItem1 = new TestItemEntity();
+                testItem1.setName("Erythrocytes");
+                testItem1.setUnit("10^6/uL");
+                testItem1.setValue("4,8");
+                testItem1.setMedicalRecordById(medicalRecord);
 
-                TestResultItemEntity testResultItem2 = new TestResultItemEntity();
-                testResultItem2.setName("Platelet count");
-                testResultItem2.setUnit("10^3/uL");
-                testResultItem2.setValue("220");
-                testResultItem2.setTestResultById(testResult);
+                TestItemEntity testItem2 = new TestItemEntity();
+                testItem2.setName("Platelet count");
+                testItem2.setUnit("10^3/uL");
+                testItem2.setValue("220");
+                testItem2.setMedicalRecordById(medicalRecord);
 
-                testResultItemRepository.save(testResultItem);
-                testResultItemRepository.save(testResultItem1);
-                testResultItemRepository.save(testResultItem2);
-                testResultItemRepository.flush();
+                testItemRepository.save(testItem);
+                testItemRepository.save(testItem1);
+                testItemRepository.save(testItem2);
+                testItemRepository.flush();
 
-                TestResultItemEntity testResultItem3 = new TestResultItemEntity();
-                testResultItem3.setName("Total cholesterol");
-                testResultItem3.setUnit("mg/dL");
-                testResultItem3.setValue("190");
-                testResultItem3.setTestResultById(testResult1);
+                TestItemEntity testItem3 = new TestItemEntity();
+                testItem3.setName("Total cholesterol");
+                testItem3.setUnit("mg/dL");
+                testItem3.setValue("190");
+                testItem3.setMedicalRecordById(medicalRecord1);
 
-                TestResultItemEntity testResultItem4 = new TestResultItemEntity();
-                testResultItem4.setName("LDL cholesterol");
-                testResultItem4.setUnit("mg/dL");
-                testResultItem4.setValue("110");
-                testResultItem4.setTestResultById(testResult1);
+                TestItemEntity testItem4 = new TestItemEntity();
+                testItem4.setName("LDL cholesterol");
+                testItem4.setUnit("mg/dL");
+                testItem4.setValue("110");
+                testItem4.setMedicalRecordById(medicalRecord1);
 
-                TestResultItemEntity testResultItem5 = new TestResultItemEntity();
-                testResultItem5.setName("HDL cholesterol");
-                testResultItem5.setUnit("mg/dL");
-                testResultItem5.setValue("45");
-                testResultItem5.setTestResultById(testResult1);
+                TestItemEntity testItem5 = new TestItemEntity();
+                testItem5.setName("HDL cholesterol");
+                testItem5.setUnit("mg/dL");
+                testItem5.setValue("45");
+                testItem5.setMedicalRecordById(medicalRecord1);
 
-                TestResultItemEntity testResultItem6 = new TestResultItemEntity();
-                testResultItem6.setName("Tryglycerides");
-                testResultItem6.setUnit("mg/dL");
-                testResultItem6.setValue("140");
-                testResultItem6.setTestResultById(testResult1);
+                TestItemEntity testItem6 = new TestItemEntity();
+                testItem6.setName("Tryglycerides");
+                testItem6.setUnit("mg/dL");
+                testItem6.setValue("140");
+                testItem6.setMedicalRecordById(medicalRecord1);
 
-                testResultItemRepository.save(testResultItem3);
-                testResultItemRepository.save(testResultItem4);
-                testResultItemRepository.save(testResultItem5);
-                testResultItemRepository.save(testResultItem6);
-                testResultItemRepository.flush();
+                testItemRepository.save(testItem3);
+                testItemRepository.save(testItem4);
+                testItemRepository.save(testItem5);
+                testItemRepository.save(testItem6);
+                testItemRepository.flush();
             }
 
         }

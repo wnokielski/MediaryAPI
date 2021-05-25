@@ -5,8 +5,7 @@ import java.util.List;
 
 import com.mediary.Models.Entities.FileEntity;
 
-import com.mediary.Models.Entities.TestResultEntity;
-import com.mediary.Models.Entities.TestResultItemEntity;
+import com.mediary.Models.Entities.MedicalRecordEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -14,10 +13,10 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
 
     void deleteById(Integer id);
 
-    Collection<FileEntity> findAllByTestResultById(TestResultEntity testResult);
+    Collection<FileEntity> findAllByMedicalRecordById(MedicalRecordEntity medicalRecord);
 
-    @Query("SELECT f from FileEntity f WHERE f.testResultById.id=?1")
-    List<FileEntity> findByTestResultId(Integer testResultId);
+    @Query("SELECT f from FileEntity f WHERE f.medicalRecordById.id=?1")
+    List<FileEntity> findByMedicalRecordId(Integer medicalRecordId);
 
     FileEntity findById(Integer id);
 }

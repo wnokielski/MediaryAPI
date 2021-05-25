@@ -6,15 +6,15 @@ import java.util.Collection;
 import lombok.Data;
 
 @Data
-public class GetTestResultDto {
+public class GetMedicalRecordDto {
 
     private Integer id;
     private String title;
     private String location;
+    private String category;
     private String note;
     private Date dateOfTheTest;
-    private TestTypeDto testType;
     private Integer userId;
     private Collection<GetFileDto> files;
-    private Collection<GetTestResultItemDto> testResultItems;
+    private Collection<GetTestItemDto> testItems;
 }

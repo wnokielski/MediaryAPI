@@ -5,9 +5,9 @@ import java.util.Collection;
 
 import com.mediary.Models.DTOs.Response.GetFileDto;
 import com.mediary.Models.Entities.FileEntity;
-import com.mediary.Models.Entities.TestResultEntity;
+import com.mediary.Models.Entities.MedicalRecordEntity;
 import com.mediary.Repositories.FileRepository;
-import com.mediary.Repositories.TestResultRepository;
+import com.mediary.Repositories.MedicalRecordRepository;
 import com.mediary.Services.Exceptions.BlobStorageException;
 import com.mediary.Services.Exceptions.EntityNotFoundException;
 import com.mediary.Services.Interfaces.IFileService;
@@ -31,12 +31,12 @@ public class FileService implements IFileService {
     FileRepository fileRepository;
 
     @Autowired
-    TestResultRepository testResultRepository;
+    MedicalRecordRepository medicalRecordRepository;
 
     @Autowired
     IStorageService storageService;
 
-    public boolean uploadFile(MultipartFile file, Integer userId, TestResultEntity testResult)
+    public boolean uploadFile(MultipartFile file, Integer userId, MedicalRecordEntity medicalRecord)
             throws BlobStorageException {
         boolean success = false;
         String fileName = file.getOriginalFilename();
@@ -56,7 +56,7 @@ public class FileService implements IFileService {
         fileEntity.setUuid(blobName);
         fileEntity.setOriginalName(fileName);
         fileEntity.setUrl(url);
-        fileEntity.setTestResultById(testResult);
+        fileEntity.setMedicalRecordById(medicalRecord);
         fileRepository.save(fileEntity);
         fileRepository.flush();
 

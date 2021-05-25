@@ -1,6 +1,5 @@
 package com.mediary.Models.DTOs.Response;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 import lombok.Data;
@@ -13,5 +12,5 @@ public class GetScheduleItemDto {
     private String place;
     private String address;
     private String note;
-    private GetScheduleItemTypeDto scheduleItemType;
+    private Integer scheduleItemTypeId;
 }

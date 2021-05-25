@@ -1,9 +1,9 @@
-package com.mediary.Models.DTOs.Request;
+package com.mediary.Models.DTOs.Response;
 
 import lombok.Data;
 
 @Data
-public class UpdateTestResultItemDto {
+public class GetTestItemDto {
     private Integer id;
     private String name;
     private String value;

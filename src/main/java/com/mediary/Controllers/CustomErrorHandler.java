@@ -1,7 +1,7 @@
 package com.mediary.Controllers;
 
 import com.mediary.Services.Exceptions.*;
-import com.mediary.Services.Exceptions.TestResult.TestResultFileDeletionError;
+import com.mediary.Services.Exceptions.MedicalRecord.MedicalRecordFileDeletionError;
 import com.mediary.Services.Exceptions.User.UserNotFoundException;
 
 import org.springframework.http.HttpStatus;
@@ -44,7 +44,7 @@ public class CustomErrorHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({ BlobStorageException.class, TestResultFileDeletionError.class })
+    @ExceptionHandler({ BlobStorageException.class, MedicalRecordFileDeletionError.class })
     public ResponseEntity<ErrorResponse> storage(Exception ex, WebRequest request) {
         ErrorResponse response = new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
                 ex.getMessage());
