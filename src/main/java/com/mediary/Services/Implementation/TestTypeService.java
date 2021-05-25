@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mediary.Models.DTOs.Response.GetTestTypeDto;
-import com.mediary.Models.DTOs.Response.TestTypeDto;
 import com.mediary.Models.Entities.TestTypeEntity;
 import com.mediary.Repositories.TestTypeRepository;
 import com.mediary.Services.Interfaces.ITestTypeService;
@@ -37,14 +36,6 @@ public class TestTypeService implements ITestTypeService {
             testTypeDtos.add(testTypeDto);
         }
         return testTypeDtos;
-    }
-
-    @Override
-    public TestTypeDto testTypeToDto(TestTypeEntity testTypeEntity) {
-        var testTypeDto = new TestTypeDto();
-        testTypeDto.setId(testTypeEntity.getId());
-        testTypeDto.setName(testTypeEntity.getName());
-        return testTypeDto;
     }
 
     @Override

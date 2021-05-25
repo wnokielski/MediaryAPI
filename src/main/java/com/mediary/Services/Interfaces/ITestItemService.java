@@ -11,6 +11,7 @@ import com.mediary.Services.Exceptions.EntityNotFoundException;
 import com.mediary.Services.Exceptions.IncorrectFieldException;
 
 public interface ITestItemService {
+    void deleteTestItem(Integer id);
 
     void addTestItems(Collection<AddTestItemDto> testItemDtos, MedicalRecordEntity medicalRecord)
             throws IncorrectFieldException;

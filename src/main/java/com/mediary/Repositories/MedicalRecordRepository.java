@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface MedicalRecordRepository extends JpaRepository<MedicalRecordEntity, Long> {
 
+    void deleteById(Integer id);
+
     MedicalRecordEntity findById(Integer id);
 
     @Query("SELECT t from MedicalRecordEntity t WHERE t.userById.id=?1")

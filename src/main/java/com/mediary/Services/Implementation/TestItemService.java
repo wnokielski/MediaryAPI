@@ -29,7 +29,12 @@ public class TestItemService implements ITestItemService {
     TestItemRepository testItemRepository;
 
     @Autowired
-    MedicalRecordRepository medicalRecordRepostiory;
+    MedicalRecordRepository medicalRecordRepository;
+
+    @Override
+    public void deleteTestItem(Integer id) {
+        testItemRepository.deleteById(id);
+    }
 
     @Override
     public void addTestItems(Collection<AddTestItemDto> testItemDtos, MedicalRecordEntity medicalRecord)
@@ -73,7 +78,7 @@ public class TestItemService implements ITestItemService {
 
     @Override
     public List<GetTestItemDto> getAllByMedicalRecordId(Integer medicalRecordId) throws EntityNotFoundException {
-        if (medicalRecordRepostiory.findById(medicalRecordId) == null) {
+        if (medicalRecordRepository.findById(medicalRecordId) == null) {
             throw new EntityNotFoundException("Medical Record with specified ID doesn't exist");
         } else {
             var testItems = testItemRepository.findByMedicalRecordId(medicalRecordId);

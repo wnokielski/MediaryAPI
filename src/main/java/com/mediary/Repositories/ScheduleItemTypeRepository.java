@@ -10,4 +10,6 @@ public interface ScheduleItemTypeRepository extends JpaRepository<ScheduleItemTy
     List<ScheduleItemTypeEntity> findAll();
 
     ScheduleItemTypeEntity findById(Integer id);
+
+    void deleteById(Integer id);
 }

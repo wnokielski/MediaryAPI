@@ -1,5 +1,7 @@
 package com.mediary.Models.Entities;
 
+import com.mediary.Models.Enums.Category;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.Collection;
@@ -10,10 +12,10 @@ public class MedicalRecordEntity {
     private Integer id;
     private String title;
     private String location;
+    private Category category;
     private String note;
     private Date dateOfTheTest;
     private Collection<FileEntity> filesById;
-    private TestTypeEntity testTypeById;
     private UserEntity userById;
     private Collection<TestItemEntity> testItemsById;
 
@@ -47,6 +49,16 @@ public class MedicalRecordEntity {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    @Basic
+    @Column(name="`Category`", nullable = false, length = 15)
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     @Basic
@@ -109,16 +121,6 @@ public class MedicalRecordEntity {
 
     public void setFilesById(Collection<FileEntity> filesById) {
         this.filesById = filesById;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "`TestTypeID`", referencedColumnName = "`ID`", nullable = false)
-    public TestTypeEntity getTestTypeById() {
-        return testTypeById;
-    }
-
-    public void setTestTypeById(TestTypeEntity testTypeById) {
-        this.testTypeById = testTypeById;
     }
 
     @ManyToOne
