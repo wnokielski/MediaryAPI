@@ -3,7 +3,7 @@ package com.mediary.Models.Entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "`testItem`", schema = "public", catalog = "MediaryDB")
+@Table(name = "`TestItem`", schema = "public", catalog = "MediaryDB")
 public class TestItemEntity {
     private Integer id;
     private String name;

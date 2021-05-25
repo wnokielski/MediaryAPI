@@ -538,7 +538,7 @@ public class DbSeeder implements CommandLineRunner {
 
                 MedicalRecordEntity medicalRecord1 = new MedicalRecordEntity();
                 medicalRecord1.setTitle("Cholesterol test");
-                medicalRecord.setCategory(Category.EXAMINATION);
+                medicalRecord1.setCategory(Category.EXAMINATION);
                 medicalRecord1.setUserById(user);
                 medicalRecord1.setDateOfTheTest(Date.valueOf("2021-04-02"));
 
