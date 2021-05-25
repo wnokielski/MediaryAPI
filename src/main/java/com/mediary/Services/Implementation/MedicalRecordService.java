@@ -1,39 +1,36 @@
 package com.mediary.Services.Implementation;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mediary.Models.DTOs.Request.AddMedicalRecordDto;
+import com.mediary.Models.DTOs.Request.UpdateMedicalRecordDto;
 import com.mediary.Models.DTOs.Request.UpdateTestItemDto;
 import com.mediary.Models.DTOs.Response.GetMedicalRecordDto;
 import com.mediary.Models.DTOs.UserDto;
-import com.mediary.Models.Entities.*;
+import com.mediary.Models.Entities.FileEntity;
+import com.mediary.Models.Entities.MedicalRecordEntity;
+import com.mediary.Models.Entities.TestItemEntity;
+import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Models.Enums.Category;
 import com.mediary.Models.Enums.SortType;
 import com.mediary.Repositories.FileRepository;
 import com.mediary.Repositories.MedicalRecordRepository;
 import com.mediary.Repositories.TestItemRepository;
-import com.mediary.Repositories.TestTypeRepository;
 import com.mediary.Services.Const;
-import com.mediary.Services.Exceptions.BlobStorageException;
-import com.mediary.Services.Exceptions.EntityDoesNotBelongToUser;
-import com.mediary.Services.Exceptions.EntityNotFoundException;
-import com.mediary.Services.Exceptions.IncorrectFieldException;
+import com.mediary.Services.Exceptions.*;
 import com.mediary.Services.Interfaces.IFileService;
-import com.mediary.Services.Interfaces.ITestItemService;
 import com.mediary.Services.Interfaces.IMedicalRecordService;
-import com.mediary.Services.Interfaces.ITestTypeService;
-
+import com.mediary.Services.Interfaces.ITestItemService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -43,16 +40,10 @@ public class MedicalRecordService implements IMedicalRecordService {
     MedicalRecordRepository medicalRecordRepository;
 
     @Autowired
-    TestTypeRepository testTypeRepository;
-
-    @Autowired
     UserService userService;
 
     @Autowired
     IFileService fileService;
-
-    @Autowired
-    ITestTypeService testTypeService;
 
     @Autowired
     ITestItemService testItemService;
@@ -248,7 +239,7 @@ public class MedicalRecordService implements IMedicalRecordService {
     }
 
     @Override
-    public void updateMedicalRecordById(UpdateMedicalRecordDto medicalRecordDto, String authHeader, Integer medicalRecordId) throws EntityNotFoundException, EntityDoesNotBelongToUser, IncorrectFieldException {
+    public void updateMedicalRecordById(UpdateMedicalRecordDto medicalRecordDto, String authHeader, Integer medicalRecordId) throws EntityNotFoundException, EntityDoesNotBelongToUser, IncorrectFieldException, EnumConversionException {
         UserEntity user = userService.getUserByAuthHeader(authHeader);
         MedicalRecordEntity updatedMedicalRecord = medicalRecordRepository.findById(medicalRecordId);
         if(updatedMedicalRecord != null){

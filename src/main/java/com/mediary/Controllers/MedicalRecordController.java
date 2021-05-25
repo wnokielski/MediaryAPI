@@ -3,14 +3,12 @@ package com.mediary.Controllers;
 import java.util.List;
 
 import com.mediary.Models.DTOs.Request.AddMedicalRecordDto;
+import com.mediary.Models.DTOs.Request.UpdateMedicalRecordDto;
 import com.mediary.Models.DTOs.Request.UpdateTestItemDto;
 import com.mediary.Models.DTOs.Response.GetMedicalRecordDto;
 import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Services.Const;
-import com.mediary.Services.Exceptions.BlobStorageException;
-import com.mediary.Services.Exceptions.EntityDoesNotBelongToUser;
-import com.mediary.Services.Exceptions.EntityNotFoundException;
-import com.mediary.Services.Exceptions.IncorrectFieldException;
+import com.mediary.Services.Exceptions.*;
 import com.mediary.Services.Exceptions.MedicalRecord.MedicalRecordFileDeletionError;
 import com.mediary.Services.Interfaces.IMedicalRecordService;
 
@@ -86,7 +84,7 @@ public class MedicalRecordController {
     @ResponseStatus(HttpStatus.CREATED)
     @PutMapping("/{medicalRecordId}")
     public void updateMedicalRecordById(@RequestHeader("Authorization") String authHeader, @RequestBody UpdateMedicalRecordDto medicalRecord, @PathVariable ("medicalRecordId") Integer medicalRecordId)
-            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException, EntityDoesNotBelongToUser {
+            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException, EntityDoesNotBelongToUser, EnumConversionException {
         medicalRecordService.updateMedicalRecordById(medicalRecord, authHeader, medicalRecordId);
     }
 

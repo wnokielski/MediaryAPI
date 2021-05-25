@@ -9,6 +9,7 @@ import com.mediary.Models.Entities.MedicalRecordEntity;
 import com.mediary.Models.Entities.TestItemEntity;
 import com.mediary.Models.Entities.TestTypeEntity;
 import com.mediary.Models.Entities.UserEntity;
+import com.mediary.Models.Enums.Category;
 import com.mediary.Models.Enums.Gender;
 import com.mediary.Repositories.ScheduleItemRepository;
 import com.mediary.Repositories.ScheduleItemTypeRepository;
@@ -187,8 +188,6 @@ public class DbSeeder implements CommandLineRunner {
             }
 
             // Test types
-            TestTypeEntity testType = new TestTypeEntity();
-            testType.setName("Other");
             TestTypeEntity testType1 = new TestTypeEntity();
             testType1.setName("Blood count");
             TestTypeEntity testType2 = new TestTypeEntity();
@@ -214,7 +213,6 @@ public class DbSeeder implements CommandLineRunner {
             TestTypeEntity testType12 = new TestTypeEntity();
             testType12.setName("Cronoscopy");
 
-            testTypeRepository.save(testType);
             testTypeRepository.save(testType1);
             testTypeRepository.save(testType2);
             testTypeRepository.save(testType3);
@@ -534,15 +532,15 @@ public class DbSeeder implements CommandLineRunner {
                 // Medical Records
                 MedicalRecordEntity medicalRecord = new MedicalRecordEntity();
                 medicalRecord.setTitle("Annual blood test");
+                medicalRecord.setCategory(Category.EXAMINATION);
                 medicalRecord.setUserById(user);
                 medicalRecord.setDateOfTheTest(Date.valueOf("2021-03-12"));
-                medicalRecord.setTestTypeById(testType1);
 
                 MedicalRecordEntity medicalRecord1 = new MedicalRecordEntity();
                 medicalRecord1.setTitle("Cholesterol test");
+                medicalRecord.setCategory(Category.EXAMINATION);
                 medicalRecord1.setUserById(user);
                 medicalRecord1.setDateOfTheTest(Date.valueOf("2021-04-02"));
-                medicalRecord1.setTestTypeById(testType3);
 
                 medicalRecordRepository.save(medicalRecord);
                 medicalRecordRepository.save(medicalRecord1);
