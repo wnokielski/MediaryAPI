@@ -8,7 +8,6 @@ import java.util.Collection;
 public class TestTypeEntity {
     private Integer id;
     private String name;
-    private Collection<MedicalRecordEntity> medicalRecordsById;
     private Collection<TestParameterEntity> testParametersById;
 
     @Id
@@ -55,15 +54,6 @@ public class TestTypeEntity {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
-    }
-
-    @OneToMany(mappedBy = "testTypeById")
-    public Collection<MedicalRecordEntity> getMedicalRecordsById() {
-        return medicalRecordsById;
-    }
-
-    public void setMedicalRecordsById(Collection<MedicalRecordEntity> medicalRecordsById) {
-        this.medicalRecordsById = medicalRecordsById;
     }
 
     @OneToMany(mappedBy = "testTypeById")
