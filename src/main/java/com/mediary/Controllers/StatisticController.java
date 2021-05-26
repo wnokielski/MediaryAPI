@@ -1,6 +1,7 @@
 package com.mediary.Controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import com.mediary.Models.DTOs.Request.AddStatisticDto;
 import com.mediary.Models.DTOs.Response.GetStatisticDto;
@@ -8,7 +9,6 @@ import com.mediary.Services.Exceptions.EntityNotFoundException;
 import com.mediary.Services.Exceptions.IncorrectFieldException;
 import com.mediary.Services.Interfaces.IStatisticService;
 
-import io.swagger.models.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,7 +57,7 @@ public class StatisticController {
     }
 
     @DeleteMapping("/{statisticId}")
-    public ResponseEntity<List<GetStatisticDto>> deleteStatisticByUserAndStatisticId(
+    public ResponseEntity<?> deleteStatisticByUserAndStatisticId(
             @RequestHeader("Authorization") String authHeader, @PathVariable Integer statisticId)
             throws EntityNotFoundException {
         var qty = statisticService.deleteStatisticByAuthHeaderAndStatisticId(authHeader, statisticId);
@@ -66,5 +66,13 @@ public class StatisticController {
         } else {
             return new ResponseEntity<>(HttpStatus.OK);
         }
+    }
+
+    @PatchMapping("/{statisticId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateStatistic(@RequestBody Map<String, Object> updates,
+                                @RequestHeader("Authorization") String authHeader,
+                                @PathVariable Integer statisticId) throws EntityNotFoundException {
+        statisticService.updateStatisticByAuthHeaderAndStatisticId(authHeader, statisticId, updates);
     }
 }

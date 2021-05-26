@@ -1,8 +1,10 @@
 package com.mediary.Services.Implementation;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.mediary.Models.DTOs.Request.AddStatisticDto;
 import com.mediary.Models.DTOs.Response.GetStatisticDto;
@@ -16,7 +18,6 @@ import com.mediary.Services.Exceptions.IncorrectFieldException;
 import com.mediary.Services.Interfaces.IStatisticService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -156,7 +157,39 @@ public class StatisticService implements IStatisticService {
             log.warn("Statistic not found! Are you trying to delete someone else's statistic?");
             throw new EntityNotFoundException("Statistic not found! Are you trying to delete someone else's statistic?");
         }
+    }
 
+    @Override
+    public void updateStatisticByAuthHeaderAndStatisticId(String authHeader, Integer statisticId, Map<String, Object> updates)
+            throws EntityNotFoundException{
+        UserEntity user = userService.getUserByAuthHeader(authHeader);
+        if (user != null) {
+            updateStatisticByUserAndStatisticId(user, statisticId, updates);
+        } else {
+            log.warn("User not found!");
+            throw new EntityNotFoundException("User doesn't exist.");
+        }
+    }
+
+    @Override
+    public void updateStatisticByUserAndStatisticId(UserEntity user, Integer statisticId, Map<String, Object> updates) throws EntityNotFoundException {
+        var statistic = statisticRepository.findByUserByIdAndId(user, statisticId);
+        if(statistic != null){
+            if(updates.containsKey("date")){
+                String date = (String) updates.get("date");
+                date = date.replace("T", " ");
+                date = date.replace("Z", "");
+                statistic.setDate(Timestamp.valueOf(date));
+                statisticRepository.save(statistic);
+            }
+            if(updates.containsKey("value")){
+                statistic.setValue((String) updates.get("value"));
+                statisticRepository.save(statistic);
+            }
+        } else {
+            log.warn("Statistic not found! Are you trying to delete someone else's statistic?");
+            throw new EntityNotFoundException("Statistic not found! Are you trying to delete someone else's statistic?");
+        }
     }
 
     @Override
