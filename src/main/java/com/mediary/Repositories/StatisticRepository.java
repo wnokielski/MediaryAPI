@@ -13,11 +13,11 @@ import org.springframework.data.jpa.repository.Query;
 public interface StatisticRepository extends JpaRepository<StatisticEntity, Long> {
 
     @Query("SELECT s from StatisticEntity s WHERE s.userById.id=?1 AND s.statisticTypeById.id=?2 ORDER BY s.date")
-    List<StatisticEntity> findByUserIdAndStatisticTypeId(Integer userId, Integer statisticTypeId, Sort sort);
+    List<StatisticEntity> findByUserIdAndStatisticTypeId(Integer userId, Integer statisticTypeId);
 
-    List<StatisticEntity> findByUserByIdAndStatisticTypeByIdAndDateBetween(Optional<com.mediary.Models.Entities.UserEntity> user,
+    List<StatisticEntity> findByUserByIdAndStatisticTypeByIdAndDateBetweenOrderByDateAsc(Optional<com.mediary.Models.Entities.UserEntity> user,
                                                                            com.mediary.Models.Entities.StatisticTypeEntity statisticType,
-                                                                           Timestamp dateFrom, Timestamp dateTo, Sort sort);
+                                                                           Timestamp dateFrom, Timestamp dateTo);
 
     StatisticEntity findByUserByIdAndId(com.mediary.Models.Entities.UserEntity user, Integer statisticId);
 

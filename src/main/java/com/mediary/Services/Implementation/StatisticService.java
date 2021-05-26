@@ -1,6 +1,5 @@
 package com.mediary.Services.Implementation;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,9 +101,10 @@ public class StatisticService implements IStatisticService {
             log.warn("Statistic type with specified ID doesn't exist!");
             throw new EntityNotFoundException("Statistic type with specified ID doesn't exist!");
         }
-        var statistics = statisticRepository.findByUserIdAndStatisticTypeId(userId, statisticTypeId, Sort.by(Sort.Direction.ASC, "Date"));
+        var statistics = statisticRepository.findByUserIdAndStatisticTypeId(userId, statisticTypeId);
         ArrayList<GetStatisticDto> statisticDtos = (ArrayList<GetStatisticDto>) statisticsToDtos(statistics);
-        return statisticDtos;
+        ArrayList<GetStatisticDto> limitedStatisticDtos = new ArrayList<GetStatisticDto>(statisticDtos.subList(Math.max(statisticDtos.size() - 20, 0), statisticDtos.size()));
+        return limitedStatisticDtos;
     }
 
     @Override
@@ -129,10 +129,11 @@ public class StatisticService implements IStatisticService {
         var user = userRepository.findById(userId);
         var statisticsType = statisticTypeRepository.findById(statisticTypeId);
 
-        var statistics = statisticRepository.findByUserByIdAndStatisticTypeByIdAndDateBetween(user, statisticsType,
-                Timestamp.valueOf(dateFrom + " 00:00:00"), Timestamp.valueOf(dateTo + " 23:59:59"), Sort.by(Sort.Direction.ASC, "Date"));
+        var statistics = statisticRepository.findByUserByIdAndStatisticTypeByIdAndDateBetweenOrderByDateAsc(user, statisticsType,
+                Timestamp.valueOf(dateFrom + " 00:00:00"), Timestamp.valueOf(dateTo + " 23:59:59"));
         ArrayList<GetStatisticDto> statisticDtos = (ArrayList<GetStatisticDto>) statisticsToDtos(statistics);
-        return statisticDtos;
+        ArrayList<GetStatisticDto> limitedStatisticDtos = new ArrayList<GetStatisticDto>(statisticDtos.subList(Math.max(statisticDtos.size() - 20, 0), statisticDtos.size()));
+        return limitedStatisticDtos;
     }
 
     @Override
