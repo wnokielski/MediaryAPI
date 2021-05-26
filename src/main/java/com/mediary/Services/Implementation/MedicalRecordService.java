@@ -91,11 +91,7 @@ public class MedicalRecordService implements IMedicalRecordService {
 
             testItemService.addTestItems(medicalRecordDto.getTestItems(), savedEntity);
 
-            savedEntity.setFilesById(fileRepository.findByMedicalRecordId(savedEntity.getId()));
-            savedEntity.setTestItemsById(testItemRepository.findByMedicalRecordId(savedEntity.getId()));
-            savedEntity = medicalRecordRepository.saveAndFlush(medicalRecordEntity);
-
-            return medicalRecordToDto(medicalRecordRepository.findById(savedEntity.getId()));
+            return medicalRecordToDto(savedEntity);
         }
     }
 
@@ -147,10 +143,10 @@ public class MedicalRecordService implements IMedicalRecordService {
         medicalRecordDto.setDateOfTheTest(medicalRecordEntity.getDateOfTheTest());
         medicalRecordDto.setUserId(medicalRecordEntity.getUserById().getId());
 
-        var files = medicalRecordEntity.getFilesById();
+        var files = fileRepository.findByMedicalRecordId(medicalRecordEntity.getId());
         medicalRecordDto.setFiles(fileService.filesToDtos(files));
 
-        var testItems = medicalRecordEntity.getTestItemsById();
+        var testItems = testItemRepository.findByMedicalRecordId(medicalRecordEntity.getId());
         medicalRecordDto.setTestItems(testItemService.testItemsToDtos(testItems));
 
         return medicalRecordDto;
