@@ -1,6 +1,7 @@
 package com.mediary.Services.Interfaces;
 
 import java.util.List;
+import java.util.Map;
 
 import com.mediary.Models.DTOs.Request.AddStatisticDto;
 import com.mediary.Models.DTOs.Response.GetStatisticDto;
@@ -8,6 +9,7 @@ import com.mediary.Models.Entities.StatisticEntity;
 import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Services.Exceptions.EntityNotFoundException;
 import com.mediary.Services.Exceptions.IncorrectFieldException;
+import org.springframework.http.ResponseEntity;
 
 public interface IStatisticService {
 
@@ -39,5 +41,10 @@ public interface IStatisticService {
         Long deleteStatisticByAuthHeaderAndStatisticId(String authHeader, Integer statisticId) throws EntityNotFoundException;
 
         Long deleteStatisticByUserAndStatisticId(UserEntity user, Integer statisticId) throws EntityNotFoundException;
+
+        void updateStatisticByAuthHeaderAndStatisticId(String authHeader, Integer statisticId, Map<String, Object> updates)
+                throws EntityNotFoundException;
+
+        void updateStatisticByUserAndStatisticId(UserEntity user, Integer statisticId, Map<String, Object> updates) throws EntityNotFoundException;
 
 }

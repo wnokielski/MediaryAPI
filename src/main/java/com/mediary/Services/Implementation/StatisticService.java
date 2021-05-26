@@ -4,6 +4,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.mediary.Models.DTOs.Request.AddStatisticDto;
 import com.mediary.Models.DTOs.Response.GetStatisticDto;
@@ -103,7 +104,8 @@ public class StatisticService implements IStatisticService {
         }
         var statistics = statisticRepository.findByUserIdAndStatisticTypeId(userId, statisticTypeId);
         ArrayList<GetStatisticDto> statisticDtos = (ArrayList<GetStatisticDto>) statisticsToDtos(statistics);
-        return statisticDtos;
+        ArrayList<GetStatisticDto> limitedStatisticDtos = new ArrayList<GetStatisticDto>(statisticDtos.subList(Math.max(statisticDtos.size() - 20, 0), statisticDtos.size()));
+        return limitedStatisticDtos;
     }
 
     @Override
@@ -128,10 +130,11 @@ public class StatisticService implements IStatisticService {
         var user = userRepository.findById(userId);
         var statisticsType = statisticTypeRepository.findById(statisticTypeId);
 
-        var statistics = statisticRepository.findByUserByIdAndStatisticTypeByIdAndDateBetween(user, statisticsType,
+        var statistics = statisticRepository.findByUserByIdAndStatisticTypeByIdAndDateBetweenOrderByDateAsc(user, statisticsType,
                 Timestamp.valueOf(dateFrom + " 00:00:00"), Timestamp.valueOf(dateTo + " 23:59:59"));
         ArrayList<GetStatisticDto> statisticDtos = (ArrayList<GetStatisticDto>) statisticsToDtos(statistics);
-        return statisticDtos;
+        ArrayList<GetStatisticDto> limitedStatisticDtos = new ArrayList<GetStatisticDto>(statisticDtos.subList(Math.max(statisticDtos.size() - 20, 0), statisticDtos.size()));
+        return limitedStatisticDtos;
     }
 
     @Override
@@ -154,7 +157,39 @@ public class StatisticService implements IStatisticService {
             log.warn("Statistic not found! Are you trying to delete someone else's statistic?");
             throw new EntityNotFoundException("Statistic not found! Are you trying to delete someone else's statistic?");
         }
+    }
 
+    @Override
+    public void updateStatisticByAuthHeaderAndStatisticId(String authHeader, Integer statisticId, Map<String, Object> updates)
+            throws EntityNotFoundException{
+        UserEntity user = userService.getUserByAuthHeader(authHeader);
+        if (user != null) {
+            updateStatisticByUserAndStatisticId(user, statisticId, updates);
+        } else {
+            log.warn("User not found!");
+            throw new EntityNotFoundException("User doesn't exist.");
+        }
+    }
+
+    @Override
+    public void updateStatisticByUserAndStatisticId(UserEntity user, Integer statisticId, Map<String, Object> updates) throws EntityNotFoundException {
+        var statistic = statisticRepository.findByUserByIdAndId(user, statisticId);
+        if(statistic != null){
+            if(updates.containsKey("date")){
+                String date = (String) updates.get("date");
+                date = date.replace("T", " ");
+                date = date.replace("Z", "");
+                statistic.setDate(Timestamp.valueOf(date));
+                statisticRepository.save(statistic);
+            }
+            if(updates.containsKey("value")){
+                statistic.setValue((String) updates.get("value"));
+                statisticRepository.save(statistic);
+            }
+        } else {
+            log.warn("Statistic not found! Are you trying to delete someone else's statistic?");
+            throw new EntityNotFoundException("Statistic not found! Are you trying to delete someone else's statistic?");
+        }
     }
 
     @Override
