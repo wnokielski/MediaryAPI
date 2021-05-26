@@ -2,10 +2,12 @@ package com.mediary.Services.Implementation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mediary.Models.DTOs.Request.AddMedicalRecordDto;
+import com.mediary.Models.DTOs.Request.AddTestItemDto;
 import com.mediary.Models.DTOs.Request.UpdateMedicalRecordDto;
 import com.mediary.Models.DTOs.Request.UpdateTestItemDto;
 import com.mediary.Models.DTOs.Response.GetMedicalRecordDto;
 import com.mediary.Models.DTOs.Response.GetScheduleItemDto;
+import com.mediary.Models.DTOs.Response.GetTestItemDto;
 import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Models.Entities.FileEntity;
 import com.mediary.Models.Entities.MedicalRecordEntity;
@@ -244,9 +246,8 @@ public class MedicalRecordService implements IMedicalRecordService {
     public void updateMedicalRecordById(UpdateMedicalRecordDto medicalRecordDto, String authHeader, Integer medicalRecordId) throws EntityNotFoundException, EntityDoesNotBelongToUser, IncorrectFieldException, EnumConversionException {
         UserEntity user = userService.getUserByAuthHeader(authHeader);
         MedicalRecordEntity updatedMedicalRecord = medicalRecordRepository.findById(medicalRecordId);
+        List<Integer> ids = new ArrayList<>();
         if(updatedMedicalRecord != null){
-            System.out.println(updatedMedicalRecord.getUserById().getId());
-            System.out.println(user.getId());
             if (updatedMedicalRecord.getUserById().getId().equals(user.getId())) {
                 if (medicalRecordDto.getTitle().length() > 50 || medicalRecordDto.getTitle() == "") {
                     throw new IncorrectFieldException("Title field is incorrect");
@@ -270,10 +271,28 @@ public class MedicalRecordService implements IMedicalRecordService {
                         updatedMedicalRecord.setDateOfTheTest(medicalRecordDto.getDateOfTheTest());
 
                     medicalRecordRepository.save(updatedMedicalRecord);
+                    Collection<AddTestItemDto> newTestItems = medicalRecordDto.getNewTestItems();
+                    List<GetTestItemDto> testItems = testItemService.getAllByMedicalRecordId(updatedMedicalRecord.getId());
                     Collection<UpdateTestItemDto> medicalRecordItems = medicalRecordDto.getTestItems();
+                    for(UpdateTestItemDto medicalRecordItem : medicalRecordItems){
+                        ids.add(medicalRecordItem.getId());
+                    }
                     if(medicalRecordItems.isEmpty() == false){
-                        for(UpdateTestItemDto medicalRecordItem : medicalRecordItems){
-                            this.updateTestItemById(medicalRecordItem, authHeader, medicalRecordItem.getId());
+                        for(GetTestItemDto testItem : testItems){
+                            if(ids.contains(testItem.getId()) == true){
+                                for(UpdateTestItemDto medicalRecordItem : medicalRecordItems){
+                                    this.updateTestItemById(medicalRecordItem, authHeader, medicalRecordItem.getId(), updatedMedicalRecord);
+                                }
+                            }
+                            if(ids.contains(testItem.getId()) == false){
+                                testItemService.deleteTestItem(testItem.getId());
+                            }
+                        }
+                    }
+                    if(newTestItems.isEmpty() == false){
+                        for(AddTestItemDto newTestItem : newTestItems){
+                            System.out.println(newTestItem.getName());
+                            testItemService.addTestItem(newTestItem, updatedMedicalRecord);
                         }
                     }
                 }
@@ -291,7 +310,7 @@ public class MedicalRecordService implements IMedicalRecordService {
     }
 
     @Override
-    public void updateTestItemById(UpdateTestItemDto medicalRecordItemDto, String authHeader, Integer medicalRecordItemId) throws EntityNotFoundException, IncorrectFieldException, EntityDoesNotBelongToUser {
+    public void updateTestItemById(UpdateTestItemDto medicalRecordItemDto, String authHeader, Integer medicalRecordItemId, MedicalRecordEntity medicalRecordEntity) throws EntityNotFoundException, IncorrectFieldException, EntityDoesNotBelongToUser {
         UserEntity user = userService.getUserByAuthHeader(authHeader);
         List<Integer> ids = new ArrayList<>();
         TestItemEntity updatedTestItem = testItemRepository.findById(medicalRecordItemId);
@@ -320,8 +339,8 @@ public class MedicalRecordService implements IMedicalRecordService {
                     testItemRepository.save(updatedTestItem);
                 }
             } else {
-                log.warn("Medical record doesn't belong to this user");
-                throw new EntityDoesNotBelongToUser("Test item doesn't belong to this user!");
+                log.warn("Medical record item doesn't belong to this user");
+                throw new EntityDoesNotBelongToUser("Medical record item doesn't belong to this user!");
             }
         } else {
             log.warn("Test item doesn't exist");

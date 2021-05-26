@@ -89,12 +89,12 @@ public class MedicalRecordController {
         medicalRecordService.updateMedicalRecordById(medicalRecord, authHeader, medicalRecordId);
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
-    @PutMapping("/item/{medicalRecordItemId}")
-    public void updateMedicalRecordItemById(@RequestHeader("Authorization") String authHeader, @RequestBody UpdateTestItemDto medicalRecordItem, @PathVariable ("medicalRecordItemId") Integer medicalRecordItemId)
-            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException, EntityDoesNotBelongToUser {
-        medicalRecordService.updateTestItemById(medicalRecordItem, authHeader, medicalRecordItemId);
-    }
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @PutMapping("/item/{medicalRecordItemId}")
+//    public void updateMedicalRecordItemById(@RequestHeader("Authorization") String authHeader, @RequestBody UpdateTestItemDto medicalRecordItem, @PathVariable ("medicalRecordItemId") Integer medicalRecordItemId)
+//            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException, EntityDoesNotBelongToUser {
+//        medicalRecordService.updateTestItemById(medicalRecordItem, authHeader, medicalRecordItemId);
+//    }
 
     @GetMapping("/byDate/{dateFrom}/{dateTo}")
     public ResponseEntity<List<GetMedicalRecordDto>> getMedicalRecordByUserAndDate (
