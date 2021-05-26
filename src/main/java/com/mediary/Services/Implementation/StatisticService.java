@@ -17,6 +17,7 @@ import com.mediary.Services.Exceptions.IncorrectFieldException;
 import com.mediary.Services.Interfaces.IStatisticService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -101,7 +102,7 @@ public class StatisticService implements IStatisticService {
             log.warn("Statistic type with specified ID doesn't exist!");
             throw new EntityNotFoundException("Statistic type with specified ID doesn't exist!");
         }
-        var statistics = statisticRepository.findByUserIdAndStatisticTypeId(userId, statisticTypeId);
+        var statistics = statisticRepository.findByUserIdAndStatisticTypeId(userId, statisticTypeId, Sort.by(Sort.Direction.ASC, "Date"));
         ArrayList<GetStatisticDto> statisticDtos = (ArrayList<GetStatisticDto>) statisticsToDtos(statistics);
         return statisticDtos;
     }
@@ -129,7 +130,7 @@ public class StatisticService implements IStatisticService {
         var statisticsType = statisticTypeRepository.findById(statisticTypeId);
 
         var statistics = statisticRepository.findByUserByIdAndStatisticTypeByIdAndDateBetween(user, statisticsType,
-                Timestamp.valueOf(dateFrom + " 00:00:00"), Timestamp.valueOf(dateTo + " 23:59:59"));
+                Timestamp.valueOf(dateFrom + " 00:00:00"), Timestamp.valueOf(dateTo + " 23:59:59"), Sort.by(Sort.Direction.ASC, "Date"));
         ArrayList<GetStatisticDto> statisticDtos = (ArrayList<GetStatisticDto>) statisticsToDtos(statistics);
         return statisticDtos;
     }
