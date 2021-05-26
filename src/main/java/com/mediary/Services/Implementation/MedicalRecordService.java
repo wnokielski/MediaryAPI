@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,15 +56,15 @@ public class MedicalRecordService implements IMedicalRecordService {
     FileRepository fileRepository;
 
     @Override
-    public void addMedicalRecordByAuthHeader(AddMedicalRecordDto medicalRecord, MultipartFile[] files, String authHeader)
-            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException {
+    public GetMedicalRecordDto addMedicalRecordByAuthHeader(AddMedicalRecordDto medicalRecord, MultipartFile[] files, String authHeader)
+            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException, EnumConversionException {
         UserEntity user = userService.getUserByAuthHeader(authHeader);
-        addMedicalRecord(medicalRecord, files, user);
+        return addMedicalRecord(medicalRecord, files, user);
     }
 
     @Override
-    public void addMedicalRecord(AddMedicalRecordDto medicalRecordDto, MultipartFile[] files, UserEntity user)
-            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException {
+    public GetMedicalRecordDto addMedicalRecord(AddMedicalRecordDto medicalRecordDto, MultipartFile[] files, UserEntity user)
+            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException, EnumConversionException {
 
         if (medicalRecordDto.getTitle().length() > 50 || medicalRecordDto.getTitle() == "") {
             throw new IncorrectFieldException("Title field is incorrect");
@@ -77,16 +78,19 @@ public class MedicalRecordService implements IMedicalRecordService {
             MedicalRecordEntity medicalRecordEntity = new MedicalRecordEntity();
             medicalRecordEntity.setTitle(medicalRecordDto.getTitle());
             medicalRecordEntity.setLocation(medicalRecordDto.getLocation());
+            medicalRecordEntity.setCategory(Category.convertStringToEnum(medicalRecordDto.getCategory()));
             medicalRecordEntity.setNote(medicalRecordDto.getNote());
-            medicalRecordEntity.setDateOfTheTest(medicalRecordDto.getDateOfTheTest());
+            medicalRecordEntity.setDateOfTheTest(new Date(medicalRecordDto.getDateOfTheTest().getTime()));
             medicalRecordEntity.setUserById(user);
 
+            var savedEntity = medicalRecordRepository.saveAndFlush(medicalRecordEntity);
+
             for (MultipartFile file : files) {
-                fileService.uploadFile(file, user.getId(), medicalRecordEntity);
+                fileService.uploadFile(file, user.getId(), savedEntity);
             }
 
-            testItemService.addTestItems(medicalRecordDto.getTestItems(), medicalRecordEntity);
-            medicalRecordRepository.save(medicalRecordEntity);
+            testItemService.addTestItems(medicalRecordDto.getTestItems(), savedEntity);
+            return medicalRecordToDto(medicalRecordRepository.findById(savedEntity.getId()));
         }
     }
 
