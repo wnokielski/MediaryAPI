@@ -14,3 +14,4 @@ public class AddMedicalRecordDto {
     private Date dateOfTheTest;
     private Collection<AddTestItemDto> testItems;
 }
+

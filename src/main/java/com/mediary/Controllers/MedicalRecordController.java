@@ -6,6 +6,7 @@ import com.mediary.Models.DTOs.Request.AddMedicalRecordDto;
 import com.mediary.Models.DTOs.Request.UpdateMedicalRecordDto;
 import com.mediary.Models.DTOs.Request.UpdateTestItemDto;
 import com.mediary.Models.DTOs.Response.GetMedicalRecordDto;
+import com.mediary.Models.DTOs.Response.GetScheduleItemDto;
 import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Services.Const;
 import com.mediary.Services.Exceptions.*;
@@ -95,5 +96,15 @@ public class MedicalRecordController {
         medicalRecordService.updateTestItemById(medicalRecordItem, authHeader, medicalRecordItemId);
     }
 
+    @GetMapping("/byDate/{dateFrom}/{dateTo}")
+    public ResponseEntity<List<GetMedicalRecordDto>> getMedicalRecordByUserAndDate (
+            @RequestHeader("Authorization") String authHeader, @PathVariable String dateFrom, @PathVariable String dateTo) throws EntityNotFoundException {
+        List<GetMedicalRecordDto> medicalRecordDtos = medicalRecordService.getScheduleItemByAuthHeaderAndDate(authHeader, dateFrom, dateTo);
+        if (medicalRecordDtos.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(medicalRecordDtos, HttpStatus.OK);
+        }
+    }
 
 }

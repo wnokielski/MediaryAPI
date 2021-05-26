@@ -19,6 +19,7 @@ import com.mediary.Services.Exceptions.IncorrectFieldException;
 import com.mediary.Services.Interfaces.IScheduleItemService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -149,8 +150,8 @@ public class ScheduleItemService implements IScheduleItemService {
             throws EntityNotFoundException {
         UserEntity user = userService.getUserByAuthHeader(authHeader);
         if (user != null) {
-            var scheduleItems = scheduleItemRepository.findByUserByIdAndDateBetween(java.util.Optional.of(user),
-                    Timestamp.valueOf(dateFrom + " 00:00:00"), Timestamp.valueOf(dateTo + " 23:59:59"));
+            var scheduleItems = scheduleItemRepository.findByUserByIdAndDateBetweenOrderByDate(java.util.Optional.of(user),
+                    Timestamp.valueOf(dateFrom), Timestamp.valueOf(dateTo));
             ArrayList<GetScheduleItemDto> scheduleItemDtos = (ArrayList<GetScheduleItemDto>) scheduleItemsToDtos(
                     scheduleItems);
             return scheduleItemDtos;

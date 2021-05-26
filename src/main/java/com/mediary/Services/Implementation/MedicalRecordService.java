@@ -5,6 +5,7 @@ import com.mediary.Models.DTOs.Request.AddMedicalRecordDto;
 import com.mediary.Models.DTOs.Request.UpdateMedicalRecordDto;
 import com.mediary.Models.DTOs.Request.UpdateTestItemDto;
 import com.mediary.Models.DTOs.Response.GetMedicalRecordDto;
+import com.mediary.Models.DTOs.Response.GetScheduleItemDto;
 import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Models.Entities.FileEntity;
 import com.mediary.Models.Entities.MedicalRecordEntity;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -326,6 +328,20 @@ public class MedicalRecordService implements IMedicalRecordService {
             throw new EntityNotFoundException("Test item with specified id doesn't exist");
         }
     }
+
+    @Override
+    public List<GetMedicalRecordDto> getScheduleItemByAuthHeaderAndDate(String authHeader, String dateFrom, String dateTo) throws EntityNotFoundException {
+            UserEntity user = userService.getUserByAuthHeader(authHeader);
+            if (user != null) {
+                var medicalRecords = medicalRecordRepository.findByUserByIdAndDateOfTheTestBetweenOrderByDateOfTheTest(java.util.Optional.of(user),
+                        Timestamp.valueOf(dateFrom + " 00:00:00"), Timestamp.valueOf(dateTo + " 23:59:59"));
+                ArrayList<GetMedicalRecordDto> medicalRecordDtos = (ArrayList<GetMedicalRecordDto>) medicalRecordsToDtos(
+                        medicalRecords);
+                return medicalRecordDtos;
+            } else {
+                throw new EntityNotFoundException("User doesn't exist.");
+            }
+        }
 
     private List<GetMedicalRecordDto> chooseSort(String sortType,  List<GetMedicalRecordDto> medicalRecords) {
         List<GetMedicalRecordDto> sortedEvents = null;
