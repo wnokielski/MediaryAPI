@@ -90,6 +90,11 @@ public class MedicalRecordService implements IMedicalRecordService {
             }
 
             testItemService.addTestItems(medicalRecordDto.getTestItems(), savedEntity);
+
+            savedEntity.setFilesById(fileRepository.findByMedicalRecordId(savedEntity.getId()));
+            savedEntity.setTestItemsById(testItemRepository.findByMedicalRecordId(savedEntity.getId()));
+            savedEntity = medicalRecordRepository.saveAndFlush(medicalRecordEntity);
+
             return medicalRecordToDto(medicalRecordRepository.findById(savedEntity.getId()));
         }
     }
