@@ -13,4 +13,5 @@ public class UpdateMedicalRecordDto {
     private String note;
     private Date dateOfTheTest;
     private Collection<UpdateTestItemDto> testItems;
+    private Collection<AddTestItemDto> newTestItems;
 }
