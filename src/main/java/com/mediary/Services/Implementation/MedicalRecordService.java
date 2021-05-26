@@ -85,11 +85,15 @@ public class MedicalRecordService implements IMedicalRecordService {
 
             var savedEntity = medicalRecordRepository.saveAndFlush(medicalRecordEntity);
 
-            for (MultipartFile file : files) {
-                fileService.uploadFile(file, user.getId(), savedEntity);
+            if (files != null) {
+                for (MultipartFile file : files) {
+                    fileService.uploadFile(file, user.getId(), savedEntity);
+                }
             }
 
-            testItemService.addTestItems(medicalRecordDto.getTestItems(), savedEntity);
+            if (medicalRecordDto.getTestItems() != null) {
+                testItemService.addTestItems(medicalRecordDto.getTestItems(), savedEntity);
+            }
 
             return medicalRecordToDto(savedEntity);
         }
