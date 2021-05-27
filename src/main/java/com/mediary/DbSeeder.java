@@ -137,54 +137,62 @@ public class DbSeeder implements CommandLineRunner {
             // Statistics
             {
                 StatisticTypeEntity statisticType = new StatisticTypeEntity();
-                statisticType.setName("Blood pressure");
-                statisticType.setUnit("mmHg");
+                statisticType.setName("Weight");
+                statisticType.setUnit("kg");
                 StatisticTypeEntity statisticType1 = new StatisticTypeEntity();
-                statisticType1.setName("Pulse");
-                statisticType1.setUnit("/min");
+                statisticType1.setName("Glucose level");
+                statisticType1.setUnit("mg/dL");
                 StatisticTypeEntity statisticType2 = new StatisticTypeEntity();
-                statisticType2.setName("Glucose level");
-                statisticType2.setUnit("md/dL");
+                statisticType2.setName("Insuline level");
+                statisticType2.setUnit("mU/ml");
                 StatisticTypeEntity statisticType3 = new StatisticTypeEntity();
-                statisticType3.setName("Weight");
-                statisticType3.setUnit("kg");
+                statisticType3.setName("Tsh");
+                statisticType3.setUnit("mlU/l");
+                StatisticTypeEntity statisticType4 = new StatisticTypeEntity();
+                statisticType4.setName("Body fat level");
+                statisticType4.setUnit("%");
+                StatisticTypeEntity statisticType5 = new StatisticTypeEntity();
+                statisticType5.setName("Muscle tissue level");
+                statisticType5.setUnit("%");
 
                 statisticTypeRepository.save(statisticType);
                 statisticTypeRepository.save(statisticType1);
                 statisticTypeRepository.save(statisticType2);
                 statisticTypeRepository.save(statisticType3);
+                statisticTypeRepository.save(statisticType4);
+                statisticTypeRepository.save(statisticType5);
                 statisticTypeRepository.flush();
 
                 // Statistics
-                StatisticEntity statistic = new StatisticEntity();
-                statistic.setValue("120");
-                statistic.setDate(Timestamp.valueOf("2021-04-12 21:37:00"));
-                statistic.setStatisticTypeById(statisticType2);
-                statistic.setUserById(user);
-
-                StatisticEntity statistic1 = new StatisticEntity();
-                statistic1.setValue("110");
-                statistic1.setDate(Timestamp.valueOf("2021-04-13 12:00:00"));
-                statistic1.setStatisticTypeById(statisticType2);
-                statistic1.setUserById(user);
-
-                StatisticEntity statistic2 = new StatisticEntity();
-                statistic2.setValue("130");
-                statistic2.setDate(Timestamp.valueOf("2021-04-14 11:23:00"));
-                statistic2.setStatisticTypeById(statisticType2);
-                statistic2.setUserById(user);
-
-                StatisticEntity statistic3 = new StatisticEntity();
-                statistic3.setValue("122");
-                statistic3.setDate(Timestamp.valueOf("2021-04-15 12:34:56"));
-                statistic3.setStatisticTypeById(statisticType2);
-                statistic3.setUserById(user);
-
-                statisticRepository.save(statistic);
-                statisticRepository.save(statistic1);
-                statisticRepository.save(statistic2);
-                statisticRepository.save(statistic3);
-                statisticRepository.flush();
+//                StatisticEntity statistic = new StatisticEntity();
+//                statistic.setValue("120");
+//                statistic.setDate(Timestamp.valueOf("2021-04-12 21:37:00"));
+//                statistic.setStatisticTypeById(statisticType2);
+//                statistic.setUserById(user);
+//
+//                StatisticEntity statistic1 = new StatisticEntity();
+//                statistic1.setValue("110");
+//                statistic1.setDate(Timestamp.valueOf("2021-04-13 12:00:00"));
+//                statistic1.setStatisticTypeById(statisticType2);
+//                statistic1.setUserById(user);
+//
+//                StatisticEntity statistic2 = new StatisticEntity();
+//                statistic2.setValue("130");
+//                statistic2.setDate(Timestamp.valueOf("2021-04-14 11:23:00"));
+//                statistic2.setStatisticTypeById(statisticType2);
+//                statistic2.setUserById(user);
+//
+//                StatisticEntity statistic3 = new StatisticEntity();
+//                statistic3.setValue("122");
+//                statistic3.setDate(Timestamp.valueOf("2021-04-15 12:34:56"));
+//                statistic3.setStatisticTypeById(statisticType2);
+//                statistic3.setUserById(user);
+//
+//                statisticRepository.save(statistic);
+//                statisticRepository.save(statistic1);
+//                statisticRepository.save(statistic2);
+//                statisticRepository.save(statistic3);
+//                statisticRepository.flush();
             }
 
             // Test types
