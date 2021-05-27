@@ -5,8 +5,8 @@ import com.mediary.Models.DTOs.Request.AddMedicalRecordDto;
 import com.mediary.Models.DTOs.Request.AddTestItemDto;
 import com.mediary.Models.DTOs.Request.UpdateMedicalRecordDto;
 import com.mediary.Models.DTOs.Request.UpdateTestItemDto;
+import com.mediary.Models.DTOs.Response.GetFileDto;
 import com.mediary.Models.DTOs.Response.GetMedicalRecordDto;
-import com.mediary.Models.DTOs.Response.GetScheduleItemDto;
 import com.mediary.Models.DTOs.Response.GetTestItemDto;
 import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Models.Entities.FileEntity;
@@ -243,7 +243,7 @@ public class MedicalRecordService implements IMedicalRecordService {
     }
 
     @Override
-    public void updateMedicalRecordById(UpdateMedicalRecordDto medicalRecordDto, String authHeader, Integer medicalRecordId) throws EntityNotFoundException, EntityDoesNotBelongToUser, IncorrectFieldException, EnumConversionException {
+    public GetMedicalRecordDto updateMedicalRecordById(UpdateMedicalRecordDto medicalRecordDto, String authHeader, Integer medicalRecordId) throws EntityNotFoundException, EntityDoesNotBelongToUser, IncorrectFieldException, EnumConversionException, BlobStorageException {
         UserEntity user = userService.getUserByAuthHeader(authHeader);
         MedicalRecordEntity updatedMedicalRecord = medicalRecordRepository.findById(medicalRecordId);
         List<Integer> ids = new ArrayList<>();
@@ -274,25 +274,44 @@ public class MedicalRecordService implements IMedicalRecordService {
                     Collection<AddTestItemDto> newTestItems = medicalRecordDto.getNewTestItems();
                     List<GetTestItemDto> testItems = testItemService.getAllByMedicalRecordId(updatedMedicalRecord.getId());
                     Collection<UpdateTestItemDto> medicalRecordItems = medicalRecordDto.getTestItems();
+                    Collection<GetFileDto> files = medicalRecordDto.getFiles();
+                    MultipartFile[] newFiles = medicalRecordDto.getNewFiles();
                     for(UpdateTestItemDto medicalRecordItem : medicalRecordItems){
                         ids.add(medicalRecordItem.getId());
                     }
-                    if(medicalRecordItems.isEmpty() == false){
+                    if(!medicalRecordItems.isEmpty()){
                         for(GetTestItemDto testItem : testItems){
-                            if(ids.contains(testItem.getId()) == true){
+                            if(ids.contains(testItem.getId())){
                                 for(UpdateTestItemDto medicalRecordItem : medicalRecordItems){
                                     this.updateTestItemById(medicalRecordItem, authHeader, medicalRecordItem.getId(), updatedMedicalRecord);
                                 }
                             }
-                            if(ids.contains(testItem.getId()) == false){
+                            if(!ids.contains(testItem.getId())){
                                 testItemService.deleteTestItem(testItem.getId());
                             }
                         }
                     }
-                    if(newTestItems.isEmpty() == false){
+                    if(!newTestItems.isEmpty()){
                         for(AddTestItemDto newTestItem : newTestItems){
                             System.out.println(newTestItem.getName());
                             testItemService.addTestItem(newTestItem, updatedMedicalRecord);
+                        }
+                    }
+                    if(newFiles != null){
+                        for (MultipartFile newFile : newFiles){
+                            fileService.uploadFile(newFile, user.getId(), updatedMedicalRecord);
+                        }
+                    }
+                    if(!files.isEmpty()){
+                        for(GetFileDto file : files){
+                            if(ids.contains(file.getId())){
+                                for(UpdateTestItemDto medicalRecordItem : medicalRecordItems){
+                                    this.updateTestItemById(medicalRecordItem, authHeader, medicalRecordItem.getId(), updatedMedicalRecord);
+                                }
+                            }
+                            if(!ids.contains(file.getId())){
+                                testItemService.deleteTestItem(file.getId());
+                            }
                         }
                     }
                 }
@@ -305,8 +324,7 @@ public class MedicalRecordService implements IMedicalRecordService {
             log.warn("Medical record doesn't exist");
             throw new EntityNotFoundException("Medical record with specified id doesn't exist");
         }
-
-
+        return medicalRecordToDto(updatedMedicalRecord);
     }
 
     @Override

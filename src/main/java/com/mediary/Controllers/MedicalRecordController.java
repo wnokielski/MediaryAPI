@@ -84,9 +84,9 @@ public class MedicalRecordController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PutMapping("/{medicalRecordId}")
-    public void updateMedicalRecordById(@RequestHeader("Authorization") String authHeader, @RequestBody UpdateMedicalRecordDto medicalRecord, @PathVariable ("medicalRecordId") Integer medicalRecordId)
+    public GetMedicalRecordDto updateMedicalRecordById(@RequestHeader("Authorization") String authHeader, @RequestBody UpdateMedicalRecordDto medicalRecord, @PathVariable ("medicalRecordId") Integer medicalRecordId)
             throws EntityNotFoundException, IncorrectFieldException, BlobStorageException, EntityDoesNotBelongToUser, EnumConversionException {
-        medicalRecordService.updateMedicalRecordById(medicalRecord, authHeader, medicalRecordId);
+        return medicalRecordService.updateMedicalRecordById(medicalRecord, authHeader, medicalRecordId);
     }
 
 //    @ResponseStatus(HttpStatus.CREATED)

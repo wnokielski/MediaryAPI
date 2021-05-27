@@ -1,6 +1,5 @@
 package com.mediary.Services.Interfaces;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import com.mediary.Models.DTOs.Request.AddMedicalRecordDto;
@@ -46,8 +45,8 @@ public interface IMedicalRecordService {
 
     List<GetMedicalRecordDto> sortByPast(List<GetMedicalRecordDto> medicalRecords);
 
-    void updateMedicalRecordById(UpdateMedicalRecordDto medicalRecord, String authHeader, Integer medicalRecordId)
-            throws EntityNotFoundException, EntityDoesNotBelongToUser, IncorrectFieldException, EnumConversionException;
+    GetMedicalRecordDto updateMedicalRecordById(UpdateMedicalRecordDto medicalRecord, String authHeader, Integer medicalRecordId)
+            throws EntityNotFoundException, EntityDoesNotBelongToUser, IncorrectFieldException, EnumConversionException, BlobStorageException;
 
     void updateTestItemById(UpdateTestItemDto medicalRecordItem, String authHeader, Integer medicalRecordItemId, MedicalRecordEntity medicalRecordEntity) throws EntityNotFoundException, IncorrectFieldException, EntityDoesNotBelongToUser;
 
