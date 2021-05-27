@@ -302,7 +302,6 @@ public class MedicalRecordService implements IMedicalRecordService {
                     }
                     if(newTestItems != null){
                         for(AddTestItemDto newTestItem : newTestItems){
-                            System.out.println(newTestItem.getName());
                             testItemService.addTestItem(newTestItem, updatedMedicalRecord);
                         }
                     }
