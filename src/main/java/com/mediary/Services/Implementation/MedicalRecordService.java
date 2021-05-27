@@ -243,10 +243,11 @@ public class MedicalRecordService implements IMedicalRecordService {
     }
 
     @Override
-    public GetMedicalRecordDto updateMedicalRecordById(UpdateMedicalRecordDto medicalRecordDto, String authHeader, Integer medicalRecordId) throws EntityNotFoundException, EntityDoesNotBelongToUser, IncorrectFieldException, EnumConversionException, BlobStorageException {
+    public GetMedicalRecordDto updateMedicalRecordById(UpdateMedicalRecordDto medicalRecordDto, String authHeader, Integer medicalRecordId, MultipartFile[] updateFiles) throws EntityNotFoundException, EntityDoesNotBelongToUser, IncorrectFieldException, EnumConversionException, BlobStorageException {
         UserEntity user = userService.getUserByAuthHeader(authHeader);
         MedicalRecordEntity updatedMedicalRecord = medicalRecordRepository.findById(medicalRecordId);
         List<Integer> ids = new ArrayList<>();
+        List<Integer> filesIds = new ArrayList<>();
         if(updatedMedicalRecord != null){
             if (updatedMedicalRecord.getUserById().getId().equals(user.getId())) {
                 if (medicalRecordDto.getTitle().length() > 50 || medicalRecordDto.getTitle() == "") {
@@ -273,13 +274,21 @@ public class MedicalRecordService implements IMedicalRecordService {
                     medicalRecordRepository.save(updatedMedicalRecord);
                     Collection<AddTestItemDto> newTestItems = medicalRecordDto.getNewTestItems();
                     List<GetTestItemDto> testItems = testItemService.getAllByMedicalRecordId(updatedMedicalRecord.getId());
+                    List<FileEntity> files = fileService.getFilesByMedicalRecord(medicalRecordId);
                     Collection<UpdateTestItemDto> medicalRecordItems = medicalRecordDto.getTestItems();
-                    Collection<GetFileDto> files = medicalRecordDto.getFiles();
+                    Collection<GetFileDto> fileDtos = medicalRecordDto.getFiles();
                     MultipartFile[] newFiles = medicalRecordDto.getNewFiles();
-                    for(UpdateTestItemDto medicalRecordItem : medicalRecordItems){
-                        ids.add(medicalRecordItem.getId());
+                    if(medicalRecordItems != null){
+                        for(UpdateTestItemDto medicalRecordItem : medicalRecordItems){
+                            ids.add(medicalRecordItem.getId());
+                        }
                     }
-                    if(!medicalRecordItems.isEmpty()){
+                    if(fileDtos != null){
+                        for(GetFileDto fileDto : fileDtos){
+                            filesIds.add(fileDto.getId());
+                        }
+                    }
+                    if(medicalRecordItems != null){
                         for(GetTestItemDto testItem : testItems){
                             if(ids.contains(testItem.getId())){
                                 for(UpdateTestItemDto medicalRecordItem : medicalRecordItems){
@@ -291,7 +300,7 @@ public class MedicalRecordService implements IMedicalRecordService {
                             }
                         }
                     }
-                    if(!newTestItems.isEmpty()){
+                    if(newTestItems != null){
                         for(AddTestItemDto newTestItem : newTestItems){
                             System.out.println(newTestItem.getName());
                             testItemService.addTestItem(newTestItem, updatedMedicalRecord);
@@ -302,15 +311,20 @@ public class MedicalRecordService implements IMedicalRecordService {
                             fileService.uploadFile(newFile, user.getId(), updatedMedicalRecord);
                         }
                     }
-                    if(!files.isEmpty()){
-                        for(GetFileDto file : files){
-                            if(ids.contains(file.getId())){
-                                for(UpdateTestItemDto medicalRecordItem : medicalRecordItems){
-                                    this.updateTestItemById(medicalRecordItem, authHeader, medicalRecordItem.getId(), updatedMedicalRecord);
+                    if(fileDtos != null){
+                        for(FileEntity file : files){
+                            if(filesIds.contains(file.getId())){
+                                for(GetFileDto fileDto : fileDtos){
+                                    boolean isFileDeleted = fileService.deleteFile(fileDto.getId());
+                                    if(isFileDeleted == true){
+                                        for (MultipartFile updateFile : updateFiles) {
+                                            fileService.uploadFile(updateFile, user.getId(), updatedMedicalRecord);
+                                        }
+                                    }
                                 }
                             }
-                            if(!ids.contains(file.getId())){
-                                testItemService.deleteTestItem(file.getId());
+                            if(!filesIds.contains(file.getId())){
+                                fileService.deleteFile(file.getId());
                             }
                         }
                     }

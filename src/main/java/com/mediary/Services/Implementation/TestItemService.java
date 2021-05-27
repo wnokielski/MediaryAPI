@@ -63,7 +63,6 @@ public class TestItemService implements ITestItemService {
             testItem.setUnit(testItemDto.getUnit());
             testItem.setMedicalRecordById(medicalRecord);
             testItemRepository.save(testItem);
-            System.out.println("zzajebiscie");
         }
     }
 
