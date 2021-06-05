@@ -193,6 +193,46 @@ public class StatisticService implements IStatisticService {
     }
 
     @Override
+    public void updateWholeStatisticByAuthHeaderAndStatisticId(AddStatisticDto statistic, Integer statisticId, String authHeader) throws EntityNotFoundException {
+        UserEntity user = userService.getUserByAuthHeader(authHeader);
+        if (user != null) {
+            updateWholeStatisticByUserAndStatisticId(statistic, statisticId, user);
+        } else {
+            log.warn("User not found!");
+            throw new EntityNotFoundException("User doesn't exist.");
+        }
+    }
+
+    @Override
+    public void updateWholeStatisticByUserAndStatisticId(AddStatisticDto statistic, Integer statisticId, UserEntity user) throws EntityNotFoundException {
+        var stat = statisticRepository.findByUserByIdAndId(user, statisticId);
+//        if(stat == null){
+//            StatisticEntity newStatistic = new StatisticEntity();
+//
+//            var statisticType = statisticTypeRepository.findById(statistic.getStatisticTypeId());
+//            if (statisticType != null) {
+//                newStatistic.setStatisticTypeById(statisticType);
+//            } else {
+//                throw new EntityNotFoundException("Statistic type with specified ID doesn't exist!");
+//            }
+//
+//            newStatistic.setValue(statistic.getValue());
+//            newStatistic.setDate(statistic.getDate());
+//            newStatistic.setUserById(user);
+//
+//            statisticRepository.saveAndFlush(newStatistic);
+//        }
+        var statisticType = statisticTypeRepository.findById(statistic.getStatisticTypeId());
+        if (statisticType != null) {
+            stat.setStatisticTypeById(statisticType);
+        } else {
+            throw new EntityNotFoundException("Statistic type with specified ID doesn't exist!");
+        }
+        stat.setDate(statistic.getDate());
+        stat.setValue(statistic.getValue());
+    }
+
+    @Override
     public List<GetStatisticDto> statisticsToDtos(List<StatisticEntity> statisticEntities) {
         ArrayList<GetStatisticDto> statisticDtos = new ArrayList<GetStatisticDto>();
         for (StatisticEntity statisticEntity : statisticEntities) {

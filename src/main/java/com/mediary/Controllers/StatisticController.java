@@ -75,4 +75,12 @@ public class StatisticController {
                                 @PathVariable Integer statisticId) throws EntityNotFoundException {
         statisticService.updateStatisticByAuthHeaderAndStatisticId(authHeader, statisticId, updates);
     }
+
+    @PutMapping("/{statisticId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateWholeStatistic(@RequestBody AddStatisticDto statistic,
+                                @RequestHeader("Authorization") String authHeader,
+                                @PathVariable Integer statisticId) throws EntityNotFoundException {
+        statisticService.updateWholeStatisticByAuthHeaderAndStatisticId(statistic, statisticId, authHeader);
+    }
 }
