@@ -69,6 +69,9 @@ public class StatisticService implements IStatisticService {
         } else if (statistic.getDate() == null) {
             log.warn("Date field is required");
             throw new IncorrectFieldException("Date field is required");
+        } else if (statisticRepository.findAllByUserByIdAndDate(user, statistic.getDate()).size() > 0) {
+            log.warn("There is statistic with same date and time!");
+            throw new IncorrectFieldException("There is statistic with same date and time!");
         }
         StatisticEntity newStatistic = new StatisticEntity();
         newStatistic.setValue(statistic.getValue());
