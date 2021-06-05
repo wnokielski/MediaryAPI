@@ -6,7 +6,6 @@ import com.mediary.Models.DTOs.Request.AddMedicalRecordDto;
 import com.mediary.Models.DTOs.Request.UpdateMedicalRecordDto;
 import com.mediary.Models.DTOs.Request.UpdateTestItemDto;
 import com.mediary.Models.DTOs.Response.GetMedicalRecordDto;
-import com.mediary.Models.DTOs.Response.GetScheduleItemDto;
 import com.mediary.Models.DTOs.UserDto;
 import com.mediary.Services.Const;
 import com.mediary.Services.Exceptions.*;
@@ -45,11 +44,12 @@ public class MedicalRecordController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public void addMedicalRecord(@RequestHeader("Authorization") String authHeader,
-            @RequestPart(required = false) MultipartFile[] files, @RequestPart AddMedicalRecordDto medicalRecord)
-            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException {
+    public ResponseEntity<GetMedicalRecordDto> addMedicalRecord(@RequestHeader("Authorization") String authHeader,
+                                                                @RequestPart(required = false) MultipartFile[] files, AddMedicalRecordDto medicalRecord)
+            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException, EnumConversionException {
 
-        medicalRecordService.addMedicalRecordByAuthHeader(medicalRecord, files, authHeader);
+        return new ResponseEntity(medicalRecordService.addMedicalRecordByAuthHeader(medicalRecord, files, authHeader),
+                HttpStatus.OK);
     }
 
     @DeleteMapping("/{medicalRecordId}")
@@ -74,9 +74,9 @@ public class MedicalRecordController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             List<GetMedicalRecordDto> sortedMedicalRecordDtos = medicalRecordService.getMedicalRecordsSorted(medicalRecordDtos, sortType);
-            if(sortedMedicalRecordDtos.isEmpty()){
+            if (sortedMedicalRecordDtos.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            } else{
+            } else {
                 return new ResponseEntity<>(sortedMedicalRecordDtos, HttpStatus.OK);
             }
         }

@@ -1,9 +1,10 @@
 package com.mediary.Models.DTOs.Request;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.sql.Date;
-import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 @Data
 public class AddMedicalRecordDto {
@@ -11,7 +12,8 @@ public class AddMedicalRecordDto {
     private String location;
     private String category;
     private String note;
+    @DateTimeFormat(iso= DateTimeFormat.ISO.DATE_TIME)
     private Date dateOfTheTest;
-    private Collection<AddTestItemDto> testItems;
+    private List<AddTestItemDto> testItems;
 }
 
