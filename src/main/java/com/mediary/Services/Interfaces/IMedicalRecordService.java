@@ -15,10 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface IMedicalRecordService {
 
-    GetMedicalRecordDto addMedicalRecordByAuthHeader(AddMedicalRecordDto medicalRecord, MultipartFile[] files, String authHeader)
+    void addMedicalRecordByAuthHeader(AddMedicalRecordDto medicalRecord, MultipartFile[] files, String authHeader)
             throws EntityNotFoundException, IncorrectFieldException, BlobStorageException, EnumConversionException;
 
-    GetMedicalRecordDto addMedicalRecord(AddMedicalRecordDto medicalRecord, MultipartFile[] files, UserEntity user)
+    void addMedicalRecord(AddMedicalRecordDto medicalRecord, MultipartFile[] files, UserEntity user)
             throws EntityNotFoundException, IncorrectFieldException, BlobStorageException, EnumConversionException;
 
     AddMedicalRecordDto getJson(String medicalRecord);
