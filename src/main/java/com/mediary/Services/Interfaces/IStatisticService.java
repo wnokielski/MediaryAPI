@@ -47,4 +47,8 @@ public interface IStatisticService {
 
         void updateStatisticByUserAndStatisticId(UserEntity user, Integer statisticId, Map<String, Object> updates) throws EntityNotFoundException;
 
+        ResponseEntity<?> updateWholeStatisticByAuthHeaderAndStatisticId(AddStatisticDto statistic, Integer statisticId, String authHeader) throws EntityNotFoundException;
+
+        ResponseEntity<?> updateWholeStatisticByUserAndStatisticId(AddStatisticDto statistic, Integer statisticId, UserEntity user) throws EntityNotFoundException;
+
 }

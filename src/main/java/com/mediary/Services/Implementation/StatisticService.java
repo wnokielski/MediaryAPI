@@ -18,6 +18,8 @@ import com.mediary.Services.Exceptions.IncorrectFieldException;
 import com.mediary.Services.Interfaces.IStatisticService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -67,6 +69,9 @@ public class StatisticService implements IStatisticService {
         } else if (statistic.getDate() == null) {
             log.warn("Date field is required");
             throw new IncorrectFieldException("Date field is required");
+        } else if (statisticRepository.findAllByUserByIdAndDate(user, statistic.getDate()).size() > 0) {
+            log.warn("There is statistic with same date and time!");
+            throw new IncorrectFieldException("There is statistic with same date and time!");
         }
         StatisticEntity newStatistic = new StatisticEntity();
         newStatistic.setValue(statistic.getValue());
@@ -190,6 +195,48 @@ public class StatisticService implements IStatisticService {
             log.warn("Statistic not found! Are you trying to delete someone else's statistic?");
             throw new EntityNotFoundException("Statistic not found! Are you trying to delete someone else's statistic?");
         }
+    }
+
+    @Override
+    public ResponseEntity<?> updateWholeStatisticByAuthHeaderAndStatisticId(AddStatisticDto statistic, Integer statisticId, String authHeader) throws EntityNotFoundException {
+        UserEntity user = userService.getUserByAuthHeader(authHeader);
+        if (user != null) {
+            return updateWholeStatisticByUserAndStatisticId(statistic, statisticId, user);
+        } else {
+            log.warn("User not found!");
+            throw new EntityNotFoundException("User doesn't exist.");
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> updateWholeStatisticByUserAndStatisticId(AddStatisticDto statistic, Integer statisticId, UserEntity user) throws EntityNotFoundException {
+        var stat = statisticRepository.findByUserByIdAndId(user, statisticId);
+        if(stat == null){
+            StatisticEntity newStatistic = new StatisticEntity();
+
+            var statisticType = statisticTypeRepository.findById(statistic.getStatisticTypeId());
+            if (statisticType != null) {
+                newStatistic.setStatisticTypeById(statisticType);
+            } else {
+                throw new EntityNotFoundException("Statistic type with specified ID doesn't exist!");
+            }
+
+            newStatistic.setValue(statistic.getValue());
+            newStatistic.setDate(statistic.getDate());
+            newStatistic.setUserById(user);
+
+            statisticRepository.saveAndFlush(newStatistic);
+            return new ResponseEntity<>(statisticToDto(newStatistic), HttpStatus.CREATED);
+        }
+        var statisticType = statisticTypeRepository.findById(statistic.getStatisticTypeId());
+        if (statisticType != null) {
+            stat.setStatisticTypeById(statisticType);
+        } else {
+            throw new EntityNotFoundException("Statistic type with specified ID doesn't exist!");
+        }
+        stat.setDate(statistic.getDate());
+        stat.setValue(statistic.getValue());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Override
