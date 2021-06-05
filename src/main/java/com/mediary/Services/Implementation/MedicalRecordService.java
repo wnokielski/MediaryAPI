@@ -14,7 +14,6 @@ import com.mediary.Models.Entities.MedicalRecordEntity;
 import com.mediary.Models.Entities.TestItemEntity;
 import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Models.Enums.Category;
-import com.mediary.Models.Enums.SortType;
 import com.mediary.Repositories.FileRepository;
 import com.mediary.Repositories.MedicalRecordRepository;
 import com.mediary.Repositories.TestItemRepository;
@@ -30,9 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -60,17 +57,17 @@ public class MedicalRecordService implements IMedicalRecordService {
     FileRepository fileRepository;
 
     @Override
-    public void addMedicalRecordByAuthHeader(AddMedicalRecordDto medicalRecord, MultipartFile[] files, String authHeader)
-            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException {
+    public GetMedicalRecordDto addMedicalRecordByAuthHeader(AddMedicalRecordDto medicalRecord, MultipartFile[] files, String authHeader)
+            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException, EnumConversionException {
         UserEntity user = userService.getUserByAuthHeader(authHeader);
-        addMedicalRecord(medicalRecord, files, user);
+        return addMedicalRecord(medicalRecord, files, user);
     }
 
     @Override
-    public void addMedicalRecord(AddMedicalRecordDto medicalRecordDto, MultipartFile[] files, UserEntity user)
-            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException {
+    public GetMedicalRecordDto addMedicalRecord(AddMedicalRecordDto medicalRecordDto, MultipartFile[] files, UserEntity user)
+            throws IncorrectFieldException, BlobStorageException, EnumConversionException {
 
-        if (medicalRecordDto.getTitle().length() > 50 || medicalRecordDto.getTitle() == "") {
+        if (medicalRecordDto.getTitle().length() > 50 || medicalRecordDto.getTitle().equals("")) {
             throw new IncorrectFieldException("Title field is incorrect");
         } else if (medicalRecordDto.getLocation().length() > 50) {
             throw new IncorrectFieldException("Location name is too long");
@@ -82,16 +79,21 @@ public class MedicalRecordService implements IMedicalRecordService {
             MedicalRecordEntity medicalRecordEntity = new MedicalRecordEntity();
             medicalRecordEntity.setTitle(medicalRecordDto.getTitle());
             medicalRecordEntity.setLocation(medicalRecordDto.getLocation());
+            medicalRecordEntity.setCategory(Category.convertStringToEnum(medicalRecordDto.getCategory()));
             medicalRecordEntity.setNote(medicalRecordDto.getNote());
-            medicalRecordEntity.setDateOfTheTest((Date) medicalRecordDto.getDateOfTheTest());
+            medicalRecordEntity.setDateOfTheTest(new Timestamp(medicalRecordDto.getDateOfTheTest().getTime()));
             medicalRecordEntity.setUserById(user);
 
-            for (MultipartFile file : files) {
-                fileService.uploadFile(file, user.getId(), medicalRecordEntity);
+            var savedEntity = medicalRecordRepository.saveAndFlush(medicalRecordEntity);
+
+            if (files != null) {
+                for (MultipartFile file : files) {
+                    fileService.uploadFile(file, user.getId(), savedEntity);
+                }
             }
 
-            testItemService.addTestItems(medicalRecordDto.getTestItems(), medicalRecordEntity);
-            medicalRecordRepository.save(medicalRecordEntity);
+            testItemService.addTestItems(medicalRecordDto.getTestItems(), savedEntity);
+            return medicalRecordToDto(savedEntity);
         }
     }
 
@@ -116,8 +118,7 @@ public class MedicalRecordService implements IMedicalRecordService {
     @Override
     public List<GetMedicalRecordDto> getMedicalRecordsByUser(UserEntity user) {
         var medicalRecordEntities = medicalRecordRepository.findByUserId(user.getId());
-        List<GetMedicalRecordDto> medicalRecordDtos = medicalRecordsToDtos(medicalRecordEntities);
-        return medicalRecordDtos;
+        return medicalRecordsToDtos(medicalRecordEntities);
 
     }
 
@@ -143,10 +144,10 @@ public class MedicalRecordService implements IMedicalRecordService {
         medicalRecordDto.setDateOfTheTest(medicalRecordEntity.getDateOfTheTest());
         medicalRecordDto.setUserId(medicalRecordEntity.getUserById().getId());
 
-        var files = medicalRecordEntity.getFilesById();
+        var files = fileRepository.findByMedicalRecordId(medicalRecordEntity.getId());
         medicalRecordDto.setFiles(fileService.filesToDtos(files));
 
-        var testItems = medicalRecordEntity.getTestItemsById();
+        var testItems = testItemRepository.findByMedicalRecordId(medicalRecordEntity.getId());
         medicalRecordDto.setTestItems(testItemService.testItemsToDtos(testItems));
 
         return medicalRecordDto;
@@ -156,21 +157,20 @@ public class MedicalRecordService implements IMedicalRecordService {
     @Transactional
     public int deleteMedicalRecord(UserDto user, Integer medicalRecordId) throws BlobStorageException, EntityNotFoundException {
         MedicalRecordEntity medicalRecord = medicalRecordRepository.findById(medicalRecordId);
-        if(medicalRecord != null){
-            if(medicalRecord.getUserById().getId().equals(user.getId())){
+        if (medicalRecord != null) {
+            if (medicalRecord.getUserById().getId().equals(user.getId())) {
                 Collection<TestItemEntity> medicalRecordItems = testItemRepository.findAllByMedicalRecordById(medicalRecord);
-                for(TestItemEntity medicalRecordItem : medicalRecordItems){
+                for (TestItemEntity medicalRecordItem : medicalRecordItems) {
                     testItemService.deleteTestItem(medicalRecordItem.getId());
                 }
                 List<FileEntity> files = fileRepository.findByMedicalRecordId(medicalRecordId);
-                for(FileEntity file : files){
+                for (FileEntity file : files) {
                     fileService.deleteFile(file.getId());
                 }
-                if(files.isEmpty()){
+                if (files.isEmpty()) {
                     medicalRecordRepository.deleteById(medicalRecordId);
                     return Const.medicalRecordDeletionSuccess;
-                }
-                else{
+                } else {
                     return Const.medicalRecordFileDeletionError;
                 }
             }
@@ -180,78 +180,12 @@ public class MedicalRecordService implements IMedicalRecordService {
     }
 
     @Override
-    public List<GetMedicalRecordDto> getMedicalRecordsSorted(List<GetMedicalRecordDto> medicalRecords, String sortType){
-        List<GetMedicalRecordDto> sortedResults = chooseSort(sortType, medicalRecords);
-        return sortedResults;
-    }
-
-    @Override
-    public List<GetMedicalRecordDto> sortByToday(List<GetMedicalRecordDto> medicalRecords) {
-        List<GetMedicalRecordDto> sorted = new ArrayList<>();
-        for (GetMedicalRecordDto medicalRecord: medicalRecords
-        ) {
-            if(medicalRecord.getDateOfTheTest().toLocalDate().equals(LocalDate.now()))
-                sorted.add(medicalRecord);
-        }
-        return sorted;
-    }
-
-    @Override
-    public List<GetMedicalRecordDto> sortByLastWeek(List<GetMedicalRecordDto> medicalRecords) {
-        List<GetMedicalRecordDto> sorted = new ArrayList<>();
-        for (GetMedicalRecordDto medicalRecord: medicalRecords
-        ) {
-            if(medicalRecord.getDateOfTheTest().toLocalDate().isAfter(LocalDate.now().minusDays(7))){
-                sorted.add(medicalRecord);
-            }
-
-        }
-        return sorted;
-    }
-
-    @Override
-    public List<GetMedicalRecordDto> sortByLastMonth(List<GetMedicalRecordDto> medicalRecords) {
-        List<GetMedicalRecordDto> sorted = new ArrayList<>();
-        for (GetMedicalRecordDto medicalRecord: medicalRecords
-        ) {
-            if(medicalRecord.getDateOfTheTest().toLocalDate().isAfter(LocalDate.now().minusDays(30)))
-                sorted.add(medicalRecord);
-        }
-        return sorted;
-    }
-
-    @Override
-    public List<GetMedicalRecordDto> sortByLastYear(List<GetMedicalRecordDto> medicalRecords) {
-        List<GetMedicalRecordDto> sorted = new ArrayList<>();
-        for (GetMedicalRecordDto medicalRecord: medicalRecords
-        ) {
-            if(medicalRecord.getDateOfTheTest().toLocalDate().isAfter(LocalDate.now().minusDays(365)))
-                sorted.add(medicalRecord);
-        }
-        return sorted;
-    }
-
-    @Override
-    public List<GetMedicalRecordDto> sortByPast(List<GetMedicalRecordDto> medicalRecords) {
-        List<GetMedicalRecordDto> sorted = new ArrayList<>();
-        for (GetMedicalRecordDto medicalRecord: medicalRecords
-        ) {
-            if(medicalRecord.getDateOfTheTest().toLocalDate().isBefore(LocalDate.now()) ||
-                    medicalRecord.getDateOfTheTest().toLocalDate().equals(LocalDate.now()))
-                sorted.add(medicalRecord);
-        }
-        return sorted;
-    }
-
-    @Override
-    public GetMedicalRecordDto updateMedicalRecordById(UpdateMedicalRecordDto medicalRecordDto, String authHeader, Integer medicalRecordId, MultipartFile[] updateFiles) throws EntityNotFoundException, EntityDoesNotBelongToUser, IncorrectFieldException, EnumConversionException, BlobStorageException {
+    public GetMedicalRecordDto updateMedicalRecordById(UpdateMedicalRecordDto medicalRecordDto, String authHeader, MultipartFile[] newFiles) throws EntityNotFoundException, EntityDoesNotBelongToUser, IncorrectFieldException, EnumConversionException, BlobStorageException {
         UserEntity user = userService.getUserByAuthHeader(authHeader);
-        MedicalRecordEntity updatedMedicalRecord = medicalRecordRepository.findById(medicalRecordId);
-        List<Integer> ids = new ArrayList<>();
-        List<Integer> filesIds = new ArrayList<>();
-        if(updatedMedicalRecord != null){
+        MedicalRecordEntity updatedMedicalRecord = medicalRecordRepository.findById(medicalRecordDto.getId());
+        if (updatedMedicalRecord != null) {
             if (updatedMedicalRecord.getUserById().getId().equals(user.getId())) {
-                if (medicalRecordDto.getTitle().length() > 50 || medicalRecordDto.getTitle() == "") {
+                if (medicalRecordDto.getTitle().length() > 50 || medicalRecordDto.getTitle().equals("")) {
                     throw new IncorrectFieldException("Title field is incorrect");
                 } else if (medicalRecordDto.getLocation().length() > 50) {
                     throw new IncorrectFieldException("Location name is too long");
@@ -261,72 +195,50 @@ public class MedicalRecordService implements IMedicalRecordService {
                     throw new IncorrectFieldException("Date of the test is required");
                 } else {
 
-                    if(!medicalRecordDto.getTitle().equals(updatedMedicalRecord.getTitle()))
+                    if (!medicalRecordDto.getTitle().equals(updatedMedicalRecord.getTitle()))
                         updatedMedicalRecord.setTitle(medicalRecordDto.getTitle());
-                    if(!medicalRecordDto.getLocation().equals(updatedMedicalRecord.getLocation()))
+                    if (!medicalRecordDto.getLocation().equals(updatedMedicalRecord.getLocation()))
                         updatedMedicalRecord.setLocation(medicalRecordDto.getLocation());
-                    if(!medicalRecordDto.getCategory().equals(updatedMedicalRecord.getCategory().getCode()))
+                    if (!medicalRecordDto.getCategory().equals(updatedMedicalRecord.getCategory().getCode()))
                         updatedMedicalRecord.setCategory(Category.convertStringToEnum(medicalRecordDto.getCategory()));
-                    if(!medicalRecordDto.getNote().equals(updatedMedicalRecord.getNote()))
+                    if (!medicalRecordDto.getNote().equals(updatedMedicalRecord.getNote()))
                         updatedMedicalRecord.setNote(medicalRecordDto.getNote());
-                    if(!medicalRecordDto.getDateOfTheTest().equals(updatedMedicalRecord.getDateOfTheTest()))
-                        updatedMedicalRecord.setDateOfTheTest(medicalRecordDto.getDateOfTheTest());
+                    if (medicalRecordDto.getDateOfTheTest().getTime() != updatedMedicalRecord.getDateOfTheTest().getTime())
+                        updatedMedicalRecord.setDateOfTheTest(new Timestamp(medicalRecordDto.getDateOfTheTest().getTime()));
 
                     medicalRecordRepository.save(updatedMedicalRecord);
                     Collection<AddTestItemDto> newTestItems = medicalRecordDto.getNewTestItems();
                     List<GetTestItemDto> testItems = testItemService.getAllByMedicalRecordId(updatedMedicalRecord.getId());
-                    List<FileEntity> files = fileService.getFilesByMedicalRecord(medicalRecordId);
-                    Collection<UpdateTestItemDto> medicalRecordItems = medicalRecordDto.getTestItems();
-                    Collection<GetFileDto> fileDtos = medicalRecordDto.getFiles();
-                    MultipartFile[] newFiles = medicalRecordDto.getNewFiles();
-                    if(medicalRecordItems != null){
-                        for(UpdateTestItemDto medicalRecordItem : medicalRecordItems){
-                            ids.add(medicalRecordItem.getId());
+                    List<FileEntity> files = fileService.getFilesByMedicalRecord(medicalRecordDto.getId());
+                    Collection<UpdateTestItemDto> dtoTestItems = medicalRecordDto.getTestItems();
+                    Collection<GetFileDto> dtoFiles = medicalRecordDto.getFiles();
+
+                    for (FileEntity file : files) {
+                        if (dtoFiles.stream().noneMatch(x -> x.getId().equals(file.getId()))) {
+                            fileService.deleteFile(file.getId());
                         }
                     }
-                    if(fileDtos != null){
-                        for(GetFileDto fileDto : fileDtos){
-                            filesIds.add(fileDto.getId());
-                        }
-                    }
-                    if(medicalRecordItems != null){
-                        for(GetTestItemDto testItem : testItems){
-                            if(ids.contains(testItem.getId())){
-                                for(UpdateTestItemDto medicalRecordItem : medicalRecordItems){
-                                    this.updateTestItemById(medicalRecordItem, authHeader, medicalRecordItem.getId(), updatedMedicalRecord);
-                                }
-                            }
-                            if(!ids.contains(testItem.getId())){
-                                testItemService.deleteTestItem(testItem.getId());
-                            }
-                        }
-                    }
-                    if(newTestItems != null){
-                        for(AddTestItemDto newTestItem : newTestItems){
-                            testItemService.addTestItem(newTestItem, updatedMedicalRecord);
-                        }
-                    }
-                    if(newFiles != null){
-                        for (MultipartFile newFile : newFiles){
+
+                    if (newFiles != null) {
+                        for (MultipartFile newFile : newFiles) {
                             fileService.uploadFile(newFile, user.getId(), updatedMedicalRecord);
                         }
                     }
-                    if(fileDtos != null){
-                        for(FileEntity file : files){
-                            if(filesIds.contains(file.getId())){
-                                for(GetFileDto fileDto : fileDtos){
-                                    boolean isFileDeleted = fileService.deleteFile(fileDto.getId());
-                                    if(isFileDeleted == true){
-                                        for (MultipartFile updateFile : updateFiles) {
-                                            fileService.uploadFile(updateFile, user.getId(), updatedMedicalRecord);
-                                        }
-                                    }
-                                }
-                            }
-                            if(!filesIds.contains(file.getId())){
-                                fileService.deleteFile(file.getId());
-                            }
+
+                    for (GetTestItemDto testItem : testItems) {
+                        if (dtoTestItems.stream().noneMatch(x -> x.getId().equals(testItem.getId()))) {
+                            testItemService.deleteTestItem(testItem.getId());
+                        } else {
+                            var updatedTestItem = dtoTestItems.stream()
+                                    .filter(x -> x.getId().equals(testItem.getId()))
+                                    .findFirst();
+
+                            updateTestItemById(updatedTestItem.orElseThrow(), authHeader, testItem.getId(), updatedMedicalRecord);
                         }
+                    }
+
+                    for (AddTestItemDto newTestItem : newTestItems) {
+                        testItemService.addTestItem(newTestItem, updatedMedicalRecord);
                     }
                 }
             } else {
@@ -334,7 +246,7 @@ public class MedicalRecordService implements IMedicalRecordService {
                 throw new EntityDoesNotBelongToUser("Medical record doesn't belong to this user!");
             }
 
-        } else{
+        } else {
             log.warn("Medical record doesn't exist");
             throw new EntityNotFoundException("Medical record with specified id doesn't exist");
         }
@@ -347,14 +259,14 @@ public class MedicalRecordService implements IMedicalRecordService {
         List<Integer> ids = new ArrayList<>();
         TestItemEntity updatedTestItem = testItemRepository.findById(medicalRecordItemId);
         List<MedicalRecordEntity> medicalRecords = medicalRecordRepository.findByUserId(user.getId());
-        if(updatedTestItem != null){
-            for(MedicalRecordEntity medicalRecord : medicalRecords){
+        if (updatedTestItem != null) {
+            for (MedicalRecordEntity medicalRecord : medicalRecords) {
                 List<TestItemEntity> medicalRecordsItems = (List<TestItemEntity>) testItemRepository.findAllByMedicalRecordById(medicalRecord);
-                for(TestItemEntity medicalRecordItem : medicalRecordsItems){
+                for (TestItemEntity medicalRecordItem : medicalRecordsItems) {
                     ids.add(medicalRecordItem.getId());
                 }
             }
-            if(ids.contains(updatedTestItem.getId()) == true){
+            if (ids.contains(updatedTestItem.getId())) {
                 if (medicalRecordItemDto.getName().length() > 40 || medicalRecordItemDto.getName() == "") {
                     throw new IncorrectFieldException("Name field is incorrect");
                 } else if (medicalRecordItemDto.getUnit().length() > 10) {
@@ -362,11 +274,11 @@ public class MedicalRecordService implements IMedicalRecordService {
                 } else if (medicalRecordItemDto.getValue().length() > 50) {
                     throw new IncorrectFieldException("Value is too long");
                 } else {
-                    if(!medicalRecordItemDto.getName().equals(updatedTestItem.getName()))
+                    if (!medicalRecordItemDto.getName().equals(updatedTestItem.getName()))
                         updatedTestItem.setName(medicalRecordItemDto.getName());
-                    if(!medicalRecordItemDto.getUnit().equals(updatedTestItem.getUnit()))
+                    if (!medicalRecordItemDto.getUnit().equals(updatedTestItem.getUnit()))
                         updatedTestItem.setUnit(medicalRecordItemDto.getUnit());
-                    if(!medicalRecordItemDto.getValue().equals(updatedTestItem.getValue()))
+                    if (!medicalRecordItemDto.getValue().equals(updatedTestItem.getValue()))
                         updatedTestItem.setValue(medicalRecordItemDto.getValue());
                     testItemRepository.save(updatedTestItem);
                 }
@@ -382,25 +294,13 @@ public class MedicalRecordService implements IMedicalRecordService {
 
     @Override
     public List<GetMedicalRecordDto> getScheduleItemByAuthHeaderAndDate(String authHeader, String dateFrom, String dateTo) throws EntityNotFoundException {
-            UserEntity user = userService.getUserByAuthHeader(authHeader);
-            if (user != null) {
-                var medicalRecords = medicalRecordRepository.findByUserByIdAndDateOfTheTestBetweenOrderByDateOfTheTest(java.util.Optional.of(user),
-                        Timestamp.valueOf(dateFrom + " 00:00:00"), Timestamp.valueOf(dateTo + " 23:59:59"));
-                ArrayList<GetMedicalRecordDto> medicalRecordDtos = (ArrayList<GetMedicalRecordDto>) medicalRecordsToDtos(
-                        medicalRecords);
-                return medicalRecordDtos;
-            } else {
-                throw new EntityNotFoundException("User doesn't exist.");
-            }
+        UserEntity user = userService.getUserByAuthHeader(authHeader);
+        if (user != null) {
+            var medicalRecords = medicalRecordRepository.findByUserByIdAndDateOfTheTestBetweenOrderByDateOfTheTest(java.util.Optional.of(user),
+                    Timestamp.valueOf(dateFrom + " 00:00:00"), Timestamp.valueOf(dateTo + " 23:59:59"));
+            return medicalRecordsToDtos(medicalRecords);
+        } else {
+            throw new EntityNotFoundException("User doesn't exist.");
         }
-
-    private List<GetMedicalRecordDto> chooseSort(String sortType,  List<GetMedicalRecordDto> medicalRecords) {
-        List<GetMedicalRecordDto> sortedEvents = null;
-        if(sortType.equals(SortType.Today.toString())) sortedEvents = sortByToday(medicalRecords);
-        if(sortType.equals(SortType.LastWeek.toString())) sortedEvents = sortByLastWeek(medicalRecords);
-        if(sortType.equals(SortType.LastMonth.toString())) sortedEvents = sortByLastMonth(medicalRecords);
-        if(sortType.equals(SortType.LastYear.toString())) sortedEvents = sortByLastYear(medicalRecords);
-        if(sortType.equals(SortType.Past.toString())) sortedEvents = sortByPast(medicalRecords);
-        return sortedEvents;
     }
 }
