@@ -1,10 +1,12 @@
 package com.mediary.Models.Entities;
 
 import com.mediary.Models.Enums.Category;
+import org.springframework.data.repository.cdi.Eager;
 
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "`MedicalRecord`", schema = "public", catalog = "MediaryDB")
@@ -15,9 +17,9 @@ public class MedicalRecordEntity {
     private Category category;
     private String note;
     private Date dateOfTheTest;
-    private Collection<FileEntity> filesById;
+    private List<FileEntity> filesById;
     private UserEntity userById;
-    private Collection<TestItemEntity> testItemsById;
+    private List<TestItemEntity> testItemsById;
 
     @Id
     @SequenceGenerator(name = "`MedicalRecord_ID_seq`", sequenceName = "`MedicalRecord_ID_seq`", allocationSize = 1)
@@ -115,11 +117,11 @@ public class MedicalRecordEntity {
     }
 
     @OneToMany(mappedBy = "medicalRecordById")
-    public Collection<FileEntity> getFilesById() {
+    public List<FileEntity> getFilesById() {
         return filesById;
     }
 
-    public void setFilesById(Collection<FileEntity> filesById) {
+    public void setFilesById(List<FileEntity> filesById) {
         this.filesById = filesById;
     }
 
@@ -133,12 +135,12 @@ public class MedicalRecordEntity {
         this.userById = userById;
     }
 
-    @OneToMany(mappedBy = "medicalRecordById")
-    public Collection<TestItemEntity> getTestItemsById() {
+    @OneToMany(mappedBy = "medicalRecordById", fetch = FetchType.EAGER)
+    public List<TestItemEntity> getTestItemsById() {
         return testItemsById;
     }
 
-    public void setTestItemsById(Collection<TestItemEntity> testItemsById) {
+    public void setTestItemsById(List<TestItemEntity> testItemsById) {
         this.testItemsById = testItemsById;
     }
 }

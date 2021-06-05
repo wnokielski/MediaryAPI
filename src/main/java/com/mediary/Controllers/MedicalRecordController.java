@@ -44,16 +44,17 @@ public class MedicalRecordController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public void addMedicalRecord(@RequestHeader("Authorization") String authHeader,
-            @RequestPart(required = false) MultipartFile[] files, @RequestPart AddMedicalRecordDto medicalRecord)
-            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException {
+    public ResponseEntity<GetMedicalRecordDto> addMedicalRecord(@RequestHeader("Authorization") String authHeader,
+                                                                @RequestPart(required = false) MultipartFile[] files, AddMedicalRecordDto medicalRecord)
+            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException, EnumConversionException {
 
-        medicalRecordService.addMedicalRecordByAuthHeader(medicalRecord, files, authHeader);
+        return new ResponseEntity(medicalRecordService.addMedicalRecordByAuthHeader(medicalRecord, files, authHeader),
+                HttpStatus.OK);
     }
 
     @DeleteMapping("/{medicalRecordId}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteMedicalRecord(@RequestHeader("Authorization") String authHeader, @PathVariable ("medicalRecordId") Integer medicalRecordId)
+    public void deleteMedicalRecord(@RequestHeader("Authorization") String authHeader, @PathVariable("medicalRecordId") Integer medicalRecordId)
             throws EntityNotFoundException, BlobStorageException, EntityDoesNotBelongToUser, MedicalRecordFileDeletionError {
         UserDto user = userService.getUserDetails(authHeader);
         int result = medicalRecordService.deleteMedicalRecord(user, medicalRecordId);
@@ -67,15 +68,15 @@ public class MedicalRecordController {
 
     @GetMapping("/{sortType}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<GetMedicalRecordDto>> getMedicalRecords(@RequestHeader("Authorization") String authHeader, @PathVariable ("sortType") String sortType) throws EntityNotFoundException {
+    public ResponseEntity<List<GetMedicalRecordDto>> getMedicalRecords(@RequestHeader("Authorization") String authHeader, @PathVariable("sortType") String sortType) throws EntityNotFoundException {
         var medicalRecordDtos = medicalRecordService.getMedicalRecordsByAuthHeader(authHeader);
         if (medicalRecordDtos.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             List<GetMedicalRecordDto> sortedMedicalRecordDtos = medicalRecordService.getMedicalRecordsSorted(medicalRecordDtos, sortType);
-            if(sortedMedicalRecordDtos.isEmpty()){
+            if (sortedMedicalRecordDtos.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            } else{
+            } else {
                 return new ResponseEntity<>(sortedMedicalRecordDtos, HttpStatus.OK);
             }
         }
@@ -83,17 +84,15 @@ public class MedicalRecordController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PutMapping("/{medicalRecordId}")
-    public void updateMedicalRecordById(@RequestHeader("Authorization") String authHeader, @RequestBody UpdateMedicalRecordDto medicalRecord, @PathVariable ("medicalRecordId") Integer medicalRecordId)
+    public void updateMedicalRecordById(@RequestHeader("Authorization") String authHeader, @RequestBody UpdateMedicalRecordDto medicalRecord, @PathVariable("medicalRecordId") Integer medicalRecordId)
             throws EntityNotFoundException, IncorrectFieldException, BlobStorageException, EntityDoesNotBelongToUser, EnumConversionException {
         medicalRecordService.updateMedicalRecordById(medicalRecord, authHeader, medicalRecordId);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PutMapping("/item/{medicalRecordItemId}")
-    public void updateMedicalRecordItemById(@RequestHeader("Authorization") String authHeader, @RequestBody UpdateTestItemDto medicalRecordItem, @PathVariable ("medicalRecordItemId") Integer medicalRecordItemId)
+    public void updateMedicalRecordItemById(@RequestHeader("Authorization") String authHeader, @RequestBody UpdateTestItemDto medicalRecordItem, @PathVariable("medicalRecordItemId") Integer medicalRecordItemId)
             throws EntityNotFoundException, IncorrectFieldException, BlobStorageException, EntityDoesNotBelongToUser {
         medicalRecordService.updateTestItemById(medicalRecordItem, authHeader, medicalRecordItemId);
     }
-
-
 }
