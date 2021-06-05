@@ -9,6 +9,7 @@ import com.mediary.Services.Exceptions.EntityNotFoundException;
 import com.mediary.Services.Exceptions.IncorrectFieldException;
 import com.mediary.Services.Interfaces.IStatisticService;
 
+import io.swagger.models.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -77,10 +78,9 @@ public class StatisticController {
     }
 
     @PutMapping("/{statisticId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateWholeStatistic(@RequestBody AddStatisticDto statistic,
-                                @RequestHeader("Authorization") String authHeader,
-                                @PathVariable Integer statisticId) throws EntityNotFoundException {
-        statisticService.updateWholeStatisticByAuthHeaderAndStatisticId(statistic, statisticId, authHeader);
+    public ResponseEntity<?> updateWholeStatistic(@RequestBody AddStatisticDto statistic,
+                                         @RequestHeader("Authorization") String authHeader,
+                                         @PathVariable Integer statisticId) throws EntityNotFoundException {
+        return statisticService.updateWholeStatisticByAuthHeaderAndStatisticId(statistic, statisticId, authHeader);
     }
 }

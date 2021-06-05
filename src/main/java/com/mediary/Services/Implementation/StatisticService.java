@@ -18,6 +18,8 @@ import com.mediary.Services.Exceptions.IncorrectFieldException;
 import com.mediary.Services.Interfaces.IStatisticService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -193,10 +195,10 @@ public class StatisticService implements IStatisticService {
     }
 
     @Override
-    public void updateWholeStatisticByAuthHeaderAndStatisticId(AddStatisticDto statistic, Integer statisticId, String authHeader) throws EntityNotFoundException {
+    public ResponseEntity<?> updateWholeStatisticByAuthHeaderAndStatisticId(AddStatisticDto statistic, Integer statisticId, String authHeader) throws EntityNotFoundException {
         UserEntity user = userService.getUserByAuthHeader(authHeader);
         if (user != null) {
-            updateWholeStatisticByUserAndStatisticId(statistic, statisticId, user);
+            return updateWholeStatisticByUserAndStatisticId(statistic, statisticId, user);
         } else {
             log.warn("User not found!");
             throw new EntityNotFoundException("User doesn't exist.");
@@ -204,24 +206,25 @@ public class StatisticService implements IStatisticService {
     }
 
     @Override
-    public void updateWholeStatisticByUserAndStatisticId(AddStatisticDto statistic, Integer statisticId, UserEntity user) throws EntityNotFoundException {
+    public ResponseEntity<?> updateWholeStatisticByUserAndStatisticId(AddStatisticDto statistic, Integer statisticId, UserEntity user) throws EntityNotFoundException {
         var stat = statisticRepository.findByUserByIdAndId(user, statisticId);
-//        if(stat == null){
-//            StatisticEntity newStatistic = new StatisticEntity();
-//
-//            var statisticType = statisticTypeRepository.findById(statistic.getStatisticTypeId());
-//            if (statisticType != null) {
-//                newStatistic.setStatisticTypeById(statisticType);
-//            } else {
-//                throw new EntityNotFoundException("Statistic type with specified ID doesn't exist!");
-//            }
-//
-//            newStatistic.setValue(statistic.getValue());
-//            newStatistic.setDate(statistic.getDate());
-//            newStatistic.setUserById(user);
-//
-//            statisticRepository.saveAndFlush(newStatistic);
-//        }
+        if(stat == null){
+            StatisticEntity newStatistic = new StatisticEntity();
+
+            var statisticType = statisticTypeRepository.findById(statistic.getStatisticTypeId());
+            if (statisticType != null) {
+                newStatistic.setStatisticTypeById(statisticType);
+            } else {
+                throw new EntityNotFoundException("Statistic type with specified ID doesn't exist!");
+            }
+
+            newStatistic.setValue(statistic.getValue());
+            newStatistic.setDate(statistic.getDate());
+            newStatistic.setUserById(user);
+
+            statisticRepository.saveAndFlush(newStatistic);
+            return new ResponseEntity<>(statisticToDto(newStatistic), HttpStatus.CREATED);
+        }
         var statisticType = statisticTypeRepository.findById(statistic.getStatisticTypeId());
         if (statisticType != null) {
             stat.setStatisticTypeById(statisticType);
@@ -230,6 +233,7 @@ public class StatisticService implements IStatisticService {
         }
         stat.setDate(statistic.getDate());
         stat.setValue(statistic.getValue());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Override
