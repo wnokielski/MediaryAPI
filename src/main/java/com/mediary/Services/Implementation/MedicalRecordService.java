@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -82,7 +83,7 @@ public class MedicalRecordService implements IMedicalRecordService {
             medicalRecordEntity.setTitle(medicalRecordDto.getTitle());
             medicalRecordEntity.setLocation(medicalRecordDto.getLocation());
             medicalRecordEntity.setNote(medicalRecordDto.getNote());
-            medicalRecordEntity.setDateOfTheTest(medicalRecordDto.getDateOfTheTest());
+            medicalRecordEntity.setDateOfTheTest((Date) medicalRecordDto.getDateOfTheTest());
             medicalRecordEntity.setUserById(user);
 
             for (MultipartFile file : files) {

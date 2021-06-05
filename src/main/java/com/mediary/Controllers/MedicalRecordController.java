@@ -47,7 +47,7 @@ public class MedicalRecordController {
     @PostMapping
     public void addMedicalRecord(@RequestHeader("Authorization") String authHeader,
             @RequestPart(required = false) MultipartFile[] files, @RequestPart AddMedicalRecordDto medicalRecord)
-            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException {
+            throws EntityNotFoundException, IncorrectFieldException, BlobStorageException, EnumConversionException {
 
         medicalRecordService.addMedicalRecordByAuthHeader(medicalRecord, files, authHeader);
     }
