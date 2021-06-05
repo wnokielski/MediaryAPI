@@ -45,8 +45,10 @@ public interface IMedicalRecordService {
 
     List<GetMedicalRecordDto> sortByPast(List<GetMedicalRecordDto> medicalRecords);
 
-    void updateMedicalRecordById(UpdateMedicalRecordDto medicalRecord, String authHeader, Integer medicalRecordId)
-            throws EntityNotFoundException, EntityDoesNotBelongToUser, IncorrectFieldException, EnumConversionException;
+    GetMedicalRecordDto updateMedicalRecordById(UpdateMedicalRecordDto medicalRecord, String authHeader, Integer medicalRecordId, MultipartFile[] files)
+            throws EntityNotFoundException, EntityDoesNotBelongToUser, IncorrectFieldException, EnumConversionException, BlobStorageException;
 
-    void updateTestItemById(UpdateTestItemDto medicalRecordItem, String authHeader, Integer medicalRecordItemId) throws EntityNotFoundException, IncorrectFieldException, EntityDoesNotBelongToUser;
+    void updateTestItemById(UpdateTestItemDto medicalRecordItem, String authHeader, Integer medicalRecordItemId, MedicalRecordEntity medicalRecordEntity) throws EntityNotFoundException, IncorrectFieldException, EntityDoesNotBelongToUser;
+
+    List<GetMedicalRecordDto> getScheduleItemByAuthHeaderAndDate(String authHeader, String dateFrom, String dateTo) throws EntityNotFoundException;
 }

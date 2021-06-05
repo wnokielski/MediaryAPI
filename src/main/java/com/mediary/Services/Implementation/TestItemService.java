@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -32,6 +33,7 @@ public class TestItemService implements ITestItemService {
     MedicalRecordRepository medicalRecordRepository;
 
     @Override
+    @Transactional
     public void deleteTestItem(Integer id) {
         testItemRepository.deleteById(id);
     }
@@ -63,6 +65,8 @@ public class TestItemService implements ITestItemService {
             testItemRepository.save(testItem);
         }
     }
+
+
 
     @Override
     public AddTestItemDto getJson(String testItem) {

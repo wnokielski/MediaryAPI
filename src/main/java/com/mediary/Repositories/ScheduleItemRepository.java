@@ -1,6 +1,7 @@
 package com.mediary.Repositories;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +19,10 @@ public interface ScheduleItemRepository extends JpaRepository<ScheduleItemEntity
 
     ScheduleItemEntity findById(Integer scheduleItemId);
 
-    List<ScheduleItemEntity> findByUserByIdAndDateBetween(Optional<UserEntity> user, Timestamp dateFrom, Timestamp dateTo);
+    List<ScheduleItemEntity> findByUserByIdAndDateBetweenOrderByDate(Optional<UserEntity> user, Timestamp dateFrom, Timestamp dateTo);
+
+//    @Query(value = "SELECT * FROM ScheduleItemEntity WHERE UserId = ?1 AND Date >= ?2 AND Date <= ?3 ORDER BY Date", nativeQuery = true)
+//    List<ScheduleItemEntity> findByUserByIdAndDateBetween(Optional<Integer> userId, Timestamp dateFrom, Timestamp dateTo);
 
     void deleteById(Integer id);
 }

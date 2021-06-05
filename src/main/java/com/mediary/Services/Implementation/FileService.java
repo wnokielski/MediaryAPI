@@ -2,10 +2,14 @@ package com.mediary.Services.Implementation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import com.mediary.Models.DTOs.Request.UpdateMedicalRecordDto;
 import com.mediary.Models.DTOs.Response.GetFileDto;
+import com.mediary.Models.DTOs.Response.GetMedicalRecordDto;
 import com.mediary.Models.Entities.FileEntity;
 import com.mediary.Models.Entities.MedicalRecordEntity;
+import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Repositories.FileRepository;
 import com.mediary.Repositories.MedicalRecordRepository;
 import com.mediary.Services.Exceptions.BlobStorageException;
@@ -112,6 +116,11 @@ public class FileService implements IFileService {
         fileDto.setOriginalName(file.getOriginalName());
         fileDto.setUrl(file.getUrl());
         return fileDto;
+    }
+
+    @Override
+    public List<FileEntity> getFilesByMedicalRecord(Integer medicalRecordID) {
+        return fileRepository.findByMedicalRecordId(medicalRecordID);
     }
 
 }
