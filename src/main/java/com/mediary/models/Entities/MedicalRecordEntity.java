@@ -1,11 +1,9 @@
 package com.mediary.Models.Entities;
 
 import com.mediary.Models.Enums.Category;
-import org.springframework.data.repository.cdi.Eager;
 
 import javax.persistence.*;
-import java.sql.Date;
-import java.util.Collection;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
@@ -16,7 +14,7 @@ public class MedicalRecordEntity {
     private String location;
     private Category category;
     private String note;
-    private Date dateOfTheTest;
+    private Timestamp dateOfTheTest;
     private List<FileEntity> filesById;
     private UserEntity userById;
     private List<TestItemEntity> testItemsById;
@@ -75,11 +73,11 @@ public class MedicalRecordEntity {
 
     @Basic
     @Column(name = "`DateOfTheTest`", nullable = false)
-    public Date getDateOfTheTest() {
+    public Timestamp getDateOfTheTest() {
         return dateOfTheTest;
     }
 
-    public void setDateOfTheTest(Date dateOfTheTest) {
+    public void setDateOfTheTest(Timestamp dateOfTheTest) {
         this.dateOfTheTest = dateOfTheTest;
     }
 

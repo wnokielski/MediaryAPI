@@ -1,25 +1,9 @@
 package com.mediary;
 
-import com.mediary.Models.Entities.ScheduleItemEntity;
-import com.mediary.Models.Entities.ScheduleItemTypeEntity;
-import com.mediary.Models.Entities.StatisticEntity;
-import com.mediary.Models.Entities.StatisticTypeEntity;
-import com.mediary.Models.Entities.TestParameterEntity;
-import com.mediary.Models.Entities.MedicalRecordEntity;
-import com.mediary.Models.Entities.TestItemEntity;
-import com.mediary.Models.Entities.TestTypeEntity;
-import com.mediary.Models.Entities.UserEntity;
+import com.mediary.Models.Entities.*;
 import com.mediary.Models.Enums.Category;
 import com.mediary.Models.Enums.Gender;
-import com.mediary.Repositories.ScheduleItemRepository;
-import com.mediary.Repositories.ScheduleItemTypeRepository;
-import com.mediary.Repositories.StatisticRepository;
-import com.mediary.Repositories.StatisticTypeRepository;
-import com.mediary.Repositories.TestParameterRepository;
-import com.mediary.Repositories.TestItemRepository;
-import com.mediary.Repositories.MedicalRecordRepository;
-import com.mediary.Repositories.TestTypeRepository;
-import com.mediary.Repositories.UserRepository;
+import com.mediary.Repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -542,13 +526,13 @@ public class DbSeeder implements CommandLineRunner {
                 medicalRecord.setTitle("Annual blood test");
                 medicalRecord.setCategory(Category.EXAMINATION);
                 medicalRecord.setUserById(user);
-                medicalRecord.setDateOfTheTest(Date.valueOf("2021-03-12"));
+                medicalRecord.setDateOfTheTest(Timestamp.valueOf("2021-03-12 00:00:00"));
 
                 MedicalRecordEntity medicalRecord1 = new MedicalRecordEntity();
                 medicalRecord1.setTitle("Cholesterol test");
                 medicalRecord1.setCategory(Category.EXAMINATION);
                 medicalRecord1.setUserById(user);
-                medicalRecord1.setDateOfTheTest(Date.valueOf("2021-04-02"));
+                medicalRecord1.setDateOfTheTest(Timestamp.valueOf("2021-04-02 00:00:00"));
 
                 medicalRecordRepository.save(medicalRecord);
                 medicalRecordRepository.save(medicalRecord1);

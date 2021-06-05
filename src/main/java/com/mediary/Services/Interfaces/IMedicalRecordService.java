@@ -33,19 +33,7 @@ public interface IMedicalRecordService {
 
     int deleteMedicalRecord(UserDto user, Integer medicalRecordId) throws BlobStorageException, EntityNotFoundException;
 
-    List<GetMedicalRecordDto> getMedicalRecordsSorted(List<GetMedicalRecordDto> medicalRecords, String sortType);
-
-    List<GetMedicalRecordDto> sortByToday(List<GetMedicalRecordDto> medicalRecords);
-
-    List<GetMedicalRecordDto> sortByLastWeek(List<GetMedicalRecordDto> medicalRecords);
-
-    List<GetMedicalRecordDto> sortByLastMonth(List<GetMedicalRecordDto> medicalRecords);
-
-    List<GetMedicalRecordDto> sortByLastYear(List<GetMedicalRecordDto> medicalRecords);
-
-    List<GetMedicalRecordDto> sortByPast(List<GetMedicalRecordDto> medicalRecords);
-
-    GetMedicalRecordDto updateMedicalRecordById(UpdateMedicalRecordDto medicalRecord, String authHeader, Integer medicalRecordId, MultipartFile[] files)
+    GetMedicalRecordDto updateMedicalRecordById(UpdateMedicalRecordDto medicalRecord, String authHeader, MultipartFile[] newFiles)
             throws EntityNotFoundException, EntityDoesNotBelongToUser, IncorrectFieldException, EnumConversionException, BlobStorageException;
 
     void updateTestItemById(UpdateTestItemDto medicalRecordItem, String authHeader, Integer medicalRecordItemId, MedicalRecordEntity medicalRecordEntity) throws EntityNotFoundException, IncorrectFieldException, EntityDoesNotBelongToUser;
