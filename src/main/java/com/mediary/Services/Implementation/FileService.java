@@ -1,28 +1,23 @@
 package com.mediary.Services.Implementation;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import com.mediary.Models.DTOs.Request.UpdateMedicalRecordDto;
 import com.mediary.Models.DTOs.Response.GetFileDto;
-import com.mediary.Models.DTOs.Response.GetMedicalRecordDto;
 import com.mediary.Models.Entities.FileEntity;
 import com.mediary.Models.Entities.MedicalRecordEntity;
-import com.mediary.Models.Entities.UserEntity;
 import com.mediary.Repositories.FileRepository;
 import com.mediary.Repositories.MedicalRecordRepository;
 import com.mediary.Services.Exceptions.BlobStorageException;
 import com.mediary.Services.Exceptions.EntityNotFoundException;
 import com.mediary.Services.Interfaces.IFileService;
 import com.mediary.Services.Interfaces.IStorageService;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -80,7 +75,7 @@ public class FileService implements IFileService {
                 throw new BlobStorageException("File deletion problem occured");
             }
             if (success) {
-                fileRepository.delete(file);
+                fileRepository.deleteById(file.getId());
                 fileRepository.flush();
                 return true;
             } else {

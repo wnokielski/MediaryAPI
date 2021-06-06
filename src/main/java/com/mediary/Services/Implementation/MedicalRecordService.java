@@ -167,6 +167,8 @@ public class MedicalRecordService implements IMedicalRecordService {
                 for (FileEntity file : files) {
                     fileService.deleteFile(file.getId());
                 }
+
+                files = fileRepository.findByMedicalRecordId(medicalRecordId);
                 if (files.isEmpty()) {
                     medicalRecordRepository.deleteById(medicalRecordId);
                     return Const.medicalRecordDeletionSuccess;
@@ -180,6 +182,7 @@ public class MedicalRecordService implements IMedicalRecordService {
     }
 
     @Override
+    @Transactional
     public GetMedicalRecordDto updateMedicalRecordById(UpdateMedicalRecordDto medicalRecordDto, String authHeader, MultipartFile[] newFiles) throws EntityNotFoundException, EntityDoesNotBelongToUser, IncorrectFieldException, EnumConversionException, BlobStorageException {
         UserEntity user = userService.getUserByAuthHeader(authHeader);
         MedicalRecordEntity updatedMedicalRecord = medicalRecordRepository.findById(medicalRecordDto.getId());
