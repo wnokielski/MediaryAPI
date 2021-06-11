@@ -150,8 +150,9 @@ public class ScheduleItemService implements IScheduleItemService {
             throws EntityNotFoundException {
         UserEntity user = userService.getUserByAuthHeader(authHeader);
         if (user != null) {
-            var scheduleItems = scheduleItemRepository.findByUserByIdAndDateBetweenOrderByDate(java.util.Optional.of(user),
-                    Timestamp.valueOf(dateFrom), Timestamp.valueOf(dateTo));
+            var scheduleItems = scheduleItemRepository.findByUserByIdAndDateBetweenOrderByDate(
+                    java.util.Optional.of(user), Timestamp.valueOf(dateFrom + " 00:00:00"),
+                    Timestamp.valueOf(dateTo + " 23:59:59"));
             ArrayList<GetScheduleItemDto> scheduleItemDtos = (ArrayList<GetScheduleItemDto>) scheduleItemsToDtos(
                     scheduleItems);
             return scheduleItemDtos;
